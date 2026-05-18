@@ -272,7 +272,7 @@ const Signup = () => {
           </div>
         </form>
       ) : (
-      <form onSubmit={handleSignup} className="space-y-8">
+      <form onSubmit={handleSignup} className="space-y-6 sm:space-y-8">
         {/* Avatar Placeholder */}
         <div className="flex flex-col items-center">
             <div className="relative group active:scale-95 transition-all">
@@ -328,7 +328,7 @@ const Signup = () => {
             {photoError && <p className="text-[11px] font-bold text-red-500 mt-2">{photoError}</p>}
         </div>
 
-        <div className="space-y-5">
+        <div className="space-y-4 sm:space-y-5">
           <div className="space-y-2">
             <label className="ml-1 text-xs font-bold uppercase tracking-widest text-slate-600">Mobile Number *</label>
             <div className={fieldShellClassName}>
@@ -397,13 +397,13 @@ const Signup = () => {
 
           <div className="space-y-3">
              <label className="ml-1 text-xs font-bold uppercase tracking-widest text-slate-600">Gender</label>
-             <div className="flex flex-wrap gap-2">
+             <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
                 {['Male', 'Female', 'Other'].map((g) => (
                     <button
                         key={g}
                         type="button"
                         onClick={() => handleGenderChange(g.toLowerCase())}
-                        className={`flex-1 min-w-[80px] py-3 rounded-xl text-[13px] font-bold border-2 transition-all ${
+                        className={`w-full flex-1 min-w-[80px] py-3 rounded-xl text-[13px] font-bold border-2 transition-all ${
                             formData.gender === g.toLowerCase() 
                             ? 'border-black bg-black text-white shadow-sm' 
                             : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
@@ -467,7 +467,7 @@ const Signup = () => {
               Login
             </Link>
           </p>
-          <p className="text-[12px] text-slate-400 font-medium leading-relaxed px-2">
+          <p className="text-[12px] text-slate-400 font-medium leading-relaxed px-1 sm:px-2">
             By creating an account, you agree to our
             <Link to="/terms" className="ml-1 text-black underline hover:opacity-70 transition-colors">
               Terms
