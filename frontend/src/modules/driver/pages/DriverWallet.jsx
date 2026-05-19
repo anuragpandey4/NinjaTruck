@@ -447,41 +447,43 @@ const DriverWallet = () => {
                 const callbackUrl = orderData.callbackUrl
                     || `${API_BASE_URL}/drivers/wallet/top-up/razorpay/callback`;
 
-                // In WebView, Razorpay's JS SDK restricts payment options (specifically UPI)
-                // because it detects WebView user-agents and blocks inline iframe-based intents.
-                //
-                // The ultimate, 100% robust bypass: submit a direct HTML form POST to
-                // Razorpay's secure hosted checkout endpoint (https://api.razorpay.com/v1/checkout/hosted).
-                // This loads the payment flow as a secure, first-party HTTPS page,
-                // restoring all UPI apps, Google Pay, PhonePe, Paytm, and netbanking icons perfectly.
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = 'https://api.razorpay.com/v1/checkout/hosted';
-                form.style.display = 'none';
+                if (callbackUrl.startsWith('http://')) {
+                    console.warn('[Razorpay] Warning: Using cleartext HTTP callback URL in WebView. This will fail with ERR_CLEARTEXT_NOT_PERMITTED on Android unless cleartext traffic is explicitly permitted in AndroidManifest.xml.');
+                }
 
-                const fields = {
-                    key_id: orderData.keyId,
-                    order_id: orderData.orderId,
-                    amount: orderData.amount, // already in paise from backend
+                // Initialize the Razorpay JS SDK with redirect mode (callback_url + redirect: true).
+                // Because our new robust WebView detection is active, the SDK successfully enters
+                // full-page redirect mode, restoring all UPI options (GPay, PhonePe, Paytm) inside the WebView.
+                const rzp = new window.Razorpay({
+                    key: orderData.keyId,
+                    amount: orderData.amount,
+                    currency: orderData.currency || 'INR',
                     name: appName,
                     description: 'Wallet Topup',
-                    'prefill[name]': driverInfo?.name || driverInfo?.full_name || '',
-                    'prefill[email]': driverInfo?.email || '',
-                    'prefill[contact]': prefillContact,
+                    order_id: orderData.orderId,
                     callback_url: callbackUrl,
-                };
-
-                Object.entries(fields).forEach(([key, value]) => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = key;
-                    input.value = String(value || '');
-                    form.appendChild(input);
+                    redirect: true,
+                    prefill: {
+                        name: driverInfo?.name || driverInfo?.full_name || '',
+                        email: driverInfo?.email || '',
+                        contact: prefillContact,
+                    },
+                    modal: {
+                        ondismiss: () => {
+                            setProcessingTopUp(false);
+                        },
+                    },
+                    theme: {
+                        color: '#E85D04',
+                    },
                 });
 
-                document.body.appendChild(form);
-                form.submit();
-                document.body.removeChild(form);
+                rzp.on('payment.failed', (event) => {
+                    const message = event?.error?.description || event?.error?.reason || 'Payment failed';
+                    setError(message);
+                    setProcessingTopUp(false);
+                });
+                rzp.open();
                 return;
             }
 
