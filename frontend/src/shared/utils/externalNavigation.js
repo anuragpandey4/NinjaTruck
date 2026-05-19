@@ -161,6 +161,16 @@ const postToJavascriptChannel = (targetUrl, checkoutPayload) => {
 };
 
 const callNativeInterface = (targetUrl, checkoutPayload) => {
+  if (typeof globalThis.Rydon24Native?.openExternalUrl === 'function') {
+    try {
+      globalThis.Rydon24Native.openExternalUrl({ url: targetUrl });
+      recordCheckoutDiagnostic({ status: 'rydon24-native-bridge-called', targetUrl });
+      return true;
+    } catch (error) {
+      recordCheckoutDiagnostic({ status: 'rydon24-native-bridge-failed', message: error?.message || String(error) });
+    }
+  }
+
   const bridgeNames = ['Android', 'NativeBridge', 'FlutterBridge', 'AppBridge'];
   const methodNames = ['openExternalUrl', 'openExternalCheckout', 'openUrl'];
 
