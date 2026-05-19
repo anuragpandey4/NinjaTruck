@@ -17,9 +17,8 @@ import DriverBottomNav from '../../shared/components/DriverBottomNav';
 import api from '../../../shared/api/axiosInstance';
 import { socketService } from '../../../shared/api/socket';
 import { useSettings } from '../../../shared/context/SettingsContext';
-import { openExternalCheckout, isEmbeddedCheckoutWebView } from '../../../shared/utils/externalNavigation';
+import { openExternalCheckout } from '../../../shared/utils/externalNavigation';
 import { rememberPendingPhonePeRedirect } from '../../../shared/utils/phonePeResume';
-import { BACKEND_ORIGIN } from '../../../shared/api/runtimeConfig';
 import { getLocalDriverToken } from '../services/registrationService';
 
 const PHONEPE_DRIVER_WALLET_FLOW_KEY = 'driver-wallet-topup';
@@ -427,48 +426,13 @@ const DriverWallet = () => {
                 driverInfo = {};
             }
 
-            if (isEmbeddedCheckoutWebView()) {
-                const launchUrl = new URL('/razorpay/launch', window.location.origin);
-                launchUrl.searchParams.set('flow', 'driver-wallet');
-                launchUrl.searchParams.set('key', orderData.keyId);
-                launchUrl.searchParams.set('order_id', orderData.orderId);
-                launchUrl.searchParams.set('amount', String(orderData.amount || ''));
-                launchUrl.searchParams.set('currency', orderData.currency || 'INR');
-                launchUrl.searchParams.set('name', appName);
-                launchUrl.searchParams.set('description', 'Driver wallet top-up');
-                launchUrl.searchParams.set(
-                    'callback_url',
-                    `${BACKEND_ORIGIN}/api/v1/drivers/wallet/top-up/razorpay/callback`,
-                );
-
-                const prefillName = String(driverInfo?.name || driverInfo?.full_name || '').trim();
-                const prefillEmail = String(driverInfo?.email || '').trim();
-                const prefillContact = String(
-                    driverInfo?.phone || driverInfo?.mobile
-                        ? `+91${String(driverInfo?.phone || driverInfo?.mobile).replace(/^\+?91/, '')}`
-                        : '',
-                ).trim();
-
-                if (prefillName) launchUrl.searchParams.set('prefill_name', prefillName);
-                if (prefillEmail) launchUrl.searchParams.set('prefill_email', prefillEmail);
-                if (prefillContact) launchUrl.searchParams.set('prefill_contact', prefillContact);
-
-                const opened = await openExternalCheckout(launchUrl.toString());
-                if (!opened) {
-                    throw new Error('Razorpay checkout could not open outside the app WebView. Please update the app bridge or open this payment flow in your browser.');
-                }
-                setProcessingTopUp(false);
-                setShowTopUp(false);
-                return;
-            }
-
             // 2. Open Razorpay checkout
             const options = {
                 key: orderData.keyId,
                 amount: orderData.amount,
                 currency: orderData.currency || 'INR',
                 name: appName,
-                description: 'Wallet Top-up',
+                description: 'Wallet Topup',
                 order_id: orderData.orderId,
                 prefill: {
                     name: driverInfo?.name || driverInfo?.full_name || '',
@@ -483,19 +447,17 @@ const DriverWallet = () => {
                     },
                 },
                 theme: {
-                    color: '#0F172A',
+                    color: '#E85D04',
                 },
                 handler: async (response) => {
                     try {
-                        setProcessingTopUp(true);
-                        // 3. Verify payment on backend
                         const verifyResponse = await api.post('/drivers/wallet/top-up/razorpay/verify', {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
                         }, withDriverAuthorization());
 
-                        const result = verifyResponse?.data?.data || verifyResponse?.data || verifyResponse;
+                        const result = verifyResponse?.data || verifyResponse;
                         if (result?.wallet) {
                             setWallet(result.wallet);
                         }
@@ -511,9 +473,9 @@ const DriverWallet = () => {
                             setTopUpSuccess(false);
                             setShowTopUp(false);
                             setTopUpAmount('500');
-                        }, 2000);
+                        }, 1400);
                     } catch (verifyError) {
-                        setError(verifyError?.response?.data?.message || 'Payment verification failed.');
+                        setError(verifyError?.message || 'Payment verification failed');
                     } finally {
                         setProcessingTopUp(false);
                     }
@@ -521,8 +483,9 @@ const DriverWallet = () => {
             };
 
             const rzp = new window.Razorpay(options);
-            rzp.on('payment.failed', (response) => {
-                setError(response.error?.description || 'Payment failed.');
+            rzp.on('payment.failed', (event) => {
+                const message = event?.error?.description || event?.error?.reason || 'Payment failed';
+                setError(message);
                 setProcessingTopUp(false);
             });
             rzp.open();

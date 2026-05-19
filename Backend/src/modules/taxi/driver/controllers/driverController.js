@@ -5792,7 +5792,7 @@ const fetchRazorpay = async ({ method, path, body, keyId, keySecret }) => {
 export const createDriverWalletTopupOrder = async (req, res) => {
   const settings = await getWalletSettings();
   const minTopUp = Number(settings.minimum_amount_added_to_wallet || 0);
-  const amount = Number(req.body.amount);
+  const amount = Math.round(Number(req.body.amount) * 100) / 100;
 
   if (!Number.isFinite(amount) || amount <= 0) {
     throw new ApiError(400, "Invalid top-up amount");
