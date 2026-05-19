@@ -27,7 +27,7 @@ const isAndroidWebView = () => {
 export const convertToAndroidIntentUrl = (url) => {
   try {
     const hostAndPath = String(url || '').replace(/^https?:\/\//i, '');
-    return `intent://${hostAndPath}#Intent;scheme=https;end`;
+    return `intent://${hostAndPath}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(url)};end`;
   } catch (e) {
     return url;
   }
@@ -366,10 +366,23 @@ export const openExternalCheckout = async (url) => {
 
     // 5. Try intent-based redirection fallback to force default Chrome/browser
     if (isAndroidWebView() || globalThis.window?.__isRydon24WebView) {
-      const intentUrl = convertToAndroidIntentUrl(targetUrl);
-      recordCheckoutDiagnostic({ status: 'webview-intent-fallback', intentUrl });
-      globalThis.location.href = intentUrl;
-      return true;
+      const chromeCustomUrl = `googlechromes://navigate?url=${encodeURIComponent(targetUrl)}`;
+      try {
+        globalThis.location.href = chromeCustomUrl;
+        recordCheckoutDiagnostic({ status: 'webview-chrome-scheme-redirect', chromeCustomUrl });
+        
+        globalThis.setTimeout(() => {
+          const intentUrl = convertToAndroidIntentUrl(targetUrl);
+          recordCheckoutDiagnostic({ status: 'webview-intent-fallback-deferred', intentUrl });
+          globalThis.location.href = intentUrl;
+        }, 250);
+        return true;
+      } catch (error) {
+        const intentUrl = convertToAndroidIntentUrl(targetUrl);
+        recordCheckoutDiagnostic({ status: 'webview-intent-fallback-immediate', intentUrl, message: error?.message || String(error) });
+        globalThis.location.href = intentUrl;
+        return true;
+      }
     }
 
     recordCheckoutDiagnostic({ status: 'webview-bridge-unavailable' });
