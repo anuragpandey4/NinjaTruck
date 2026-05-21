@@ -233,6 +233,10 @@ driverRouter.post(
   "/wallet/top-up/razorpay/callback",
   asyncHandler(handleDriverRazorpayWalletTopupCallback),
 );
+driverRouter.get(
+  "/wallet/top-up/razorpay/callback",
+  asyncHandler(handleDriverRazorpayWalletTopupCallback),
+);
   driverRouter.post(
     "/wallet/top-up/razorpay/order",
     authenticate(["driver"]),

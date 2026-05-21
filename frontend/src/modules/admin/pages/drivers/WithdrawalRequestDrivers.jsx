@@ -160,10 +160,12 @@ const WithdrawalRequestDrivers = () => {
                     <td className="px-6 py-4 text-sm text-gray-600">
                       <div className="space-y-1">
                         <div className="font-semibold text-gray-800">
-                          {item.driver?.bankDetails?.upiId || item.driver?.bankDetails?.accountNumber || '-'}
+                          {item.driver?.bankDetails?.accountHolderName || item.driver?.bankDetails?.upiId || item.driver?.bankDetails?.accountNumber || '-'}
                         </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                          {item.driver?.bankDetails?.accountNumber ? <span>A/C {item.driver.bankDetails.accountNumber}</span> : null}
                           {item.driver?.bankDetails?.ifsc ? <span>{item.driver.bankDetails.ifsc}</span> : null}
+                          {item.driver?.bankDetails?.branchName ? <span>{item.driver.bankDetails.branchName}</span> : null}
                           {item.driver?.bankDetails?.qrCodeImage ? (
                             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
                               <QrCode size={12} />

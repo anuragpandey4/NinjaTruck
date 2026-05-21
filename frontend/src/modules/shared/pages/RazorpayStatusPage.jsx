@@ -9,6 +9,11 @@ const FLOWS = {
     destination: '/taxi/driver/wallet',
     verify: (payload) => api.post('/drivers/wallet/top-up/razorpay/verify', payload),
   },
+  'user-wallet': {
+    label: 'User wallet top-up',
+    destination: '/taxi/user/wallet',
+    verify: (payload) => api.post('/users/wallet/razorpay/verify', payload),
+  },
 };
 
 const unwrapPayload = (response) => response?.data?.data || response?.data || response || {};

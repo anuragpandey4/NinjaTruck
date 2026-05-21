@@ -4196,12 +4196,16 @@ export const listDriverWithdrawalSummaries = async ({ page = 1, limit = 50, sear
             mobile: driver.phone || '',
             email: driver.email || '',
             bankDetails: {
-              upiId: driver.bankDetails?.upiId || '',
-              qrCodeImage: driver.bankDetails?.qrCodeImage || '',
-              accountNumber: driver.bankDetails?.accountNumber || '',
-              ifsc: driver.bankDetails?.ifsc || '',
-              branchName: driver.bankDetails?.branchName || '',
-              updatedAt: driver.bankDetails?.updatedAt || null,
+              accountHolderName:
+                latestRequest?.bank_details_snapshot?.accountHolderName || driver.bankDetails?.accountHolderName || '',
+              upiId: latestRequest?.bank_details_snapshot?.upiId || driver.bankDetails?.upiId || '',
+              qrCodeImage: latestRequest?.bank_details_snapshot?.qrCodeImage || driver.bankDetails?.qrCodeImage || '',
+              accountNumber:
+                latestRequest?.bank_details_snapshot?.accountNumber || driver.bankDetails?.accountNumber || '',
+              ifsc: latestRequest?.bank_details_snapshot?.ifsc || driver.bankDetails?.ifsc || '',
+              branchName: latestRequest?.bank_details_snapshot?.branchName || driver.bankDetails?.branchName || '',
+              updatedAt:
+                latestRequest?.bank_details_snapshot?.updatedAt || driver.bankDetails?.updatedAt || null,
             },
           }
           : null,
@@ -4243,6 +4247,7 @@ export const listDriverWithdrawals = async ({ driverId, page = 1, limit = 50 }) 
       register_for: driver.registerFor || '',
       wallet: await serializeDriverWallet(driver),
       bankDetails: {
+        accountHolderName: driver.bankDetails?.accountHolderName || '',
         upiId: driver.bankDetails?.upiId || '',
         qrCodeImage: driver.bankDetails?.qrCodeImage || '',
         accountNumber: driver.bankDetails?.accountNumber || '',
@@ -4257,6 +4262,15 @@ export const listDriverWithdrawals = async ({ driverId, page = 1, limit = 50 }) 
       requested_currency: 'INR',
       status: item.status || 'pending',
       payment_method: item.payment_method || '',
+      bank_details_snapshot: {
+        accountHolderName: item.bank_details_snapshot?.accountHolderName || '',
+        upiId: item.bank_details_snapshot?.upiId || '',
+        qrCodeImage: item.bank_details_snapshot?.qrCodeImage || '',
+        accountNumber: item.bank_details_snapshot?.accountNumber || '',
+        ifsc: item.bank_details_snapshot?.ifsc || '',
+        branchName: item.bank_details_snapshot?.branchName || '',
+        updatedAt: item.bank_details_snapshot?.updatedAt || null,
+      },
       createdAt: item.createdAt,
     })),
     paginator: {

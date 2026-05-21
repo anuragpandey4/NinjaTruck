@@ -69,6 +69,7 @@ const WithdrawalRequestDetail = () => {
         currency: item.requested_currency || 'INR',
         status: item.status || 'pending',
         paymentMethod: item.payment_method || 'bank_transfer',
+        bankDetailsSnapshot: item.bank_details_snapshot || {},
       })),
     );
   };
@@ -145,7 +146,29 @@ const WithdrawalRequestDetail = () => {
     () => history.find((item) => item.paymentMethod)?.paymentMethod || 'bank_transfer',
     [history],
   );
-  const bankDetails = driver?.bankDetails || {};
+  const selectedRequest = useMemo(() => {
+    if (requestId) {
+      const matched = history.find((item) => String(item.id) === String(requestId));
+      if (matched) {
+        return matched;
+      }
+    }
+    return history[0] || null;
+  }, [history, requestId]);
+
+  const bankDetails = useMemo(() => {
+    const snapshot = selectedRequest?.bankDetailsSnapshot || {};
+    const hasSnapshotValue = [
+      snapshot.accountHolderName,
+      snapshot.upiId,
+      snapshot.qrCodeImage,
+      snapshot.accountNumber,
+      snapshot.ifsc,
+      snapshot.branchName,
+    ].some((value) => String(value || '').trim());
+
+    return hasSnapshotValue ? snapshot : (driver?.bankDetails || {});
+  }, [driver?.bankDetails, selectedRequest]);
   const maskedAccountNumber = bankDetails.accountNumber
     ? bankDetails.accountNumber.slice(-4).padStart(bankDetails.accountNumber.length, '*')
     : '';
@@ -331,6 +354,10 @@ const WithdrawalRequestDetail = () => {
             </div>
 
             <div className="space-y-4">
+              <div>
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Account Holder Name</p>
+                <p className="mt-1 text-sm font-bold text-gray-800">{bankDetails.accountHolderName || '-'}</p>
+              </div>
               <div>
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">UPI ID</p>
                 <p className="mt-1 text-sm font-bold text-gray-800 break-all">{bankDetails.upiId || '-'}</p>

@@ -233,6 +233,7 @@ const serializeDriverRouteBooking = (routeBooking = {}) => {
 };
 
 const serializeDriverBankDetails = (bankDetails = {}) => ({
+  accountHolderName: String(bankDetails?.accountHolderName || "").trim(),
   upiId: String(bankDetails?.upiId || "").trim(),
   qrCodeImage: String(bankDetails?.qrCodeImage || "").trim(),
   accountNumber: String(bankDetails?.accountNumber || "").trim(),
@@ -243,6 +244,10 @@ const serializeDriverBankDetails = (bankDetails = {}) => ({
 
 const normalizeDriverBankDetails = (payload = {}, existing = {}) => {
   const next = serializeDriverBankDetails(existing);
+
+  if (Object.prototype.hasOwnProperty.call(payload, "accountHolderName")) {
+    next.accountHolderName = String(payload.accountHolderName || "").trim().slice(0, 120);
+  }
 
   if (Object.prototype.hasOwnProperty.call(payload, "upiId")) {
     const upiId = String(payload.upiId || "").trim().toLowerCase();
@@ -5391,6 +5396,7 @@ export const createDriverWithdrawalRequest = async (req, res) => {
     driver_id: req.auth.sub,
     amount: Math.round(amount * 100) / 100,
     payment_method: paymentMethod,
+    bank_details_snapshot: serializeDriverBankDetails(driver.bankDetails || {}),
     status: 'pending',
   });
 
@@ -5962,51 +5968,123 @@ export const createDriverWalletTopupOrder = async (req, res) => {
   });
 };
 
+const DRIVER_RAZORPAY_PAYMENT_SUCCESS_STATUSES = new Set(["authorized", "captured", "paid"]);
+const DRIVER_RAZORPAY_LINK_SUCCESS_STATUSES = new Set(["paid"]);
+
 const verifyAndApplyDriverRazorpayWalletTopup = async ({
   orderId,
   paymentId,
   signature,
+  paymentLinkId = "",
+  paymentLinkReferenceId = "",
+  paymentLinkStatus = "",
   driverId: requestedDriverId = "",
 } = {}) => {
   const normalizedOrderId = String(orderId || "").trim();
   const normalizedPaymentId = String(paymentId || "").trim();
   const normalizedSignature = String(signature || "").trim();
+  const normalizedPaymentLinkId = String(paymentLinkId || "").trim();
+  const normalizedPaymentLinkReferenceId = String(paymentLinkReferenceId || "").trim();
+  const normalizedPaymentLinkStatus = String(paymentLinkStatus || "").trim().toLowerCase();
 
-  if (!normalizedOrderId || !normalizedPaymentId || !normalizedSignature) {
+  if (!normalizedPaymentId) {
+    throw new ApiError(400, "Payment verification fields are required");
+  }
+
+  if (!normalizedOrderId && !normalizedPaymentLinkId) {
     throw new ApiError(400, "Payment verification fields are required");
   }
 
   const { keyId, keySecret } = await resolveRazorpayCredentials();
 
-  const expectedSignature = crypto
-    .createHmac("sha256", keySecret)
-    .update(`${normalizedOrderId}|${normalizedPaymentId}`)
-    .digest("hex");
+  let effectiveOrderId = normalizedOrderId;
+  let amountPaise = 0;
+  let resolvedDriverId = "";
 
-  if (expectedSignature !== normalizedSignature) {
-    throw new ApiError(400, "Invalid payment signature");
+  if (effectiveOrderId) {
+    if (!normalizedSignature) {
+      throw new ApiError(400, "Payment verification signature is required");
+    }
+
+    const expectedSignature = crypto
+      .createHmac("sha256", keySecret)
+      .update(`${effectiveOrderId}|${normalizedPaymentId}`)
+      .digest("hex");
+
+    if (expectedSignature !== normalizedSignature) {
+      throw new ApiError(400, "Invalid payment signature");
+    }
+
+    const order = await fetchRazorpay({
+      method: "GET",
+      path: `/orders/${encodeURIComponent(effectiveOrderId)}`,
+      keyId,
+      keySecret,
+    });
+
+    amountPaise = Number(order?.amount);
+    resolvedDriverId = String(order?.notes?.driverId || "").trim();
+  } else {
+    const [payment, paymentLink] = await Promise.all([
+      fetchRazorpay({
+        method: "GET",
+        path: `/payments/${encodeURIComponent(normalizedPaymentId)}`,
+        keyId,
+        keySecret,
+      }),
+      fetchRazorpay({
+        method: "GET",
+        path: `/payment_links/${encodeURIComponent(normalizedPaymentLinkId)}`,
+        keyId,
+        keySecret,
+      }),
+    ]);
+
+    const paymentStatus = String(payment?.status || "").trim().toLowerCase();
+    const linkStatus = String(paymentLink?.status || normalizedPaymentLinkStatus || "").trim().toLowerCase();
+    const linkPaymentId = String(
+      paymentLink?.payments?.[0]?.payment_id ||
+      paymentLink?.payment_id ||
+      payment?.id ||
+      "",
+    ).trim();
+
+    if (!DRIVER_RAZORPAY_PAYMENT_SUCCESS_STATUSES.has(paymentStatus)) {
+      throw new ApiError(400, "Razorpay payment is not successful yet");
+    }
+
+    if (linkStatus && !DRIVER_RAZORPAY_LINK_SUCCESS_STATUSES.has(linkStatus)) {
+      throw new ApiError(400, "Razorpay payment link is not marked as paid");
+    }
+
+    if (linkPaymentId && linkPaymentId !== normalizedPaymentId) {
+      throw new ApiError(400, "Payment link callback does not match the payment id");
+    }
+
+    if (
+      normalizedPaymentLinkReferenceId &&
+      paymentLink?.reference_id &&
+      String(paymentLink.reference_id).trim() !== normalizedPaymentLinkReferenceId
+    ) {
+      throw new ApiError(400, "Payment link callback reference did not match");
+    }
+
+    effectiveOrderId = String(payment?.order_id || "").trim();
+    amountPaise = Number(payment?.amount || paymentLink?.amount_paid || paymentLink?.amount || 0);
+    resolvedDriverId = String(paymentLink?.notes?.driverId || payment?.notes?.driverId || "").trim();
   }
 
-  const order = await fetchRazorpay({
-    method: "GET",
-    path: `/orders/${encodeURIComponent(normalizedOrderId)}`,
-    keyId,
-    keySecret,
-  });
-
-  const amountPaise = Number(order?.amount);
   if (!Number.isFinite(amountPaise) || amountPaise <= 0) {
     throw new ApiError(400, "Invalid order amount");
   }
 
-  const orderDriverId = String(order?.notes?.driverId || "").trim();
-  const effectiveDriverId = String(requestedDriverId || orderDriverId).trim();
+  const effectiveDriverId = String(requestedDriverId || resolvedDriverId).trim();
 
   if (!effectiveDriverId) {
     throw new ApiError(400, "Driver reference is missing from this Razorpay order");
   }
 
-  if (requestedDriverId && orderDriverId && requestedDriverId !== orderDriverId) {
+  if (requestedDriverId && resolvedDriverId && requestedDriverId !== resolvedDriverId) {
     throw new ApiError(403, "This Razorpay order does not belong to the authenticated driver");
   }
 
@@ -6034,8 +6112,9 @@ const verifyAndApplyDriverRazorpayWalletTopup = async ({
     metadata: {
       source: "razorpay",
       provider: "razorpay",
-      providerOrderId: normalizedOrderId,
+      providerOrderId: effectiveOrderId,
       providerPaymentId: normalizedPaymentId,
+      providerPaymentLinkId: normalizedPaymentLinkId,
     },
   });
 
@@ -6057,10 +6136,24 @@ export const handleDriverRazorpayWalletTopupCallback = async (req, res) => {
   const frontendBaseUrl = getFrontendBaseUrl(req);
   const redirectUrl = new URL(`${frontendBaseUrl}/razorpay/status`);
   redirectUrl.searchParams.set("flow", "driver-wallet");
+  const callbackPayload = {
+    razorpay_order_id: req.body?.razorpay_order_id || req.query?.razorpay_order_id,
+    razorpay_payment_id: req.body?.razorpay_payment_id || req.query?.razorpay_payment_id,
+    razorpay_signature: req.body?.razorpay_signature || req.query?.razorpay_signature,
+    razorpay_payment_link_id: req.body?.razorpay_payment_link_id || req.query?.razorpay_payment_link_id,
+    razorpay_payment_link_reference_id:
+      req.body?.razorpay_payment_link_reference_id || req.query?.razorpay_payment_link_reference_id,
+    razorpay_payment_link_status:
+      req.body?.razorpay_payment_link_status || req.query?.razorpay_payment_link_status,
+  };
 
   try {
-    const errorCode = String(req.body?.error?.code || req.body?.error?.reason || "").trim();
-    const errorDescription = String(req.body?.error?.description || "").trim();
+    const errorCode = String(
+      req.body?.error?.code || req.body?.error?.reason || req.query?.error_code || "",
+    ).trim();
+    const errorDescription = String(
+      req.body?.error?.description || req.query?.error_description || "",
+    ).trim();
 
     if (errorCode || errorDescription) {
       redirectUrl.searchParams.set("status", "failure");
@@ -6075,9 +6168,12 @@ export const handleDriverRazorpayWalletTopupCallback = async (req, res) => {
     }
 
     await verifyAndApplyDriverRazorpayWalletTopup({
-      orderId: req.body?.razorpay_order_id,
-      paymentId: req.body?.razorpay_payment_id,
-      signature: req.body?.razorpay_signature,
+      orderId: callbackPayload.razorpay_order_id,
+      paymentId: callbackPayload.razorpay_payment_id,
+      signature: callbackPayload.razorpay_signature,
+      paymentLinkId: callbackPayload.razorpay_payment_link_id,
+      paymentLinkReferenceId: callbackPayload.razorpay_payment_link_reference_id,
+      paymentLinkStatus: callbackPayload.razorpay_payment_link_status,
     });
 
     redirectUrl.searchParams.set("status", "success");

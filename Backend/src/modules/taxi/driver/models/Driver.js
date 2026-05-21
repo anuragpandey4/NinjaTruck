@@ -280,6 +280,11 @@ const driverSchema = new mongoose.Schema(
       },
     },
     bankDetails: {
+      accountHolderName: {
+        type: String,
+        default: '',
+        trim: true,
+      },
       upiId: {
         type: String,
         default: '',

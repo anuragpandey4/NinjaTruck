@@ -142,6 +142,7 @@ const OwnerBusBookingsPage = lazy(() => import('./modules/driver/pages/OwnerBusB
 const ActiveTrip = lazy(() => import('./modules/driver/pages/ActiveTrip'));
 const DriverWallet = lazy(() => import('./modules/driver/pages/DriverWallet'));
 const DriverProfile = lazy(() => import('./modules/driver/pages/DriverProfile'));
+const DriverBankDetailsPage = lazy(() => import('./modules/driver/pages/DriverBankDetailsPage'));
 const ServiceCenterDashboard = lazy(() => import('./modules/driver/pages/ServiceCenterDashboard'));
 const ServiceCenterVehicleDetails = lazy(() => import('./modules/driver/pages/ServiceCenterVehicleDetails'));
 const RideRequests = lazy(() => import('./modules/driver/pages/RideRequests'));
@@ -1000,6 +1001,7 @@ function App() {
                 <Route path="chat" element={<Chat />} />
                 <Route path="wallet" element={<DriverWallet />} />
                 <Route path="profile" element={<DriverProfile />} />
+                <Route path="profile/bank-details" element={<DriverBankDetailsPage />} />
                 <Route path="service-center" element={<ServiceCenterDashboard />} />
                 <Route path="service-center/vehicles/new" element={<ServiceCenterVehicleDetails />} />
                 <Route path="service-center/vehicles/:vehicleId" element={<ServiceCenterVehicleDetails />} />
@@ -1060,6 +1062,7 @@ function App() {
                 <Route path="bus-service/:id" element={<OwnerBusServicePage />} />
                 <Route path="bus-bookings" element={<OwnerBusBookingsPage />} />
                 <Route path="profile" element={<DriverProfile />} />
+                <Route path="profile/bank-details" element={<DriverBankDetailsPage />} />
                 <Route path="wallet" element={<DriverWallet />} />
                 <Route path="history" element={<RideRequests />} />
                 <Route path="edit-profile" element={<EditProfile />} />

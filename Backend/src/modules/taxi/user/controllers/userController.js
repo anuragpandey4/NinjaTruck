@@ -2198,6 +2198,10 @@ export const createRazorpayWalletTopupOrder = async (req, res) => {
   const userId = String(req.auth?.sub || '');
   const compactUserId = userId.replace(/[^a-zA-Z0-9]/g, '').slice(-8) || 'usr';
   const receipt = `uwal_${compactUserId}_${Date.now().toString(36)}`;
+  const proto = req.get('x-forwarded-proto') || req.protocol || 'http';
+  const host = req.get('x-forwarded-host') || req.get('host') || 'localhost:5000';
+  const backendOrigin = `${proto}://${host}`;
+  const callbackUrl = `${backendOrigin}/api/v1/users/wallet/razorpay/callback`;
 
   const order = await razorpayRequest({
     method: 'POST',
@@ -2219,8 +2223,99 @@ export const createRazorpayWalletTopupOrder = async (req, res) => {
       orderId: order.id,
       amount: order.amount,
       currency: order.currency || 'INR',
+      callbackUrl,
     },
   });
+};
+
+const verifyAndApplyUserRazorpayWalletTopup = async ({
+  orderId,
+  paymentId,
+  signature,
+  userId: requestedUserId = '',
+} = {}) => {
+  const normalizedOrderId = String(orderId || '').trim();
+  const normalizedPaymentId = String(paymentId || '').trim();
+  const normalizedSignature = String(signature || '').trim();
+
+  if (!normalizedOrderId || !normalizedPaymentId || !normalizedSignature) {
+    throw new ApiError(400, 'Payment verification fields are required');
+  }
+
+  const { keyId, keySecret } = await resolveRazorpayCredentials();
+
+  const expectedSignature = crypto
+    .createHmac('sha256', keySecret)
+    .update(`${normalizedOrderId}|${normalizedPaymentId}`)
+    .digest('hex');
+
+  if (expectedSignature !== normalizedSignature) {
+    throw new ApiError(400, 'Invalid payment signature');
+  }
+
+  const order = await razorpayRequest({
+    method: 'GET',
+    path: `/orders/${encodeURIComponent(normalizedOrderId)}`,
+    keyId,
+    keySecret,
+  });
+
+  const amountPaise = Number(order?.amount);
+  if (!Number.isFinite(amountPaise) || amountPaise <= 0) {
+    throw new ApiError(400, 'Invalid order amount');
+  }
+
+  const orderUserId = String(order?.notes?.userId || '').trim();
+  const effectiveUserId = String(requestedUserId || orderUserId).trim();
+
+  if (!effectiveUserId) {
+    throw new ApiError(400, 'User reference is missing from this Razorpay order');
+  }
+
+  if (requestedUserId && orderUserId && requestedUserId !== orderUserId) {
+    throw new ApiError(403, 'This Razorpay order does not belong to the authenticated user');
+  }
+
+  const amount = Math.round(amountPaise) / 100;
+
+  await ensureUserWallet(effectiveUserId);
+
+  const alreadyCredited = await UserWallet.findOne({
+    userId: effectiveUserId,
+    'transactions.providerPaymentId': normalizedPaymentId,
+  })
+    .select('_id')
+    .lean();
+
+  if (!alreadyCredited) {
+    const tx = {
+      kind: 'credit',
+      amount,
+      title: 'Wallet Refilled',
+      provider: 'razorpay',
+      providerOrderId: normalizedOrderId,
+      providerPaymentId: normalizedPaymentId,
+    };
+
+    await UserWallet.updateOne(
+      { userId: effectiveUserId },
+      {
+        $inc: { balance: amount },
+        $push: { transactions: { $each: [tx], $slice: -50 } },
+      },
+    );
+  }
+
+  const wallet = await UserWallet.findOne({ userId: effectiveUserId })
+    .select('balance refundWallet transactions')
+    .slice('transactions', -10)
+    .lean();
+
+  if (!wallet) {
+    throw new ApiError(404, 'User not found');
+  }
+
+  return buildUserWalletPayload(wallet);
 };
 
 export const createRentalAdvancePaymentOrder = async (req, res) => {
@@ -2513,77 +2608,60 @@ export const payRentalAdvanceWithWallet = async (req, res) => {
 };
 
 export const verifyRazorpayWalletTopup = async (req, res) => {
-  const orderId = String(req.body?.razorpay_order_id || '');
-  const paymentId = String(req.body?.razorpay_payment_id || '');
-  const signature = String(req.body?.razorpay_signature || '');
-
-  if (!orderId || !paymentId || !signature) {
-    throw new ApiError(400, 'Payment verification fields are required');
-  }
-
-  const { keyId, keySecret } = await resolveRazorpayCredentials();
-
-  const expectedSignature = crypto
-    .createHmac('sha256', keySecret)
-    .update(`${orderId}|${paymentId}`)
-    .digest('hex');
-
-  if (expectedSignature !== signature) {
-    throw new ApiError(400, 'Invalid payment signature');
-  }
-
-  const order = await razorpayRequest({
-    method: 'GET',
-    path: `/orders/${encodeURIComponent(orderId)}`,
-    keyId,
-    keySecret,
+  const wallet = await verifyAndApplyUserRazorpayWalletTopup({
+    orderId: req.body?.razorpay_order_id,
+    paymentId: req.body?.razorpay_payment_id,
+    signature: req.body?.razorpay_signature,
+    userId: req.auth?.sub,
   });
-
-  const amountPaise = Number(order?.amount);
-  if (!Number.isFinite(amountPaise) || amountPaise <= 0) {
-    throw new ApiError(400, 'Invalid order amount');
-  }
-
-  const amount = Math.round(amountPaise) / 100;
-  const userId = req.auth?.sub;
-
-  await ensureUserWallet(userId);
-
-  const alreadyCredited = await UserWallet.findOne({
-    userId,
-    'transactions.providerPaymentId': paymentId,
-  })
-    .select('_id')
-    .lean();
-
-  if (!alreadyCredited) {
-    const tx = {
-      kind: 'credit',
-      amount,
-      title: 'Wallet Refilled',
-      provider: 'razorpay',
-      providerOrderId: orderId,
-      providerPaymentId: paymentId,
-    };
-
-    await UserWallet.updateOne(
-      { userId },
-      {
-        $inc: { balance: amount },
-        $push: { transactions: { $each: [tx], $slice: -50 } },
-      },
-    );
-  }
-
-  const wallet = await UserWallet.findOne({ userId }).select('balance refundWallet transactions').slice('transactions', -10).lean();
-  if (!wallet) {
-    throw new ApiError(404, 'User not found');
-  }
 
   res.status(201).json({
     success: true,
-    data: buildUserWalletPayload(wallet),
+    data: wallet,
   });
+};
+
+export const handleUserRazorpayWalletTopupCallback = async (req, res) => {
+  const frontendBaseUrl = getFrontendBaseUrl(req);
+  const redirectUrl = new URL(`${frontendBaseUrl}/razorpay/status`);
+  redirectUrl.searchParams.set('flow', 'user-wallet');
+
+  try {
+    const errorCode = String(
+      req.body?.error?.code || req.body?.error?.reason || req.query?.error_code || '',
+    ).trim();
+    const errorDescription = String(
+      req.body?.error?.description || req.query?.error_description || '',
+    ).trim();
+
+    if (errorCode || errorDescription) {
+      redirectUrl.searchParams.set('status', 'failure');
+      if (errorCode) {
+        redirectUrl.searchParams.set('error_code', errorCode);
+      }
+      if (errorDescription) {
+        redirectUrl.searchParams.set('error_description', errorDescription);
+      }
+      res.redirect(302, redirectUrl.toString());
+      return;
+    }
+
+    await verifyAndApplyUserRazorpayWalletTopup({
+      orderId: req.body?.razorpay_order_id || req.query?.razorpay_order_id,
+      paymentId: req.body?.razorpay_payment_id || req.query?.razorpay_payment_id,
+      signature: req.body?.razorpay_signature || req.query?.razorpay_signature,
+    });
+
+    redirectUrl.searchParams.set('status', 'success');
+  } catch (error) {
+    redirectUrl.searchParams.set('status', 'failure');
+    redirectUrl.searchParams.set(
+      'error_description',
+      String(error?.message || 'Payment verification failed.'),
+    );
+  }
+
+  res.redirect(302, redirectUrl.toString());
 };
 
 export const verifyPhonePeWalletTopup = async (req, res) => {

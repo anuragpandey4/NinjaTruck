@@ -86,6 +86,13 @@ const Wallet = () => {
       document.body.appendChild(script);
     });
 
+  const isMobileOrWebView = () => {
+    const ua = String(window.navigator?.userAgent || '');
+    return /Android|iPhone|iPad|iPod/i.test(ua)
+      || /; wv\)/i.test(ua)
+      || /Version\/[\d.]+/i.test(ua);
+  };
+
   const handleAddMoney = async () => {
     const amountValue = Number(amount);
     if (!Number.isFinite(amountValue) || amountValue <= 0) return;
@@ -148,6 +155,12 @@ const Wallet = () => {
         name: appName,
         description: 'Wallet Topup',
         order_id: order.orderId,
+        ...(isMobileOrWebView() && order.callbackUrl
+          ? {
+              callback_url: order.callbackUrl,
+              redirect: true,
+            }
+          : {}),
         prefill: {
           name: userInfo?.name || '',
           email: userInfo?.email || '',
