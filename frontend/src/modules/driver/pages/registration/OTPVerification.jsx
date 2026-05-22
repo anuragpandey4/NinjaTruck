@@ -3,6 +3,9 @@ import { ArrowLeft, CheckCircle2, ShieldCheck, ChevronRight, MessageSquare } fro
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
+    buildDriverOnboardingSessionSnapshot,
+    getDriverOnboardingResumeStep,
+    getDriverOnboardingSession,
     getStoredDriverRegistrationSession,
     clearDriverRegistrationSession,
     persistDriverAuthSession,
@@ -56,6 +59,7 @@ const OTPVerification = () => {
     const [timer, setTimer] = useState(60);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [resolvingSession, setResolvingSession] = useState(false);
 
     const session = {
         ...getStoredDriverRegistrationSession(),
@@ -67,6 +71,72 @@ const OTPVerification = () => {
     const registrationId = session.registrationId || '';
     const isLoginFlow = Boolean(session.loginMode);
     const entryPath = String(session.entryPath || (isLoginFlow ? `${routePrefix}/login` : `${routePrefix}/reg-phone`));
+    const sessionResumeKey = JSON.stringify({
+        registrationId,
+        phone,
+        otpVerified: Boolean(session.otpVerified),
+        status: session.status || '',
+        fullName: session.fullName || '',
+        email: session.email || '',
+        gender: session.gender || '',
+        locationId: session.locationId || '',
+        vehicleTypeId: session.vehicleTypeId || '',
+        role: session.role || '',
+    });
+
+    useEffect(() => {
+        let active = true;
+
+        const resumeIfVerified = async () => {
+            if (isLoginFlow || !phone || !registrationId) {
+                return;
+            }
+
+            const locallyVerified = Boolean(session.otpVerified);
+            if (locallyVerified) {
+                const nextStep = getDriverOnboardingResumeStep(session);
+                navigate(`${routePrefix}/${nextStep}`, {
+                    replace: true,
+                    state: saveDriverRegistrationSession(session),
+                });
+                return;
+            }
+
+            setResolvingSession(true);
+            try {
+                const response = await getDriverOnboardingSession({ registrationId, phone });
+                const payload = unwrap(response);
+                const nextSession = saveDriverRegistrationSession(
+                    buildDriverOnboardingSessionSnapshot(payload, session),
+                );
+
+                if (!active || !nextSession.otpVerified) {
+                    return;
+                }
+
+                const nextStep = getDriverOnboardingResumeStep(nextSession);
+                navigate(`${routePrefix}/${nextStep}`, {
+                    replace: true,
+                    state: nextSession,
+                });
+            } catch (err) {
+                const status = Number(err?.status || err?.response?.status || 0);
+                if (status === 404 || status === 410) {
+                    clearDriverRegistrationSession();
+                }
+            } finally {
+                if (active) {
+                    setResolvingSession(false);
+                }
+            }
+        };
+
+        resumeIfVerified();
+
+        return () => {
+            active = false;
+        };
+    }, [isLoginFlow, navigate, phone, registrationId, routePrefix, sessionResumeKey]);
 
     useEffect(() => {
         if (!phone) {
@@ -267,7 +337,7 @@ const OTPVerification = () => {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={handleVerify}
-                            disabled={loading || otp.join('').length !== 4}
+                            disabled={loading || resolvingSession || otp.join('').length !== 4}
                             className={`group flex h-18 w-full items-center justify-center gap-4 rounded-[24px] text-lg font-black transition-all ${
                                 otp.join('').length === 4
                                     ? 'bg-slate-900 text-white shadow-2xl shadow-slate-900/20'

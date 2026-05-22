@@ -3,7 +3,10 @@ import { ChevronRight, ShieldCheck, Briefcase, UserRound, Building2, CheckCircle
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
+    buildDriverOnboardingSessionSnapshot,
     clearDriverRegistrationSession,
+    getDriverOnboardingResumeStep,
+    getDriverOnboardingSession,
     getStoredDriverRegistrationSession,
     saveDriverRegistrationSession,
     sendDriverLoginOtp,
@@ -84,6 +87,13 @@ const PhoneRegistration = () => {
         : ROLE_CONFIG;
     
     const activeRole = ROLE_CONFIG.find(r => r.id === role) || ROLE_CONFIG[0];
+    const storedSessionResumeKey = JSON.stringify({
+        registrationId: storedSession.registrationId || '',
+        phone: storedSession.phone || '',
+        role: storedSession.role || '',
+        otpVerified: Boolean(storedSession.otpVerified),
+        status: storedSession.status || '',
+    });
 
     useEffect(() => {
         saveDriverRegistrationSession({
@@ -101,6 +111,64 @@ const PhoneRegistration = () => {
             setRole('owner');
         }
     }, [isOwnerPortal, role]);
+
+    useEffect(() => {
+        let active = true;
+
+        const resumeOnboardingIfNeeded = async () => {
+            if (isLoginPage) {
+                return;
+            }
+
+            const storedPhone = String(storedSession.phone || '').replace(/\D/g, '').slice(-10);
+            const storedRegistrationId = String(storedSession.registrationId || '').trim();
+            const storedRole = String(storedSession.role || 'driver').toLowerCase();
+            const expectedRole = isOwnerPortal ? 'owner' : role;
+
+            if (!storedPhone || !storedRegistrationId || storedRole !== expectedRole) {
+                return;
+            }
+
+            if (storedSession.otpVerified) {
+                navigate(`${routePrefix}/${getDriverOnboardingResumeStep(storedSession)}`, {
+                    replace: true,
+                    state: saveDriverRegistrationSession(storedSession),
+                });
+                return;
+            }
+
+            try {
+                const response = await getDriverOnboardingSession({
+                    registrationId: storedRegistrationId,
+                    phone: storedPhone,
+                });
+                const payload = response?.data?.data || response?.data || response;
+                const nextSession = saveDriverRegistrationSession(
+                    buildDriverOnboardingSessionSnapshot(payload, storedSession),
+                );
+
+                if (!active || !nextSession.otpVerified) {
+                    return;
+                }
+
+                navigate(`${routePrefix}/${getDriverOnboardingResumeStep(nextSession)}`, {
+                    replace: true,
+                    state: nextSession,
+                });
+            } catch (err) {
+                const status = Number(err?.status || err?.response?.status || 0);
+                if (status === 404 || status === 410) {
+                    clearDriverRegistrationSession();
+                }
+            }
+        };
+
+        resumeOnboardingIfNeeded();
+
+        return () => {
+            active = false;
+        };
+    }, [isLoginPage, isOwnerPortal, navigate, role, routePrefix, storedSessionResumeKey]);
 
     useEffect(() => {
         document.title = `${appName} | ${isLoginPage ? `${portalLabel} Login` : `${portalLabel} Registration`}`;

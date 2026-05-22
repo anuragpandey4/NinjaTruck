@@ -104,6 +104,11 @@ export const sendDriverLoginOtp = (payload) =>
 export const verifyDriverLoginOtp = (payload) =>
   api.post("/drivers/auth/verify-otp", payload);
 
+export const getDriverOnboardingSession = ({ registrationId, phone }) =>
+  api.get(`/drivers/onboarding/session/${encodeURIComponent(registrationId)}`, {
+    params: phone ? { phone } : {},
+  });
+
 export const saveDriverPersonalDetails = (payload) =>
   api.patch("/drivers/onboarding/personal", payload);
 
@@ -118,6 +123,94 @@ export const saveDriverDocuments = (payload) =>
 
 export const completeDriverOnboarding = (payload) =>
   api.post("/drivers/onboarding/complete", payload);
+
+export const buildDriverOnboardingSessionSnapshot = (payload = {}, fallbackSession = {}) => {
+  const serverSession = payload?.session || {};
+  const personal = payload?.personal || {};
+  const vehicle = payload?.vehicle || {};
+  const documents = payload?.documents || {};
+
+  return {
+    ...fallbackSession,
+    registrationId: serverSession.registrationId || fallbackSession.registrationId || "",
+    phone: serverSession.phone || fallbackSession.phone || "",
+    role: serverSession.role || fallbackSession.role || "driver",
+    status: serverSession.status || fallbackSession.status || "",
+    otpVerified:
+      serverSession.otpVerified === true
+      || serverSession.status === "otp_verified"
+      || serverSession.status === "personal_saved"
+      || serverSession.status === "vehicle_saved"
+      || serverSession.status === "documents_saved",
+    fullName: personal.fullName || fallbackSession.fullName || "",
+    email: personal.email || fallbackSession.email || "",
+    gender: personal.gender || fallbackSession.gender || "",
+    referralCode:
+      payload?.referralCode !== undefined
+        ? payload.referralCode
+        : (fallbackSession.referralCode || ""),
+    registerFor: vehicle.registerFor || fallbackSession.registerFor || "",
+    serviceCategories: Array.isArray(vehicle.serviceCategories)
+      ? vehicle.serviceCategories
+      : (fallbackSession.serviceCategories || []),
+    locationId: vehicle.locationId || fallbackSession.locationId || "",
+    vehicleTypeId: vehicle.vehicleTypeId || fallbackSession.vehicleTypeId || "",
+    make: vehicle.make || fallbackSession.make || "",
+    model: vehicle.model || fallbackSession.model || "",
+    year: vehicle.year || fallbackSession.year || "",
+    number: vehicle.number || fallbackSession.number || "",
+    color: vehicle.color || fallbackSession.color || "",
+    companyName: vehicle.companyName || fallbackSession.companyName || "",
+    companyAddress: vehicle.companyAddress || fallbackSession.companyAddress || "",
+    city: vehicle.city || fallbackSession.city || "",
+    postalCode: vehicle.postalCode || fallbackSession.postalCode || "",
+    taxNumber: vehicle.taxNumber || fallbackSession.taxNumber || "",
+    customFields: vehicle.customFields || fallbackSession.customFields || {},
+    documents,
+    otpSession: payload?.session || fallbackSession.otpSession || null,
+    personalSession: payload?.session || fallbackSession.personalSession || null,
+    referralSession: payload?.session || fallbackSession.referralSession || null,
+    vehicleSession: payload?.session
+      ? {
+          ...(fallbackSession.vehicleSession || {}),
+          vehicle,
+          status: payload?.session?.status || fallbackSession.vehicleSession?.status || "",
+        }
+      : (fallbackSession.vehicleSession || null),
+  };
+};
+
+export const getDriverOnboardingResumeStep = (session = {}) => {
+  const status = String(session?.status || "").toLowerCase();
+  const hasOtp = Boolean(session?.otpVerified);
+  const hasPersonal = Boolean(
+    String(session?.fullName || "").trim()
+    && String(session?.email || "").trim()
+    && String(session?.gender || "").trim(),
+  );
+  const hasVehicle = Boolean(
+    String(session?.locationId || "").trim()
+    && (
+      String(session?.role || "").toLowerCase() === "owner"
+        ? String(session?.companyName || "").trim()
+        : String(session?.vehicleTypeId || "").trim()
+    ),
+  );
+
+  if (!hasOtp && status !== "otp_verified" && status !== "personal_saved" && status !== "vehicle_saved" && status !== "documents_saved") {
+    return "otp-verify";
+  }
+
+  if (status === "vehicle_saved" || status === "documents_saved" || hasVehicle) {
+    return "step-documents";
+  }
+
+  if (status === "personal_saved" || hasPersonal) {
+    return "step-referral";
+  }
+
+  return "step-personal";
+};
 
 const decodeBase64Url = (value) => {
   const normalized = String(value || "")
