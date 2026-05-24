@@ -496,13 +496,13 @@ Processing Time: Refunds are typically credited back to the original payment met
                             </div>
                         </a>
 
-                        <a href="tel:9389394808" className="flex items-center gap-4 group">
+                        <a href="tel:" className="flex items-center gap-4 group">
                             <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-sky-500 transition-colors shadow-sm">
                                 <Phone size={18} />
                             </div>
                             <div>
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Call Owner</p>
-                                <p className="text-[14px] font-bold text-slate-800">93893 94808</p>
+                                <p className="text-[14px] font-bold text-slate-800">7409129517</p>
                             </div>
                         </a>
                     </div>

@@ -3,6 +3,44 @@ import api from "../../../shared/api/axiosInstance";
 const STORAGE_KEY = "driverRegistrationSession";
 const DRIVER_AUTH_KEYS = ["token", "driverToken", "driverInfo", "role", "driverRole", "chatRole"];
 const DRIVER_PORTAL_ROLES = ["driver", "owner", "bus_driver", "service_center", "service_center_staff"];
+const isDataUrl = (value) => /^data:/i.test(String(value || "").trim());
+
+const sanitizeStoredDocumentValue = (value) => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return value;
+  }
+
+  const nextValue = { ...value };
+
+  if (isDataUrl(nextValue.previewUrl)) {
+    nextValue.previewUrl = "";
+  }
+
+  if (isDataUrl(nextValue.secureUrl)) {
+    nextValue.secureUrl = "";
+  }
+
+  if (isDataUrl(nextValue.dataUrl)) {
+    delete nextValue.dataUrl;
+  }
+
+  return nextValue;
+};
+
+const sanitizeDocumentsForStorage = (documents = {}) => {
+  if (!documents || typeof documents !== "object" || Array.isArray(documents)) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(documents).map(([key, value]) => [key, sanitizeStoredDocumentValue(value)]),
+  );
+};
+
+const buildStorableDriverRegistrationSession = (session = {}) => ({
+  ...session,
+  documents: sanitizeDocumentsForStorage(session.documents || {}),
+});
 const readSessionValue = (key) => {
   try {
     return sessionStorage.getItem(key) || "";
@@ -38,8 +76,13 @@ export const saveDriverRegistrationSession = (session = {}) => {
     ...session,
   };
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(nextSession));
-  return nextSession;
+  const storableSession = buildStorableDriverRegistrationSession(nextSession);
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(storableSession));
+  } catch {}
+
+  return storableSession;
 };
 
 export const clearDriverRegistrationSession = () => {

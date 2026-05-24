@@ -90,6 +90,60 @@ const fileToDataUrl = (file) =>
     reader.readAsDataURL(file);
   });
 
+const loadImageFromDataUrl = (dataUrl) =>
+  new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('Unable to process image'));
+    image.src = dataUrl;
+  });
+
+const optimizeImageFileForUpload = async (
+  file,
+  {
+    maxSide = 1600,
+    initialQuality = 0.82,
+    minQuality = 0.45,
+    maxDataUrlLength = 8_500_000,
+  } = {},
+) => {
+  const originalDataUrl = await fileToDataUrl(file);
+  if (!String(originalDataUrl || '').startsWith('data:image/')) {
+    throw new Error('Please upload an image file');
+  }
+
+  if (typeof document === 'undefined') {
+    return originalDataUrl;
+  }
+
+  const image = await loadImageFromDataUrl(originalDataUrl);
+  const largestSide = Math.max(image.width, image.height, 1);
+  const scale = largestSide > maxSide ? maxSide / largestSide : 1;
+  const width = Math.max(1, Math.round(image.width * scale));
+  const height = Math.max(1, Math.round(image.height * scale));
+  const canvas = document.createElement('canvas');
+
+  canvas.width = width;
+  canvas.height = height;
+
+  const context = canvas.getContext('2d');
+  if (!context) {
+    return originalDataUrl;
+  }
+
+  context.drawImage(image, 0, 0, width, height);
+
+  let quality = initialQuality;
+  let compressed = canvas.toDataURL('image/jpeg', quality);
+
+  while (compressed.length > maxDataUrlLength && quality > minQuality) {
+    quality -= 0.08;
+    compressed = canvas.toDataURL('image/jpeg', quality);
+  }
+
+  return compressed;
+};
+
 const normalizeSignupRole = (role) =>
   String(role || 'driver').toLowerCase() === 'owner' ? 'owner' : 'driver';
 
@@ -326,10 +380,9 @@ const StepDocuments = () => {
     setError('');
 
     try {
-      const dataUrl = await fileToDataUrl(file);
-      if (!String(dataUrl || '').startsWith('data:image/')) {
-        throw new Error('Please upload an image file');
-      }
+      const dataUrl = isImageLikeFile(file)
+        ? await optimizeImageFileForUpload(file)
+        : await fileToDataUrl(file);
 
       const { fileName, mimeType } = inferImageMeta(file, dataUrl);
 
