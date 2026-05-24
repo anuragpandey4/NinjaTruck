@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../api/axiosInstance';
 import { BACKEND_ORIGIN } from '../api/runtimeConfig';
 
-let activeFaviconObjectUrl = '';
+// Favicon object URL tracking removed
 const SETTINGS_CACHE_KEY = 'appSettingsCache:v1';
 const DEFAULT_ADMIN_THEME_COLOR = '#405189';
 const DEFAULT_LANDING_THEME_COLOR = '#0ab39c';
@@ -143,40 +143,13 @@ const getFaviconType = (faviconUrl = '') => {
   return 'image/png';
 };
 
-const dataUrlToBlob = (dataUrl = '') => {
-  const [meta, content] = dataUrl.split(',');
-  const mimeMatch = meta.match(/data:(.*?)(;base64)?$/i);
-  const mime = mimeMatch?.[1] || 'image/png';
-  const binary = window.atob(content || '');
-  const bytes = new Uint8Array(binary.length);
-
-  for (let index = 0; index < binary.length; index += 1) {
-    bytes[index] = binary.charCodeAt(index);
-  }
-
-  return new Blob([bytes], { type: mime });
-};
-
 const buildFaviconHref = (faviconUrl = '') => {
   if (!faviconUrl) {
-    if (activeFaviconObjectUrl) {
-      URL.revokeObjectURL(activeFaviconObjectUrl);
-      activeFaviconObjectUrl = '';
-    }
     return '';
   }
 
   if (faviconUrl.startsWith('data:')) {
-    if (activeFaviconObjectUrl) {
-      URL.revokeObjectURL(activeFaviconObjectUrl);
-    }
-    activeFaviconObjectUrl = URL.createObjectURL(dataUrlToBlob(faviconUrl));
-    return activeFaviconObjectUrl;
-  }
-
-  if (activeFaviconObjectUrl) {
-    URL.revokeObjectURL(activeFaviconObjectUrl);
-    activeFaviconObjectUrl = '';
+    return faviconUrl;
   }
 
   const normalized = normalizeAssetUrl(faviconUrl);
@@ -298,12 +271,7 @@ export const SettingsProvider = ({ children }) => {
       });
     }
 
-    return () => {
-      if (activeFaviconObjectUrl) {
-        URL.revokeObjectURL(activeFaviconObjectUrl);
-        activeFaviconObjectUrl = '';
-      }
-    };
+    return () => {};
   }, [settings.general?.app_name, settings.general?.favicon, settings.customization?.favicon]);
 
   useEffect(() => {

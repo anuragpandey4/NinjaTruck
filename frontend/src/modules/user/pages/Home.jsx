@@ -364,10 +364,12 @@ const Home = () => {
             vehicleIconUrl: rideData.vehicleIconUrl,
             vehicleIconType: rideData.vehicleIconType,
           };
-          if (cancelled) return;
-          persistCurrentRide(normalizedRide);
-          currentRideRef.current = normalizedRide;
-          return;
+          if (isActiveCurrentRide(normalizedRide)) {
+            if (cancelled) return;
+            persistCurrentRide(normalizedRide);
+            currentRideRef.current = normalizedRide;
+            return;
+          }
         }
 
       try {
