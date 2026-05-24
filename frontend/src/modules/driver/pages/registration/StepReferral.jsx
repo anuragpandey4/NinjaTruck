@@ -11,10 +11,15 @@ import {
 const StepReferral = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const routePrefix = location.pathname.startsWith('/taxi/owner')
+        ? '/taxi/owner'
+        : '/taxi/driver';
     const session = {
         ...getStoredDriverRegistrationSession(),
         ...(location.state || {}),
     };
+    const phone = String(session.phone || '').replace(/\D/g, '').slice(-10);
+    const registrationId = String(session.registrationId || '').trim();
     const [referral, setReferral] = useState(session.referralCode || '');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -25,6 +30,12 @@ const StepReferral = () => {
             referralCode: referral,
         });
     }, [referral]);
+
+    useEffect(() => {
+        if (!phone || !registrationId) {
+            navigate(`${routePrefix}/reg-phone`, { replace: true });
+        }
+    }, [navigate, phone, registrationId, routePrefix]);
 
     const handleNext = async (skip = false) => {
         setLoading(true);
@@ -43,7 +54,7 @@ const StepReferral = () => {
                 referralSession: response?.data?.session || null,
             });
 
-            navigate('/taxi/driver/step-vehicle', { state: nextState });
+            navigate(`${routePrefix}/step-vehicle`, { state: nextState });
         } catch (err) {
             setError(err?.message || 'Unable to save referral code');
         } finally {
@@ -61,7 +72,7 @@ const StepReferral = () => {
                     <div className="flex items-center justify-between">
                          <motion.button
                             whileTap={{ scale: 0.9 }}
-                            onClick={() => navigate('/taxi/driver/step-personal', { state: session })}
+                            onClick={() => navigate(`${routePrefix}/step-personal`, { state: session })}
                             className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white border border-slate-100 text-slate-900 shadow-sm transition-all"
                         >
                             <ArrowLeft size={18} strokeWidth={2.5} />

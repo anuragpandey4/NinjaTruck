@@ -282,6 +282,8 @@ const StepDocuments = () => {
   };
   const isHandlingHistoryNavigationRef = useRef(false);
   const normalizedRole = normalizeSignupRole(session.role);
+  const phone = String(session.phone || '').replace(/\D/g, '').slice(-10);
+  const registrationId = String(session.registrationId || '').trim();
 
   const [templates, setTemplates] = useState([]);
   const [templatesLoading, setTemplatesLoading] = useState(true);
@@ -294,6 +296,12 @@ const StepDocuments = () => {
   const [uploading, setUploading] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!phone || !registrationId) {
+      navigate(`${routePrefix}/reg-phone`, { replace: true });
+    }
+  }, [navigate, phone, registrationId, routePrefix]);
 
   useEffect(() => {
     const loadTemplates = async () => {

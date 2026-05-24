@@ -217,12 +217,31 @@ const OTPVerification = () => {
         setLoading(true);
         setError('');
         try {
-            if (isLoginFlow) await sendDriverLoginOtp({ phone, role });
-            else await sendDriverOtp({ phone, role });
+            const response = isLoginFlow
+                ? await sendDriverLoginOtp({ phone, role })
+                : await sendDriverOtp({ phone, role });
+            const payload = unwrap(response);
+            const nextSession = isLoginFlow
+                ? saveDriverRegistrationSession({
+                    ...session,
+                    phone,
+                    role,
+                    loginMode: true,
+                    entryPath,
+                })
+                : saveDriverRegistrationSession(
+                    buildDriverOnboardingSessionSnapshot(payload, {
+                        ...session,
+                        phone,
+                        role,
+                        entryPath,
+                    }),
+                );
+
             setOtp(['', '', '', '']);
             inputs.current[0]?.focus();
             setTimer(60);
-            setError('Code resent successfully');
+            setError(nextSession?.debugOtp ? `Code resent successfully. OTP: ${nextSession.debugOtp}` : 'Code resent successfully');
         } catch (err) {
             setError(err?.message || 'Failed to resend');
         } finally {

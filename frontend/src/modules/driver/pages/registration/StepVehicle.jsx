@@ -111,6 +111,8 @@ const StepVehicle = () => {
     const isHandlingHistoryNavigationRef = useRef(false);
     const role = session.role || 'driver';
     const isOwner = role === 'owner';
+    const phone = String(session.phone || '').replace(/\D/g, '').slice(-10);
+    const registrationId = String(session.registrationId || '').trim();
 
     const [locations, setLocations] = useState([]);
     const [locationsLoading, setLocationsLoading] = useState(true);
@@ -148,6 +150,12 @@ const StepVehicle = () => {
             ...formData,
         });
     }, [formData]);
+
+    useEffect(() => {
+        if (!phone || !registrationId) {
+            navigate(`${routePrefix}/reg-phone`, { replace: true });
+        }
+    }, [navigate, phone, registrationId, routePrefix]);
 
     const buildCurrentSession = () => saveDriverRegistrationSession({
         ...getStoredDriverRegistrationSession(),

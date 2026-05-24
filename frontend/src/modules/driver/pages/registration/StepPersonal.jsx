@@ -43,6 +43,12 @@ const StepPersonal = () => {
         });
     }, [formData]);
 
+    useEffect(() => {
+        if (!phone || !registrationId) {
+            navigate(`${routePrefix}/reg-phone`, { replace: true });
+        }
+    }, [navigate, phone, registrationId, routePrefix]);
+
     const handleContinue = async () => {
         const fullName = formData.fullName.trim();
         const email = formData.email.trim().toLowerCase();
