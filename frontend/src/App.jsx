@@ -1042,12 +1042,12 @@ function App() {
 
               <Route path="/taxi/owner" element={<DriverLayout />}>
                   <Route index element={<DriverEntryRedirect />} />
-                  <Route path="login" element={<Navigate to="/taxi/driver/login" replace />} />
+                  <Route path="login" element={<PhoneRegistration />} />
                   <Route path="terms" element={<LegalPage />} />
                   <Route path="privacy" element={<LegalPage />} />
-                  <Route path="reg-phone" element={<Navigate to="/taxi/driver/login" replace />} />
+                  <Route path="reg-phone" element={<Navigate to="/taxi/owner/login" replace />} />
                 <Route path="otp-verify" element={<OTPVerification />} />
-                <Route path="lang-select" element={<Navigate to="/taxi/driver/login" replace />} />
+                <Route path="lang-select" element={<Navigate to="/taxi/owner/login" replace />} />
                 <Route path="step-personal" element={<StepPersonal />} />
                 <Route path="step-referral" element={<StepReferral />} />
                 <Route path="step-vehicle" element={<StepVehicle />} />

@@ -6774,14 +6774,28 @@ export const getDriverVehicleFieldTemplates = async (req, res) => {
   const requestedRole = String(req.query?.role || "driver").trim().toLowerCase();
   const results = await listDriverVehicleFieldTemplates({ activeOnly: true });
   const matchesAccountType = (accountType) => {
-    const normalizedAccountType = String(accountType || "individual").trim().toLowerCase();
+    const rawAccountType = String(accountType || "").trim().toLowerCase();
+    const normalizedAccountType = rawAccountType || "individual";
+
+    if (requestedRole === "owner") {
+      if (!rawAccountType) {
+        return false;
+      }
+
+      return [
+        "fleet_drivers",
+        "fleet drivers",
+        "owner",
+        "owners",
+        "fleet_owner",
+        "fleet_owners",
+        "fleet owner",
+        "fleet owners",
+      ].includes(normalizedAccountType);
+    }
 
     if (normalizedAccountType === "both") {
       return true;
-    }
-
-    if (requestedRole === "owner") {
-      return normalizedAccountType === "fleet_drivers" || normalizedAccountType === "fleet drivers";
     }
 
     return normalizedAccountType === "individual";

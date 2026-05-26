@@ -39,6 +39,9 @@ const isAccountNotFoundError = (err) =>
     Number(err?.status || err?.response?.status) === 404 &&
     getErrorMessage(err).toLowerCase().includes('account not found');
 
+const getFlowRoutePrefix = (selectedRole) =>
+    String(selectedRole || '').toLowerCase() === 'owner' ? '/taxi/owner' : '/taxi/driver';
+
 const PhoneRegistration = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -124,13 +127,14 @@ const PhoneRegistration = () => {
             const storedRegistrationId = String(storedSession.registrationId || '').trim();
             const storedRole = String(storedSession.role || 'driver').toLowerCase();
             const expectedRole = isOwnerPortal ? 'owner' : role;
+            const flowRoutePrefix = getFlowRoutePrefix(storedRole || expectedRole);
 
             if (!storedPhone || !storedRegistrationId || storedRole !== expectedRole) {
                 return;
             }
 
             if (storedSession.otpVerified) {
-                navigate(`${routePrefix}/${getDriverOnboardingResumeStep(storedSession)}`, {
+                navigate(`${flowRoutePrefix}/${getDriverOnboardingResumeStep(storedSession)}`, {
                     replace: true,
                     state: saveDriverRegistrationSession(storedSession),
                 });
@@ -151,7 +155,7 @@ const PhoneRegistration = () => {
                     return;
                 }
 
-                navigate(`${routePrefix}/${getDriverOnboardingResumeStep(nextSession)}`, {
+                navigate(`${flowRoutePrefix}/${getDriverOnboardingResumeStep(nextSession)}`, {
                     replace: true,
                     state: nextSession,
                 });
@@ -192,6 +196,8 @@ const PhoneRegistration = () => {
             let response;
             let loginMode = isLoginPage;
             const requestRole = isOwnerPortal ? 'owner' : role;
+            const flowRoutePrefix = getFlowRoutePrefix(requestRole);
+            const flowEntryPath = `${flowRoutePrefix}/login`;
 
             if (isOwnerPortal) {
                 try {
@@ -254,11 +260,11 @@ const PhoneRegistration = () => {
                 registrationId: sessionData.registrationId || '',
                 debugOtp: sessionData.debugOtp || '',
                 loginMode,
-                entryPath,
+                entryPath: flowEntryPath,
                 referralCode: sharedReferralCode,
             });
 
-            navigate(`${routePrefix}/otp-verify`, { state: nextState });
+            navigate(`${flowRoutePrefix}/otp-verify`, { state: nextState });
         } catch (err) {
             setError(getErrorMessage(err) || 'Try again in a moment');
         } finally {
@@ -333,7 +339,10 @@ const PhoneRegistration = () => {
                                 return (
                                     <motion.button
                                         key={item.id}
-                                        onClick={() => setRole(item.id)}
+                                        onClick={() => {
+                                            setRole(item.id);
+                                            setError('');
+                                        }}
                                         whileTap={{ scale: 0.95 }}
                                         className={`flex-none flex items-center gap-2.5 py-3 px-5 rounded-2xl transition-all border-2 ${
                                             active

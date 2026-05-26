@@ -214,15 +214,29 @@ const matchesDocumentRole = (accountType, role) => {
 };
 
 const matchesVehicleFieldRole = (accountType, role) => {
-  const normalizedAccountType = String(accountType || 'individual').trim().toLowerCase();
+  const rawAccountType = String(accountType || '').trim().toLowerCase();
+  const normalizedAccountType = rawAccountType || 'individual';
   const normalizedRole = normalizeRole(role);
+
+  if (normalizedRole === 'owner') {
+    if (!rawAccountType) {
+      return false;
+    }
+
+    return [
+      'fleet_drivers',
+      'fleet drivers',
+      'owner',
+      'owners',
+      'fleet_owner',
+      'fleet_owners',
+      'fleet owner',
+      'fleet owners',
+    ].includes(normalizedAccountType);
+  }
 
   if (normalizedAccountType === 'both') {
     return true;
-  }
-
-  if (normalizedRole === 'owner') {
-    return normalizedAccountType === 'fleet_drivers';
   }
 
   return normalizedAccountType === 'individual';
