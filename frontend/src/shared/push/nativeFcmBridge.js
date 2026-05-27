@@ -4,11 +4,6 @@ import { userAuthService, getLocalUserToken } from '../../modules/user/services/
 const PENDING_NATIVE_FCM_KEY = 'pendingNativeFcmRegistration';
 const LAST_NATIVE_FCM_KEY = 'lastNativeFcmRegistration';
 
-const isDriverPendingApprovalScreen = () => {
-  const pathname = String(window.location.pathname || '').toLowerCase();
-  return pathname === '/taxi/driver/registration-status' || pathname === '/taxi/driver/status';
-};
-
 const decodeBase64Url = (value) => {
   const normalized = String(value || '').replace(/-/g, '+').replace(/_/g, '/');
   const padding = (4 - (normalized.length % 4)) % 4;
@@ -117,11 +112,6 @@ const submitFcmToken = async ({ token, role, platform = 'mobile' }) => {
   if (!hasRoleSession(normalizedRole)) {
     savePendingRegistration({ token: normalizedToken, role: normalizedRole, platform: normalizedPlatform });
     return { ok: false, reason: 'missing-auth' };
-  }
-
-  if (normalizedRole === 'driver' && isDriverPendingApprovalScreen()) {
-    savePendingRegistration({ token: normalizedToken, role: normalizedRole, platform: normalizedPlatform });
-    return { ok: false, reason: 'driver-pending-approval' };
   }
 
   if (normalizedRole === 'driver') {

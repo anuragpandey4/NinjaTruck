@@ -210,7 +210,7 @@ driverRouter.post(
     "bus_driver",
     "service_center",
     "service_center_staff",
-  ]),
+  ], { allowPending: true }),
   asyncHandler(saveDriverFcmToken),
 );
 driverRouter.get(

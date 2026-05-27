@@ -44,6 +44,13 @@ const redirectToDriverLogin = (navigate) => {
   navigate("/taxi/driver/login", { replace: true });
 };
 
+const syncPushTokens = async () => {
+  await Promise.allSettled([
+    window.__flushNativeFcmToken?.(),
+    window.__registerBrowserFcmToken?.({ interactive: true }),
+  ]);
+};
+
 const RegistrationStatus = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -84,6 +91,8 @@ const RegistrationStatus = () => {
         role: roleFromState === "owner" ? "owner" : "driver",
       });
     }
+
+    syncPushTokens().catch(() => {});
 
     mountedRef.current = true;
 
