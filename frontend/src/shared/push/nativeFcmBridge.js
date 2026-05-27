@@ -3,6 +3,7 @@ import { userAuthService, getLocalUserToken } from '../../modules/user/services/
 
 const PENDING_NATIVE_FCM_KEY = 'pendingNativeFcmRegistration';
 const LAST_NATIVE_FCM_KEY = 'lastNativeFcmRegistration';
+const LAST_NATIVE_FCM_DEBUG_KEY = 'lastNativeFcmDebugState';
 const DRIVER_PORTAL_ROLES = new Set([
   'driver',
   'owner',
@@ -107,22 +108,34 @@ const clearPendingRegistration = () => {
   localStorage.removeItem(PENDING_NATIVE_FCM_KEY);
 };
 
+const persistDebugState = (payload) => {
+  try {
+    localStorage.setItem(LAST_NATIVE_FCM_DEBUG_KEY, JSON.stringify({
+      ...payload,
+      updatedAt: new Date().toISOString(),
+    }));
+  } catch {}
+};
+
 const submitFcmToken = async ({ token, role, platform = 'mobile' }) => {
   const normalizedRole = inferRole(role);
   const normalizedPlatform = String(platform || 'mobile').trim().toLowerCase() || 'mobile';
   const normalizedToken = String(token || '').trim();
 
   if (!normalizedToken) {
+    persistDebugState({ ok: false, reason: 'missing-token', role: normalizedRole, platform: normalizedPlatform });
     return { ok: false, reason: 'missing-token' };
   }
 
   if (!normalizedRole) {
     savePendingRegistration({ token: normalizedToken, role: '', platform: normalizedPlatform });
+    persistDebugState({ ok: false, reason: 'missing-role', role: '', platform: normalizedPlatform });
     return { ok: false, reason: 'missing-role' };
   }
 
   if (!hasRoleSession(normalizedRole)) {
     savePendingRegistration({ token: normalizedToken, role: normalizedRole, platform: normalizedPlatform });
+    persistDebugState({ ok: false, reason: 'missing-auth', role: normalizedRole, platform: normalizedPlatform });
     return { ok: false, reason: 'missing-auth' };
   }
 
@@ -138,6 +151,7 @@ const submitFcmToken = async ({ token, role, platform = 'mobile' }) => {
     role: normalizedRole,
     platform: normalizedPlatform,
   });
+  persistDebugState({ ok: true, reason: 'saved', role: normalizedRole, platform: normalizedPlatform });
 
   return { ok: true, role: normalizedRole, platform: normalizedPlatform };
 };
@@ -166,6 +180,12 @@ export const installNativeFcmBridge = () => {
     } catch (error) {
       console.error('[native-fcm-bridge] token registration error', error);
       savePendingRegistration({ token, role: inferRole(role), platform });
+      persistDebugState({
+        ok: false,
+        reason: error?.message || 'unknown-error',
+        role: inferRole(role),
+        platform: String(platform || 'mobile').trim().toLowerCase() || 'mobile',
+      });
       return { ok: false, reason: error?.message || 'unknown-error' };
     }
   };
@@ -174,6 +194,14 @@ export const installNativeFcmBridge = () => {
     const result = await flushPendingRegistration();
     console.info('[native-fcm-bridge] flush result', result);
     return result;
+  };
+
+  window.__getNativeFcmDebugState = () => {
+    try {
+      return JSON.parse(localStorage.getItem(LAST_NATIVE_FCM_DEBUG_KEY) || 'null');
+    } catch {
+      return null;
+    }
   };
 
   const retryPending = () => {
