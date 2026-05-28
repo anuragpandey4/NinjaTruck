@@ -5780,7 +5780,10 @@ export const listVehicleTypes = async (queryParams = {}) => {
       ? 'both'
       : { $in: [normalizedTransportType, 'both'] };
   }
-  const items = await Vehicle.find(query).sort({ createdAt: -1 }).lean();
+  const items = await Vehicle.find(query)
+    .select('name short_description description transport_type dispatch_type icon_types delivery_category delivery_distance_pricing capacity image icon map_icon status active createdAt updatedAt')
+    .sort({ createdAt: -1 })
+    .lean();
   const results = items.map((item) => ({
     ...item,
     icon: item.map_icon || item.icon || item.image || '',
