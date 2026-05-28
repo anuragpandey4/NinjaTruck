@@ -28,11 +28,9 @@ const isDedupedGet = (url = '') => {
 
 const getDedupedRequestKey = (url = '', config = {}) => {
   const params = config?.params ? JSON.stringify(config.params) : '';
-  // Include the Authorization header in the cache key so that requests with
-  // different auth tokens (or no token at all) never share a cached response.
-  // Without this, a cached unauthenticated response (e.g. 401) can be returned
-  // to an authenticated request after a page refresh in Flutter WebView.
-  const auth = config?.headers?.Authorization || config?.headers?.authorization || '';
+  // Resolve the same auth token that the request interceptor will attach so
+  // user-specific GETs never share cache entries across auth states.
+  const auth = resolveAuthTokenForRequest({ ...config, url }) || '';
   return `${String(url || '')}|${params}|${auth}`;
 };
 
@@ -144,6 +142,80 @@ const getRoleFromPathname = () => {
   return '';
 };
 
+const resolveAuthTokenForRequest = (config = {}) => {
+  const requestPath = String(config.url || '').split('?')[0];
+  const existingAuthorization = config.headers?.Authorization || config.headers?.authorization;
+
+  if (existingAuthorization) {
+    return String(existingAuthorization).startsWith('Bearer ')
+      ? String(existingAuthorization).slice(7)
+      : String(existingAuthorization);
+  }
+
+  const chatRole = localStorage.getItem('chatRole');
+  const normalizedChatRole = String(chatRole || '').toLowerCase();
+  const userToken = getStoredTokenByRole('user');
+  const driverToken = getStoredTokenByRole('driver');
+  const ownerToken = getStoredTokenByRole('owner');
+  const adminToken = getStoredTokenByRole('admin') || localStorage.getItem('adminToken');
+
+  const isPublicUserRoute =
+    /^\/users\/(bootstrap|app-modules|settings|goods-types|vehicle-types|register|signup|login|profile-image|auth\/send-otp|auth\/verify-otp|otp-login)(\/|$)/.test(requestPath);
+  const isPublicDriverRoute =
+    /^\/drivers\/(register|login|auth\/send-otp|auth\/verify-otp|onboarding\/send-otp|onboarding\/verify-otp|onboarding\/personal|onboarding\/referral|onboarding\/vehicle|onboarding\/documents|onboarding\/complete|onboarding\/session\/|service-locations)(\/|$)/.test(requestPath);
+  const isAdminRoute =
+    /^\/admin(\/|$)/.test(requestPath) ||
+    /^\/(countries|common\/ride_modules|types\/|on-boarding(?:-|\/|$)|roles\/|permissions\/)/.test(requestPath);
+  const isDriverRoute = /^\/drivers?(\/|$)/.test(requestPath);
+  const isUserRoute = /^\/(users|rides|deliveries|promos)(\/|$)/.test(requestPath);
+  const isSupportRoute = /^\/support(\/|$)/.test(requestPath);
+  const isChatRoute = /^\/chats?(\/|$)/.test(requestPath);
+  const pathRole = getRoleFromPathname();
+
+  if (isPublicUserRoute || isPublicDriverRoute) {
+    return null;
+  }
+
+  if (isChatRoute) {
+    if (normalizedChatRole === 'admin') {
+      return adminToken;
+    }
+    if (normalizedChatRole === 'driver') {
+      return driverToken || ownerToken;
+    }
+    if (normalizedChatRole === 'owner') {
+      return ownerToken || driverToken;
+    }
+    if (normalizedChatRole === 'user') {
+      return userToken;
+    }
+  }
+
+  if (isAdminRoute) {
+    return adminToken;
+  }
+
+  if (isSupportRoute) {
+    if (pathRole === 'admin') {
+      return adminToken;
+    }
+    if (pathRole === 'driver') {
+      return driverToken || ownerToken;
+    }
+    return userToken;
+  }
+
+  if (isUserRoute) {
+    return userToken;
+  }
+
+  if (isDriverRoute) {
+    return driverToken || ownerToken;
+  }
+
+  return userToken || driverToken || ownerToken || adminToken || null;
+};
+
 const clearStaleAuthState = (role = '', staleToken = '') => {
   const normalizedRole = normalizeAuthRole(role);
   const currentGenericToken = localStorage.getItem('token');
@@ -200,64 +272,12 @@ const isStaleAuthMessage = (message = '') => {
 // Request Interceptor: Attach Auth Token automatically
 api.interceptors.request.use(
   (config) => {
-    const requestPath = String(config.url || '').split('?')[0];
     const existingAuthorization = config.headers?.Authorization || config.headers?.authorization;
 
     if (existingAuthorization) {
       return config;
     }
-
-    const chatRole = localStorage.getItem('chatRole');
-    const normalizedChatRole = String(chatRole || '').toLowerCase();
-    const userToken = getStoredTokenByRole('user');
-    const driverToken = getStoredTokenByRole('driver');
-    const ownerToken = getStoredTokenByRole('owner');
-    const adminToken = getStoredTokenByRole('admin') || localStorage.getItem('adminToken');
-
-    const isPublicUserRoute =
-      /^\/users\/(bootstrap|app-modules|settings|goods-types|vehicle-types|register|signup|login|profile-image|auth\/send-otp|auth\/verify-otp|otp-login)(\/|$)/.test(requestPath);
-    const isPublicDriverRoute =
-      /^\/drivers\/(register|login|auth\/send-otp|auth\/verify-otp|onboarding\/send-otp|onboarding\/verify-otp|onboarding\/personal|onboarding\/referral|onboarding\/vehicle|onboarding\/documents|onboarding\/complete|onboarding\/session\/|service-locations)(\/|$)/.test(requestPath);
-    const isAdminRoute =
-      /^\/admin(\/|$)/.test(requestPath) ||
-      /^\/(countries|common\/ride_modules|types\/|on-boarding(?:-|\/|$)|roles\/|permissions\/)/.test(requestPath);
-    const isDriverRoute = /^\/drivers?(\/|$)/.test(requestPath);
-    const isUserRoute = /^\/(users|rides|deliveries|promos)(\/|$)/.test(requestPath);
-    const isSupportRoute = /^\/support(\/|$)/.test(requestPath);
-    const isChatRoute = /^\/chats?(\/|$)/.test(requestPath);
-    const pathRole = getRoleFromPathname();
-
-    let token = null;
-
-    if (isPublicUserRoute || isPublicDriverRoute) {
-      token = null;
-    } else if (isChatRoute) {
-      if (normalizedChatRole === 'admin') {
-        token = adminToken;
-      } else if (normalizedChatRole === 'driver') {
-        token = driverToken || ownerToken;
-      } else if (normalizedChatRole === 'owner') {
-        token = ownerToken || driverToken;
-      } else if (normalizedChatRole === 'user') {
-        token = userToken;
-      }
-    } else if (isAdminRoute) {
-      token = adminToken;
-    } else if (isSupportRoute) {
-      if (pathRole === 'admin') {
-        token = adminToken;
-      } else if (pathRole === 'driver') {
-        token = driverToken || ownerToken;
-      } else {
-        token = userToken;
-      }
-    } else if (isUserRoute) {
-      token = userToken;
-    } else if (isDriverRoute) {
-      token = driverToken || ownerToken;
-    } else {
-      token = userToken || driverToken || ownerToken || adminToken;
-    }
+    const token = resolveAuthTokenForRequest(config);
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

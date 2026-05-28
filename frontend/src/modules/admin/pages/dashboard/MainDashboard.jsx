@@ -28,7 +28,7 @@ import { adminService } from '../../services/adminService';
 import { BACKEND_LABEL } from '../../../../shared/api/runtimeConfig';
 
 const currency = (value) => Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 0 });
-const DASHBOARD_REFRESH_INTERVAL_MS = 30000;
+const DASHBOARD_REFRESH_INTERVAL_MS = 120000;
 
 const MetricCard = ({ label, value, icon: Icon, color, isLoading, subtitle }) => (
   <div className="group relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-sm transition-all hover:border-slate-900 hover:shadow-2xl hover:shadow-slate-200/50">

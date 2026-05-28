@@ -29,6 +29,28 @@ const getPushPlatform = () => (
   typeof window !== 'undefined' && window.__isRydon24WebView ? 'mobile' : 'web'
 );
 
+const getRoleFromPathname = () => {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+
+  const pathname = String(window.location.pathname || '').toLowerCase();
+
+  if (pathname.includes('/taxi/owner')) {
+    return 'driver';
+  }
+
+  if (pathname.includes('/taxi/driver') || pathname.includes('/driver')) {
+    return 'driver';
+  }
+
+  if (pathname.includes('/taxi/user') || pathname.includes('/user')) {
+    return 'user';
+  }
+
+  return '';
+};
+
 const getStoredRegistration = () => {
   try {
     return JSON.parse(localStorage.getItem(LAST_BROWSER_FCM_KEY) || 'null');
@@ -61,6 +83,16 @@ const getMessagingSupport = async () => {
 };
 
 const getAuthenticatedRoles = () => {
+  const preferredRole = getRoleFromPathname();
+
+  if (preferredRole === 'user') {
+    return getLocalUserToken() ? ['user'] : [];
+  }
+
+  if (preferredRole === 'driver') {
+    return getLocalDriverToken() ? ['driver'] : [];
+  }
+
   const roles = [];
 
   if (getLocalUserToken()) {

@@ -165,6 +165,81 @@ const getDistanceBetweenMeters = (origin, target) => {
   return Math.round(2 * EARTH_RADIUS_METERS * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 };
 
+const getDriverMatchCoordinates = (driver = {}) => {
+  const anchorCoordinates = Array.isArray(driver?.routeBooking?.anchorLocation?.coordinates)
+    ? driver.routeBooking.anchorLocation.coordinates
+    : [];
+
+  if (driver?.routeBooking?.enabled && anchorCoordinates.length === 2) {
+    return normalizePoint(anchorCoordinates, 'driver.routeBooking.anchorLocation.coordinates');
+  }
+
+  if (Array.isArray(driver?.location?.coordinates) && driver.location.coordinates.length === 2) {
+    return normalizePoint(driver.location.coordinates, 'driver.location.coordinates');
+  }
+
+  return null;
+};
+
+const isPointInsidePolygonRing = (point, ring = []) => {
+  if (!Array.isArray(ring) || ring.length < 3) {
+    return false;
+  }
+
+  const [pointLng, pointLat] = point;
+  let inside = false;
+
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i, i += 1) {
+    const [lng1, lat1] = normalizePoint(ring[i], `zone.geometry.coordinates[0][${i}]`);
+    const [lng2, lat2] = normalizePoint(ring[j], `zone.geometry.coordinates[0][${j}]`);
+    const intersects =
+      ((lat1 > pointLat) !== (lat2 > pointLat)) &&
+      (pointLng < ((lng2 - lng1) * (pointLat - lat1)) / ((lat2 - lat1) || Number.EPSILON) + lng1);
+
+    if (intersects) {
+      inside = !inside;
+    }
+  }
+
+  return inside;
+};
+
+const isDriverWithinMatchedZone = (driver, zone) => {
+  if (!zone?._id) {
+    return true;
+  }
+
+  const coordinates = getDriverMatchCoordinates(driver);
+  if (!coordinates) {
+    return false;
+  }
+
+  const ring = Array.isArray(zone?.geometry?.coordinates?.[0]) ? zone.geometry.coordinates[0] : [];
+  if (!ring.length) {
+    return String(driver?.zoneId || '') === String(zone._id);
+  }
+
+  return isPointInsidePolygonRing(coordinates, ring);
+};
+
+const filterDriversForMatchedZone = ({ drivers = [], zone = null, pickupCoords, maxDistance }) =>
+  drivers.filter((driver) => {
+    const coordinates = getDriverMatchCoordinates(driver);
+    if (!coordinates) {
+      return false;
+    }
+
+    if (!isDriverWithinMatchedZone(driver, zone)) {
+      return false;
+    }
+
+    if (Number.isFinite(maxDistance) && maxDistance > 0) {
+      return getDistanceBetweenMeters(pickupCoords, coordinates) <= maxDistance;
+    }
+
+    return true;
+  });
+
 const buildGeoNearFilter = (field, coordinates, maxDistance) => ({
   [field]: {
     $near: {
@@ -283,6 +358,12 @@ export const matchDrivers = async (pickupCoords, options = {}) => {
     vehicleTypeKeys,
     strictZoneOnly,
   });
+  drivers = filterDriversForMatchedZone({
+    drivers,
+    zone,
+    pickupCoords: coordinates,
+    maxDistance: effectiveMaxDistance,
+  });
 
   const blockedDriverIds = await getDriverIdsBlockedByUpcomingScheduledRides(
     drivers.map((driver) => String(driver?._id || '')),
@@ -299,6 +380,12 @@ export const matchDrivers = async (pickupCoords, options = {}) => {
       normalizedVehicleTypeIds,
       vehicleTypeKeys,
       strictZoneOnly,
+    });
+    drivers = filterDriversForMatchedZone({
+      drivers,
+      zone: null,
+      pickupCoords: coordinates,
+      maxDistance: effectiveMaxDistance,
     });
 
     const fallbackBlockedDriverIds = await getDriverIdsBlockedByUpcomingScheduledRides(

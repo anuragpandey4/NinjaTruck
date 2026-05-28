@@ -75,6 +75,22 @@ const inferRole = (explicitRole) => {
   return String(tokenRole || '').toLowerCase();
 };
 
+const getActivePortalRole = () => {
+  const pathname = String(window.location.pathname || '').toLowerCase();
+
+  if (pathname.includes('/taxi/owner')) {
+    return 'owner';
+  }
+  if (pathname.includes('/taxi/driver') || pathname.includes('/driver')) {
+    return 'driver';
+  }
+  if (pathname.includes('/taxi/user') || pathname.includes('/user')) {
+    return 'user';
+  }
+
+  return '';
+};
+
 const hasRoleSession = (role) => {
   if (DRIVER_PORTAL_ROLES.has(String(role || '').toLowerCase())) {
     return Boolean(getLocalDriverToken());
@@ -158,7 +174,16 @@ const readQueuedGlobalPayloads = () => {
 };
 
 const submitFcmToken = async ({ token, role, platform = 'mobile' }) => {
-  const normalizedRole = inferRole(role);
+  const inferredRole = inferRole(role);
+  const activePortalRole = getActivePortalRole();
+  const normalizedRole =
+    activePortalRole === 'user'
+      ? 'user'
+      : activePortalRole === 'owner'
+        ? 'owner'
+        : activePortalRole === 'driver'
+          ? 'driver'
+          : inferredRole;
   const normalizedPlatform = String(platform || 'mobile').trim().toLowerCase() || 'mobile';
   const normalizedToken = String(token || '').trim();
 

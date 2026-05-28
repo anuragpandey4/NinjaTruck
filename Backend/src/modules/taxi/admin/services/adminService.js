@@ -77,6 +77,11 @@ let publicVehicleCatalogCache = {
   expiresAt: 0,
   value: null,
 };
+const DASHBOARD_CACHE_TTL_MS = 60 * 1000;
+let dashboardCache = {
+  expiresAt: 0,
+  value: null,
+};
 
 const deepMerge = (target, source) => {
   const result = { ...target };
@@ -7130,6 +7135,10 @@ export const deleteOwner = async (id) => {
   };
 
 export const getDashboardData = async () => {
+  if (dashboardCache.value && dashboardCache.expiresAt > Date.now()) {
+    return dashboardCache.value;
+  }
+
   const [totalUsers, totalDrivers, totalOwners, approvedDrivers, rides, supportTicketStats] = await Promise.all([
     User.countDocuments(),
     Driver.countDocuments(),
@@ -7298,7 +7307,7 @@ export const getDashboardData = async () => {
     { pending: 0, assigned: 0, closed: 0 },
   );
 
-  return {
+  const snapshot = {
       totalUsers,
       totalDrivers: {
         total: totalDrivers,
@@ -7354,6 +7363,13 @@ export const getDashboardData = async () => {
         ? Number((((completedRides.length || 0) / rides.length) * 100).toFixed(1))
         : 0,
     };
+
+  dashboardCache = {
+    expiresAt: Date.now() + DASHBOARD_CACHE_TTL_MS,
+    value: snapshot,
+  };
+
+  return snapshot;
   };
 
   export const getOverallEarnings = async () => (await getDashboardData()).overallEarnings;
