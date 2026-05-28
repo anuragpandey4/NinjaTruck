@@ -5837,6 +5837,30 @@ export const listVehicleCatalog = async () => {
   };
 };
 
+export const getVehicleTypeById = async (id) => {
+  const item = await Vehicle.findById(id).lean();
+
+  if (!item) {
+    throw new ApiError(404, 'Vehicle type not found');
+  }
+
+  return {
+    ...item,
+    id: String(item._id),
+    icon: item.map_icon || item.icon || item.image || '',
+    map_icon: item.map_icon || item.icon || item.image || '',
+    delivery_category: item.delivery_category || '',
+    delivery_distance_pricing: normalizeDeliveryDistancePricing(item.delivery_distance_pricing),
+    supported_vehicles: Array.isArray(item.supported_other_vehicle_types)
+      ? item.supported_other_vehicle_types.map((v) => String(v)).join(',')
+      : '',
+    icon_types_for: item.icon_types,
+    trip_dispatch_type: item.dispatch_type,
+    created_at: item.createdAt,
+    updated_at: item.updatedAt,
+  };
+};
+
 export const listPublicVehicleCatalog = async () => {
   if (publicVehicleCatalogCache.value && publicVehicleCatalogCache.expiresAt > Date.now()) {
     return publicVehicleCatalogCache.value;

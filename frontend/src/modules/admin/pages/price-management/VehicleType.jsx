@@ -93,6 +93,54 @@ const normalizeTaxiMode = (value = '') => {
   return 'taxi';
 };
 
+const resolveVehicleTransportType = (vehicle = {}) => {
+  const directTransportType = normalizeTransportType(vehicle?.transport_type || vehicle?.is_taxi || '');
+  if (directTransportType !== 'taxi') {
+    return directTransportType;
+  }
+
+  const hasDeliveryCategory = Boolean(String(vehicle?.delivery_category || '').trim());
+  const hasDeliveryPricing = Boolean(
+    vehicle?.delivery_distance_pricing?.enabled ||
+    Number(vehicle?.delivery_distance_pricing?.base_price || 0) > 0 ||
+    Number(vehicle?.delivery_distance_pricing?.distance_price || 0) > 0 ||
+    Number(vehicle?.delivery_distance_pricing?.time_price || 0) > 0,
+  );
+
+  if (hasDeliveryCategory || hasDeliveryPricing) {
+    return 'delivery';
+  }
+
+  return 'taxi';
+};
+
+const buildVehicleFormData = (selectedVehicle = {}) => ({
+  name: selectedVehicle.name || '',
+  short_description: selectedVehicle.short_description || '',
+  description: selectedVehicle.description || '',
+  transport_type: resolveVehicleTransportType(selectedVehicle),
+  dispatch_type: selectedVehicle.dispatch_type || selectedVehicle.trip_dispatch_type || 'normal',
+  icon_types: normalizeIconType(selectedVehicle.icon_types || selectedVehicle.icon_types_for),
+  image: selectedVehicle.image || '',
+  map_icon: selectedVehicle.map_icon || selectedVehicle.icon || selectedVehicle.image || '',
+  capacity: Number(selectedVehicle.capacity || 0),
+  size: String(selectedVehicle.size || ''),
+  is_taxi: selectedVehicle.is_taxi || resolveVehicleTransportType(selectedVehicle),
+  is_accept_share_ride: Number(selectedVehicle.is_accept_share_ride || 0),
+  delivery_category: String(selectedVehicle.delivery_category || ''),
+  delivery_distance_pricing: normalizeDeliveryDistancePricing(selectedVehicle.delivery_distance_pricing),
+  status: Number(selectedVehicle.status ?? (selectedVehicle.active !== false ? 1 : 0)),
+  active: selectedVehicle.active !== false && Number(selectedVehicle.status ?? 1) !== 0,
+  supported_other_vehicle_types: Array.isArray(selectedVehicle.supported_other_vehicle_types)
+    ? selectedVehicle.supported_other_vehicle_types.map((item) => String(item?._id || item))
+    : typeof selectedVehicle.supported_vehicles === 'string' && selectedVehicle.supported_vehicles
+      ? selectedVehicle.supported_vehicles.split(',').map((item) => item.trim()).filter(Boolean)
+      : [],
+  vehicle_preference: Array.isArray(selectedVehicle.vehicle_preference)
+    ? selectedVehicle.vehicle_preference.map((item) => String(item?._id || item))
+    : [],
+});
+
 const sanitizeObjectIdList = (items = []) =>
   (Array.isArray(items) ? items : [])
     .map((item) => {
@@ -294,10 +342,16 @@ const VehicleType = ({ mode: propMode }) => {
       setErrorMessage('');
 
       try {
-        const [vehicleResponse, preferenceResponse] = await Promise.all([
+        const requests = [
           api.get('/admin/types/vehicle-types'),
           api.get('/admin/vehicle_preference'),
-        ]);
+        ];
+
+        if (id) {
+          requests.push(api.get(`/admin/types/vehicle-types/${id}`));
+        }
+
+        const [vehicleResponse, preferenceResponse, vehicleDetailResponse] = await Promise.all(requests);
 
         if (!mounted) {
           return;
@@ -324,34 +378,13 @@ const VehicleType = ({ mode: propMode }) => {
         setVehiclePreferences(prefResults);
 
         if (id) {
-          const selectedVehicle = normalizedVehicles.find((item) => String(item.id) === String(id));
+          const detailPayload = vehicleDetailResponse ? unwrap(vehicleDetailResponse) : null;
+          const selectedVehicle = detailPayload?.id
+            ? normalizeVehicle(detailPayload)
+            : normalizedVehicles.find((item) => String(item.id) === String(id));
+
           if (selectedVehicle) {
-            setFormData({
-              name: selectedVehicle.name || '',
-              short_description: selectedVehicle.short_description || '',
-              description: selectedVehicle.description || '',
-              transport_type: selectedVehicle.transport_type || 'taxi',
-              dispatch_type: selectedVehicle.dispatch_type || selectedVehicle.trip_dispatch_type || 'normal',
-              icon_types: normalizeIconType(selectedVehicle.icon_types || selectedVehicle.icon_types_for),
-              image: selectedVehicle.image || '',
-              map_icon: selectedVehicle.map_icon || selectedVehicle.icon || selectedVehicle.image || '',
-              capacity: Number(selectedVehicle.capacity || 0),
-              size: String(selectedVehicle.size || ''),
-              is_taxi: selectedVehicle.is_taxi || 'taxi',
-              is_accept_share_ride: Number(selectedVehicle.is_accept_share_ride || 0),
-              delivery_category: String(selectedVehicle.delivery_category || ''),
-              delivery_distance_pricing: normalizeDeliveryDistancePricing(selectedVehicle.delivery_distance_pricing),
-              status: Number(selectedVehicle.status ?? (selectedVehicle.active !== false ? 1 : 0)),
-              active: selectedVehicle.active !== false && Number(selectedVehicle.status ?? 1) !== 0,
-              supported_other_vehicle_types: Array.isArray(selectedVehicle.supported_other_vehicle_types)
-                ? selectedVehicle.supported_other_vehicle_types.map((item) => String(item?._id || item))
-                : typeof selectedVehicle.supported_vehicles === 'string' && selectedVehicle.supported_vehicles
-                  ? selectedVehicle.supported_vehicles.split(',').map((item) => item.trim()).filter(Boolean)
-                  : [],
-              vehicle_preference: Array.isArray(selectedVehicle.vehicle_preference)
-                ? selectedVehicle.vehicle_preference.map((item) => String(item?._id || item))
-                : [],
-            });
+            setFormData(buildVehicleFormData(selectedVehicle));
           }
         } else if (propMode === 'create') {
           setFormData(defaultFormData);

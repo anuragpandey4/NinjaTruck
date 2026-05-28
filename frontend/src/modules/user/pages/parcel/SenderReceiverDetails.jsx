@@ -52,6 +52,94 @@ const MAP_CONTAINER_STYLE = { width: '100%', height: '100%' };
 
 const getCoords = (title, fallback = [75.8577, 22.7196]) => LOCATION_COORDS[title] || fallback;
 
+const unwrapResults = (response) => {
+  const payload = response?.data?.data || response?.data || response;
+  return payload?.results || payload?.zones || (Array.isArray(payload) ? payload : []);
+};
+
+const getZoneServiceLocationId = (zone) =>
+  zone?.service_location_id?._id
+  || zone?.service_location_id?.id
+  || zone?.service_location_id
+  || zone?.service_location?._id
+  || zone?.service_location?.id
+  || zone?.service_location
+  || '';
+
+const isZoneActive = (zone) => zone?.active !== false && Number(zone?.status ?? 1) !== 0;
+
+const getZoneId = (zone) => zone?._id || zone?.id || '';
+
+const getStoreZoneId = (store) =>
+  store?.zone_id?._id
+  || store?.zone_id?.id
+  || store?.zone_id
+  || '';
+
+const toZonePoint = (point) => {
+  if (Array.isArray(point) && point.length >= 2) {
+    const [lng, lat] = point;
+    if (Number.isFinite(Number(lat)) && Number.isFinite(Number(lng))) {
+      return { lat: Number(lat), lng: Number(lng) };
+    }
+  }
+
+  if (point && typeof point === 'object') {
+    const lat = Number(point.lat ?? point.latitude);
+    const lng = Number(point.lng ?? point.longitude ?? point.lon);
+
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      return { lat, lng };
+    }
+  }
+
+  return null;
+};
+
+const normalizeZonePath = (zone) => {
+  const source = Array.isArray(zone?.coordinates?.[0]) && Array.isArray(zone?.coordinates?.[0]?.[0])
+    ? zone.coordinates[0]
+    : zone?.coordinates;
+
+  if (!Array.isArray(source)) {
+    return [];
+  }
+
+  return source.map(toZonePoint).filter(Boolean);
+};
+
+const isPointInPolygon = (point, polygon) => {
+  if (!point || polygon.length < 3) {
+    return false;
+  }
+
+  let inside = false;
+
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const xi = polygon[i].lng;
+    const yi = polygon[i].lat;
+    const xj = polygon[j].lng;
+    const yj = polygon[j].lat;
+
+    const intersects = ((yi > point.lat) !== (yj > point.lat))
+      && (point.lng < ((xj - xi) * (point.lat - yi)) / ((yj - yi) || Number.EPSILON) + xi);
+
+    if (intersects) {
+      inside = !inside;
+    }
+  }
+
+  return inside;
+};
+
+const isPointInAnyZone = (point, zonePaths) => {
+  if (!zonePaths.length) {
+    return true;
+  }
+
+  return zonePaths.some((path) => isPointInPolygon(point, path));
+};
+
 const readStoredUserInfo = () => {
   if (typeof window === 'undefined') return {};
 
@@ -230,8 +318,6 @@ const PhoneInput = ({ label, value, onChange, error, name, onClearError, disable
 const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClose, onConfirm }) => {
   const { isLoaded, loadError } = useAppGoogleMapsLoader();
   const [center, setCenter] = useState(coordPairToLatLng(initialCoords));
-  const [selectedAddress, setSelectedAddress] = useState(value || formatCoordLabel(initialCoords));
-  const [customAddress, setCustomAddress] = useState(value || formatCoordLabel(initialCoords));
   const [searchQuery, setSearchQuery] = useState(value || '');
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
@@ -245,16 +331,22 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
   const autocompleteSessionTokenRef = useRef(null);
   const placesServiceRef = useRef(null);
   const suggestionCacheRef = useRef(new Map());
-  const lastResolvedAddressRef = useRef(value || formatCoordLabel(initialCoords));
+  const lastResolvedAddressRef = useRef(value || '');
+  const ignoreAutocompleteRef = useRef(false);
+  const ignoreGeocodingRef = useRef(false);
+  const mapDraggedRef = useRef(false);
 
   useEffect(() => {
     if (!open) return undefined;
 
     const resetTimer = setTimeout(() => {
       setCenter(coordPairToLatLng(initialCoords));
-      const nextValue = value || formatCoordLabel(initialCoords);
-      setSelectedAddress(nextValue);
-      setCustomAddress(nextValue);
+      const nextValue = value || '';
+      ignoreAutocompleteRef.current = true;
+      mapDraggedRef.current = false;
+      if (value && !isCoordinateLabel(value)) {
+        ignoreGeocodingRef.current = true;
+      }
       setSearchQuery(nextValue);
       setSearchSuggestions([]);
       lastResolvedAddressRef.current = nextValue;
@@ -266,6 +358,15 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
   useEffect(() => {
     if (!open || !isLoaded || !window.google?.maps?.Geocoder) return undefined;
 
+    if (ignoreGeocodingRef.current) {
+      ignoreGeocodingRef.current = false;
+      return undefined;
+    }
+
+    if (!mapDraggedRef.current && !value) {
+      return undefined;
+    }
+
     clearTimeout(geocodeTimerRef.current);
     geocodeTimerRef.current = setTimeout(() => {
       setIsResolvingAddress(true);
@@ -276,35 +377,21 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
 
         if (status === 'OK' && results?.[0]?.formatted_address) {
           const nextAddress = results[0].formatted_address;
-          const previousResolvedAddress = lastResolvedAddressRef.current;
           lastResolvedAddressRef.current = nextAddress;
-          setSelectedAddress(nextAddress);
-          setCustomAddress((current) => {
-            const trimmedCurrent = String(current || '').trim();
-            if (!trimmedCurrent || trimmedCurrent === previousResolvedAddress || isCoordinateLabel(trimmedCurrent)) {
-              return nextAddress;
-            }
-            return current;
-          });
+          ignoreAutocompleteRef.current = true;
+          setSearchQuery(nextAddress);
           return;
         }
 
         const fallbackAddress = formatLatLngLabel(center);
-        const previousResolvedAddress = lastResolvedAddressRef.current;
         lastResolvedAddressRef.current = fallbackAddress;
-        setSelectedAddress(fallbackAddress);
-        setCustomAddress((current) => {
-          const trimmedCurrent = String(current || '').trim();
-          if (!trimmedCurrent || trimmedCurrent === previousResolvedAddress || isCoordinateLabel(trimmedCurrent)) {
-            return fallbackAddress;
-          }
-          return current;
-        });
+        ignoreAutocompleteRef.current = true;
+        setSearchQuery(fallbackAddress);
       });
     }, 450);
 
     return () => clearTimeout(geocodeTimerRef.current);
-  }, [center, isLoaded, open]);
+  }, [center, isLoaded, open, value]);
 
   useEffect(() => {
     if (!open) {
@@ -314,6 +401,13 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
 
     const trimmedQuery = String(searchQuery || '').trim();
     clearTimeout(suggestionTimerRef.current);
+
+    if (ignoreAutocompleteRef.current) {
+      ignoreAutocompleteRef.current = false;
+      setSearchSuggestions([]);
+      setIsFetchingSuggestions(false);
+      return undefined;
+    }
 
     if (!isLoaded || !window.google?.maps?.places?.AutocompleteService || trimmedQuery.length < 3) {
       setSearchSuggestions([]);
@@ -344,22 +438,17 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
         input: trimmedQuery,
         componentRestrictions: { country: 'in' },
         sessionToken: autocompleteSessionTokenRef.current || undefined,
+        location: new window.google.maps.LatLng(center.lat, center.lng),
+        radius: 10000,
       };
 
-      if (window.google?.maps?.Circle) {
-        request.locationBias = new window.google.maps.Circle({
-          center,
-          radius: 10000,
-        });
-      }
-
-      autocompleteServiceRef.current.getPlacePredictions(request, (predictions = [], status) => {
+      autocompleteServiceRef.current.getPlacePredictions(request, (predictions, status) => {
         if (!active) {
           return;
         }
 
         const normalizedSuggestions =
-          status === 'OK'
+          status === 'OK' && Array.isArray(predictions)
             ? predictions.slice(0, 5).map((prediction) => ({
                 id: prediction.place_id || prediction.description,
                 label: prediction.structured_formatting?.main_text || prediction.description,
@@ -373,7 +462,7 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
         setSearchSuggestions(normalizedSuggestions);
         setIsFetchingSuggestions(false);
       });
-    }, 250);
+    }, 350);
 
     return () => {
       active = false;
@@ -468,9 +557,9 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
     }
 
     const resolvedAddress = nextCenter.address || suggestion.description || suggestion.label;
+    ignoreGeocodingRef.current = true;
+    ignoreAutocompleteRef.current = true;
     setCenter({ lat: nextCenter.lat, lng: nextCenter.lng });
-    setSelectedAddress(resolvedAddress);
-    setCustomAddress(resolvedAddress);
     setSearchQuery(resolvedAddress);
     setSearchSuggestions([]);
     lastResolvedAddressRef.current = resolvedAddress;
@@ -498,7 +587,7 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
 
   const useCurrentLocation = () => {
     if (!navigator.geolocation) {
-      setSelectedAddress('Location access is not available on this device.');
+      console.warn('Location access is not available on this device.');
       return;
     }
 
@@ -511,6 +600,7 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
         };
 
         setIsLocating(false);
+        mapDraggedRef.current = true;
         setCenter(next);
         if (mapRef.current) {
           mapRef.current.panTo(next);
@@ -519,7 +609,7 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
       },
       () => {
         setIsLocating(false);
-        setSelectedAddress('Could not fetch your current location.');
+        console.warn('Could not fetch your current location.');
       },
       { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 },
     );
@@ -561,6 +651,7 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
                 }}
                 onDragStart={() => {
                   draggingRef.current = true;
+                  mapDraggedRef.current = true;
                 }}
                 onDragEnd={() => {
                   draggingRef.current = false;
@@ -587,21 +678,31 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
             <div className="absolute inset-x-0 top-0 px-4 pt-4">
               <div className="rounded-[22px] border border-white bg-white/92 px-4 py-4 shadow-xl backdrop-blur-md">
                 <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
-                  {isResolvingAddress ? 'Resolving address...' : 'Selected location'}
+                  {isResolvingAddress ? 'Resolving address...' : 'Set Location'}
                 </p>
-                <p className="mt-1 text-[13px] font-semibold text-slate-700">{selectedAddress}</p>
-                <label className="mt-3 block text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
-                  Search address
-                </label>
                 <div className="relative mt-2">
                   <Search size={14} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="text"
                     value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                    placeholder="Search pickup area, street or landmark"
+                    onChange={(event) => {
+                      ignoreAutocompleteRef.current = false;
+                      setSearchQuery(event.target.value);
+                    }}
+                    placeholder="Search area, street or landmark..."
                     className="w-full rounded-2xl border border-slate-200 bg-white px-10 py-3 text-[13px] font-semibold text-slate-900 outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
                   />
+                  {searchQuery.length > 0 && (
+                    <button 
+                      onClick={() => {
+                        ignoreAutocompleteRef.current = true;
+                        setSearchQuery('');
+                      }} 
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
                 </div>
                 {searchSuggestions.length > 0 ? (
                   <div className="mt-2 max-h-44 overflow-y-auto rounded-2xl border border-slate-100 bg-slate-50/80 p-2">
@@ -610,10 +711,10 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
                         key={item.id}
                         type="button"
                         onClick={() => applySearchSuggestion(item)}
-                        className="flex w-full items-start gap-3 rounded-xl px-3 py-2 text-left hover:bg-white"
+                        className="flex w-full items-start gap-3 rounded-xl px-3 py-2 text-left hover:bg-white transition-colors"
                       >
                         <Navigation size={14} className="mt-0.5 shrink-0 text-blue-500" />
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <p className="truncate text-[12px] font-black text-slate-800">{item.label}</p>
                           {item.secondaryText ? (
                             <p className="mt-0.5 truncate text-[11px] font-semibold text-slate-400">{item.secondaryText}</p>
@@ -624,20 +725,10 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
                   </div>
                 ) : null}
                 {Boolean(searchQuery) && isFetchingSuggestions ? (
-                  <p className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
+                  <p className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400 animate-pulse">
                     Finding nearby address suggestions...
                   </p>
                 ) : null}
-                <label className="mt-3 block text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
-                  Custom address
-                </label>
-                <input
-                  type="text"
-                  value={customAddress}
-                  onChange={(event) => setCustomAddress(event.target.value)}
-                  placeholder="Type pickup address"
-                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-[13px] font-semibold text-slate-900 outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
-                />
               </div>
             </div>
 
@@ -660,7 +751,7 @@ const MapPickerSheet = ({ open, title, confirmLabel, value, initialCoords, onClo
           <div className="bg-white px-5 pb-8 pt-5">
             <button
               type="button"
-              onClick={() => onConfirm(latLngToCoordPair(center), String(customAddress || selectedAddress || '').trim())}
+              onClick={() => onConfirm(latLngToCoordPair(center), String(searchQuery || '').trim())}
               className="flex h-14 w-full items-center justify-center gap-2 rounded-[20px] bg-slate-900 text-sm font-black text-white shadow-[0_14px_28px_rgba(15,23,42,0.18)]"
             >
               {confirmLabel}
@@ -837,13 +928,17 @@ const SenderReceiverDetails = () => {
   const [drop, setDrop] = useState(() => parcelState.drop || '');
   const [pickupCoords, setPickupCoords] = useState(() => parcelState.pickupCoords || getCoords(parcelState.pickup || '', [75.8577, 22.7196]));
   const [dropCoords, setDropCoords] = useState(() => parcelState.dropCoords || (parcelState.drop ? getCoords(parcelState.drop || '') : null));
+  const [activeInput, setActiveInput] = useState(() => (location.state?.editPickup ? 'pickup' : 'drop'));
   const [activeMapPicker, setActiveMapPicker] = useState(null);
   const [isContactSheetOpen, setIsContactSheetOpen] = useState(false);
   const [isLocatingPickup, setIsLocatingPickup] = useState(false);
   const [errors, setErrors] = useState({});
   const [recoveredSelectedVehicles, setRecoveredSelectedVehicles] = useState([]);
-  const [googleDropSuggestions, setGoogleDropSuggestions] = useState([]);
-  const [isFetchingDropSuggestions, setIsFetchingDropSuggestions] = useState(false);
+  const [googleSuggestions, setGoogleSuggestions] = useState([]);
+  const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
+  const [zones, setZones] = useState([]);
+  const [zonePaths, setZonePaths] = useState([]);
+  const [serviceStores, setServiceStores] = useState([]);
   const autoPickupRequestedRef = useRef(false);
   const livePickupHydratedRef = useRef(false);
   const dropInputRef = useRef(null);
@@ -867,6 +962,44 @@ const SenderReceiverDetails = () => {
       dropCoords,
     }));
   }, [drop, dropCoords, parcelState, pickup, pickupCoords, receiverMobile, receiverName, senderMobile, senderName]);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadZoneData = async () => {
+      try {
+        const [zonesResponse, storesResponse] = await Promise.all([
+          api.get('/admin/zones'),
+          api.get('/users/service-stores'),
+        ]);
+        if (!active) {
+          return;
+        }
+
+        const allZones = unwrapResults(zonesResponse).filter(isZoneActive);
+        const allPaths = allZones.map(normalizeZonePath).filter((path) => path.length >= 3);
+        const allStores = unwrapResults(storesResponse).filter((store) => {
+          return store?.active !== false && String(store?.status || '').toLowerCase() !== 'inactive';
+        });
+
+        setZones(allZones);
+        setZonePaths(allPaths);
+        setServiceStores(allStores);
+      } catch {
+        if (active) {
+          setZones([]);
+          setZonePaths([]);
+          setServiceStores([]);
+        }
+      }
+    };
+
+    loadZoneData();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (dropInputRef.current) {
@@ -957,18 +1090,57 @@ const SenderReceiverDetails = () => {
     };
   }, [parcelState.category, parcelState.deliveryCategory, parcelState.selectedVehicle, parcelState.selectedVehicleId, parcelState.selectedVehicleIds, parcelState.selectedVehicles]);
 
-  const pickupSuggestions = useMemo(
-    () => POPULAR_LOCATIONS.filter((item) => item.toLowerCase().includes(String(pickup || '').toLowerCase())).slice(0, 4),
-    [pickup],
-  );
-  const dropSuggestions = useMemo(
-    () => POPULAR_LOCATIONS.filter((item) => item.toLowerCase().includes(String(drop || '').toLowerCase())).slice(0, 4),
-    [drop],
-  );
-  const nearbyDropSuggestions = useMemo(
-    () => getNearbyPopularLocations(pickupCoords, [pickup, drop], 4),
-    [drop, pickup, pickupCoords],
-  );
+  const query = useMemo(() => (activeInput === 'pickup' ? pickup : drop), [activeInput, drop, pickup]);
+
+  const currentZone = useMemo(() => {
+    if (!Array.isArray(pickupCoords) || pickupCoords.length !== 2 || !zones.length) {
+      return null;
+    }
+
+    const [lng, lat] = pickupCoords;
+    const point = { lat: Number(lat), lng: Number(lng) };
+
+    return zones.find((zone) => {
+      const zonePath = normalizeZonePath(zone);
+      return zonePath.length >= 3 && isPointInPolygon(point, zonePath);
+    }) || null;
+  }, [pickupCoords, zones]);
+
+  const currentZoneId = currentZone ? getZoneId(currentZone) : null;
+
+  const zoneStores = useMemo(() => {
+    if (!currentZoneId) return [];
+    return serviceStores.filter((store) => {
+      const storeZoneId = getStoreZoneId(store);
+      return String(storeZoneId) === String(currentZoneId);
+    });
+  }, [currentZoneId, serviceStores]);
+
+  const popularSuggestions = useMemo(() => {
+    if (zoneStores.length > 0) {
+      return zoneStores.slice(0, 6).map((store) => ({
+        title: store.name || store.address || 'Service Store',
+        address: store.address || currentZone?.name || 'Service Store',
+        coords:
+          Number.isFinite(Number(store.longitude)) && Number.isFinite(Number(store.latitude))
+            ? [Number(store.longitude), Number(store.latitude)]
+            : null,
+      }));
+    }
+
+    return POPULAR_LOCATIONS.filter((item) => item.toLowerCase().includes(String(query || '').toLowerCase())).slice(0, 6).map(name => ({
+      title: name,
+      address: name + ', Indore, Madhya Pradesh',
+      coords: getCoords(name),
+    }));
+  }, [zoneStores, currentZone, query]);
+
+  const nearbySuggestions = useMemo(() => {
+    if (activeInput === 'drop' && Array.isArray(pickupCoords) && pickupCoords.length === 2) {
+      return getNearbyPopularLocations(pickupCoords, [pickup, drop], 4);
+    }
+    return [];
+  }, [activeInput, drop, pickup, pickupCoords]);
   const selectedVehicles = useMemo(() => {
     if (Array.isArray(recoveredSelectedVehicles) && recoveredSelectedVehicles.length) {
       return recoveredSelectedVehicles;
@@ -1184,45 +1356,46 @@ const SenderReceiverDetails = () => {
   }, [isGoogleMapsLoaded, pickup, pickupCoords]);
 
   useEffect(() => {
-    const trimmedDrop = String(drop || '').trim();
+    const trimmedQuery = String(query || '').trim();
 
     clearTimeout(dropGeocodeTimerRef.current);
     clearTimeout(dropSuggestionTimerRef.current);
 
-    if (!trimmedDrop) {
-      setDropCoords(null);
-      setGoogleDropSuggestions([]);
-      setIsFetchingDropSuggestions(false);
+    if (!trimmedQuery) {
+      setGoogleSuggestions([]);
+      setIsFetchingSuggestions(false);
       return () => clearTimeout(dropGeocodeTimerRef.current);
     }
 
-    const presetCoords = LOCATION_COORDS[trimmedDrop];
+    const presetCoords = LOCATION_COORDS[trimmedQuery];
     if (presetCoords) {
-      setDropCoords((current) =>
-        Array.isArray(current) && current[0] === presetCoords[0] && current[1] === presetCoords[1] ? current : presetCoords,
-      );
-      setGoogleDropSuggestions([]);
-      setIsFetchingDropSuggestions(false);
+      if (activeInput === 'pickup') {
+        setPickupCoords(presetCoords);
+      } else {
+        setDropCoords(presetCoords);
+      }
+      setGoogleSuggestions([]);
+      setIsFetchingSuggestions(false);
       return () => clearTimeout(dropGeocodeTimerRef.current);
     }
 
-    if (!isGoogleMapsLoaded || isCoordinateLabel(trimmedDrop)) {
-      setGoogleDropSuggestions([]);
-      setIsFetchingDropSuggestions(false);
+    if (!isGoogleMapsLoaded || isCoordinateLabel(trimmedQuery)) {
+      setGoogleSuggestions([]);
+      setIsFetchingSuggestions(false);
       return () => clearTimeout(dropGeocodeTimerRef.current);
     }
 
-    if (trimmedDrop.length < 3 || !window.google?.maps?.places?.AutocompleteService) {
-      setGoogleDropSuggestions([]);
-      setIsFetchingDropSuggestions(false);
+    if (trimmedQuery.length < 3 || !window.google?.maps?.places?.AutocompleteService) {
+      setGoogleSuggestions([]);
+      setIsFetchingSuggestions(false);
       return () => clearTimeout(dropGeocodeTimerRef.current);
     }
 
-    const cacheKey = `${trimmedDrop.toLowerCase()}|${Array.isArray(pickupCoords) ? pickupCoords.join(',') : ''}`;
+    const cacheKey = `${trimmedQuery.toLowerCase()}|${activeInput}|${Array.isArray(pickupCoords) ? pickupCoords.join(',') : ''}`;
     const cachedSuggestions = dropSuggestionCacheRef.current.get(cacheKey);
     if (cachedSuggestions) {
-      setGoogleDropSuggestions(cachedSuggestions);
-      setIsFetchingDropSuggestions(false);
+      setGoogleSuggestions(cachedSuggestions);
+      setIsFetchingSuggestions(false);
       return () => clearTimeout(dropGeocodeTimerRef.current);
     }
 
@@ -1235,15 +1408,15 @@ const SenderReceiverDetails = () => {
         autocompleteSessionTokenRef.current = new window.google.maps.places.AutocompleteSessionToken();
       }
 
-      setIsFetchingDropSuggestions(true);
+      setIsFetchingSuggestions(true);
       const request = {
-        input: trimmedDrop,
+        input: trimmedQuery,
         componentRestrictions: { country: 'in' },
         types: ['geocode'],
         sessionToken: autocompleteSessionTokenRef.current || undefined,
       };
 
-      if (Array.isArray(pickupCoords) && window.google?.maps?.Circle) {
+      if (activeInput === 'drop' && Array.isArray(pickupCoords) && window.google?.maps?.Circle) {
         request.locationBias = new window.google.maps.Circle({
           center: coordPairToLatLng(pickupCoords),
           radius: 12000,
@@ -1257,7 +1430,7 @@ const SenderReceiverDetails = () => {
 
         const normalizedSuggestions =
           status === 'OK'
-            ? predictions.slice(0, 4).map((prediction) => ({
+            ? predictions.slice(0, 5).map((prediction) => ({
                 id: prediction.place_id || prediction.description,
                 label: prediction.structured_formatting?.main_text || prediction.description,
                 secondaryText: prediction.structured_formatting?.secondary_text || '',
@@ -1268,8 +1441,8 @@ const SenderReceiverDetails = () => {
             : [];
 
         dropSuggestionCacheRef.current.set(cacheKey, normalizedSuggestions);
-        setGoogleDropSuggestions(normalizedSuggestions);
-        setIsFetchingDropSuggestions(false);
+        setGoogleSuggestions(normalizedSuggestions);
+        setIsFetchingSuggestions(false);
       });
     }, 350);
 
@@ -1278,21 +1451,31 @@ const SenderReceiverDetails = () => {
       clearTimeout(dropGeocodeTimerRef.current);
       clearTimeout(dropSuggestionTimerRef.current);
     };
-  }, [drop, isGoogleMapsLoaded, pickupCoords]);
+  }, [query, isGoogleMapsLoaded, pickupCoords, activeInput]);
 
   const applySuggestion = async (type, suggestion) => {
-    const value = typeof suggestion === 'string' ? suggestion : suggestion?.label || suggestion?.description || '';
+    const value = typeof suggestion === 'string' ? suggestion : suggestion?.title || suggestion?.label || suggestion?.description || '';
 
     if (type === 'pickup') {
       setPickup(value);
-      setPickupCoords(getCoords(value));
+      if (typeof suggestion === 'string') {
+        setPickupCoords(getCoords(value));
+      } else if (Array.isArray(suggestion?.coords) && suggestion.coords.length === 2) {
+        setPickupCoords(suggestion.coords);
+      } else if (suggestion?.placeId) {
+        const resolvedCoords = await resolveCoordsFromPlaceId(suggestion.placeId);
+        setPickupCoords(resolvedCoords);
+      }
       clearError('pickup');
+      setActiveInput('drop');
       return;
     }
 
     setDrop(value);
     if (typeof suggestion === 'string') {
       setDropCoords(getCoords(value));
+    } else if (Array.isArray(suggestion?.coords) && suggestion.coords.length === 2) {
+      setDropCoords(suggestion.coords);
     } else if (suggestion?.placeId) {
       const resolvedCoords = await resolveCoordsFromPlaceId(suggestion.placeId);
       setDropCoords(resolvedCoords);
@@ -1300,7 +1483,7 @@ const SenderReceiverDetails = () => {
         autocompleteSessionTokenRef.current = new window.google.maps.places.AutocompleteSessionToken();
       }
     }
-    setGoogleDropSuggestions([]);
+    setGoogleSuggestions([]);
     clearError('drop');
   };
 
@@ -1443,134 +1626,203 @@ const SenderReceiverDetails = () => {
         }}
       />
 
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md px-4 py-4 flex items-center">
+      {/* Background visual blobs for rich depth */}
+      <div className="absolute -top-20 right-[-40px] h-48 w-48 rounded-full bg-blue-100/60 blur-3xl pointer-events-none" />
+      <div className="absolute top-64 left-[-60px] h-56 w-56 rounded-full bg-emerald-100/50 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-32 right-[-40px] h-48 w-48 rounded-full bg-indigo-100/50 blur-3xl pointer-events-none" />
+
+      <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-md px-5 py-4 border-b border-slate-100/80 flex items-center gap-3">
         <button 
           onClick={() => navigate(-1)} 
-          className="flex h-10 w-10 items-center justify-center rounded-full text-slate-800 hover:bg-slate-50 transition-colors"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-slate-800 hover:bg-slate-50 border border-slate-200/60 bg-white shadow-sm active:scale-95 transition-all"
         >
-          <ArrowLeft size={24} />
+          <ArrowLeft size={20} className="text-slate-900" strokeWidth={2.5} />
         </button>
+        <div className="min-w-0">
+          <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">Parcel Delivery</p>
+          <h1 className="mt-0.5 text-[18px] font-bold text-slate-900 tracking-tight leading-none truncate">Details & Address</h1>
+        </div>
       </header>
 
       <main className="flex-1 px-4 pt-2 pb-28 z-10">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-[32px] bg-white p-6 shadow-[0_20px_50px_rgba(0,0,0,0.08)] border border-slate-50 relative"
+          className="rounded-[32px] bg-white p-5 shadow-[0_20px_50px_rgba(0,0,0,0.08)] border border-slate-50 relative"
         >
-          {/* Route dots & line on the left */}
-          <div className="absolute left-6 top-10 flex flex-col items-center gap-1">
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-            <div className="w-0.5 h-20 border-l-2 border-dashed border-slate-100" />
-            <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-          </div>
-
-          <div className="pl-8 space-y-6">
-            {/* Sender Card */}
-            <div className="bg-slate-50/80 rounded-2xl p-4 flex items-center justify-between gap-3 border border-slate-100/50">
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500">Pickup</p>
-                <div className="flex items-center gap-2">
-                   <p className="text-[14px] font-black text-slate-900">{senderName || 'Sender Details'}</p>
-                   {senderMobile && (
-                     <>
-                        <div className="w-1 h-1 rounded-full bg-slate-300" />
-                        <p className="text-[12px] font-bold text-slate-500">{senderMobile}</p>
-                     </>
-                   )}
+          <div className="space-y-3">
+            {/* Pickup Row */}
+            <div className="flex items-center gap-3">
+              <div className="flex flex-col items-center gap-0.5 shrink-0">
+                <div className="w-5 h-5 rounded-full border-2 border-emerald-700 bg-white/70 flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-700" />
                 </div>
-                <p className="text-[13px] font-medium text-slate-500 truncate mt-1">{pickup || 'Pickup location'}</p>
-                <button
-                  type="button"
-                  onClick={() => setIsContactSheetOpen(true)}
-                  className="mt-3 inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-[0.12em] text-slate-500"
-                >
-                  Edit sender details
-                  <ChevronRight size={14} />
-                </button>
               </div>
-              <div className="shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setActiveMapPicker('pickup')}
-                  className="inline-flex h-10 items-center gap-2 rounded-xl border border-emerald-100 bg-white px-3 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-600 shadow-sm"
-                  aria-label="Choose pickup on map"
-                >
-                  <LocateFixed size={16} />
-                  <span>Choose on map</span>
-                </button>
+              <div
+                className={`flex-1 flex bg-slate-50/70 border rounded-2xl px-4 py-2.5 transition-all cursor-pointer items-center ${
+                  activeInput === 'pickup' ? 'border-blue-600 ring-4 ring-blue-50 bg-white' : 'border-slate-100 hover:bg-slate-100/50'
+                } ${errors.pickup ? 'border-red-400 bg-red-50/30' : ''}`}
+                onClick={() => setActiveInput('pickup')}
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-[9px] font-black uppercase tracking-wider text-slate-400">Pick Up From</p>
+                  <input
+                    type="text"
+                    value={pickup}
+                    onChange={(e) => {
+                      setPickup(e.target.value);
+                      clearError('pickup');
+                    }}
+                    onFocus={() => setActiveInput('pickup')}
+                    placeholder="Search pickup location..."
+                    className="w-full bg-transparent border-none text-[14px] font-bold text-slate-800 focus:outline-none placeholder:text-slate-300 mt-0.5"
+                  />
+                </div>
+                {pickup.length > 0 && activeInput === 'pickup' && (
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPickup('');
+                    }} 
+                    className="ml-2 shrink-0"
+                  >
+                    <X size={16} className="text-slate-300 hover:text-slate-600 transition-colors" />
+                  </button>
+                )}
               </div>
             </div>
 
-            {/* Drop Input Area */}
+            {/* Dotted connector */}
+            <div className="ml-[9px] h-2 w-[1.5px] border-l-[1.5px] border-dotted border-slate-300/70" />
+
+            {/* Drop Row */}
             <div className="flex items-center gap-3">
-              <div className="flex-1 relative">
-                 <input 
-                   ref={dropInputRef}
-                   type="text" 
-                   placeholder="Where is your Drop ?"
-                   value={drop}
-                   onChange={(e) => {
-                     setDrop(e.target.value);
-                     clearError('drop');
-                   }}
-                   className={`w-full h-14 bg-white border-2 rounded-2xl pl-5 pr-12 text-[15px] font-bold text-slate-900 placeholder:text-slate-300 outline-none transition-all ${
-                     errors.drop ? 'border-red-500 bg-red-50' : 'border-blue-600 focus:shadow-[0_0_0_4px_rgba(37,99,235,0.1)]'
-                   }`}
-                 />
-                 <Mic size={20} className="absolute right-5 top-1/2 -translate-y-1/2 text-blue-600" />
+              <div className="flex flex-col items-center gap-0.5 shrink-0">
+                <div className="w-5 h-5 rounded-full border-2 border-orange-600 bg-white/70 flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-orange-600" />
+                </div>
               </div>
-              <button className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 shrink-0">
-                 <Plus size={24} />
-              </button>
+              <div
+                className={`flex-1 flex bg-slate-50/70 border rounded-2xl px-4 py-2.5 transition-all cursor-pointer items-center ${
+                  activeInput === 'drop' ? 'border-blue-600 ring-4 ring-blue-50 bg-white' : 'border-slate-100 hover:bg-slate-100/50'
+                } ${errors.drop ? 'border-red-400 bg-red-50/30' : ''}`}
+                onClick={() => setActiveInput('drop')}
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-[9px] font-black uppercase tracking-wider text-slate-400">Deliver To</p>
+                  <input
+                    ref={dropInputRef}
+                    type="text"
+                    value={drop}
+                    autoFocus={activeInput === 'drop'}
+                    onFocus={() => setActiveInput('drop')}
+                    onChange={(e) => {
+                      setDrop(e.target.value);
+                      clearError('drop');
+                    }}
+                    placeholder="Search drop location..."
+                    className="w-full bg-transparent border-none text-[14px] font-bold text-slate-800 focus:outline-none placeholder:text-slate-300 mt-0.5"
+                  />
+                </div>
+                {drop.length > 0 && activeInput === 'drop' && (
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDrop('');
+                    }} 
+                    className="ml-2 shrink-0"
+                  >
+                    <X size={16} className="text-slate-300 hover:text-slate-600 transition-colors" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </motion.div>
 
-        <button 
-          onClick={() => setActiveMapPicker('drop')} 
-          className="mt-8 mx-auto flex items-center gap-2 text-blue-600 font-black text-[13px] uppercase tracking-widest hover:bg-blue-50/50 px-4 py-2 rounded-full transition-colors"
-        >
-           <MapPin size={18} fill="currentColor" className="text-blue-600/20" />
-           Select on map
-        </button>
+        {/* Action Pills */}
+        <div className="relative z-10 flex gap-3 my-5">
+          <button
+            onClick={() => setActiveMapPicker(activeInput)}
+            className="flex-1 flex items-center justify-center gap-2 bg-white border border-slate-100 rounded-2xl py-3.5 shadow-sm hover:shadow-md hover:border-slate-200 active:scale-95 transition-all text-[13px] font-bold text-slate-800 group"
+          >
+            <MapPin size={16} className="text-blue-600 group-hover:scale-110 transition-transform" strokeWidth={2.5} />
+            <span>Pin on map</span>
+          </button>
+          
+          <button
+            onClick={() => setIsContactSheetOpen(true)}
+            className="flex-1 flex items-center justify-center gap-2 bg-white border border-slate-100 rounded-2xl py-3.5 shadow-sm hover:shadow-md hover:border-slate-200 active:scale-95 transition-all text-[13px] font-bold text-slate-800 group"
+          >
+            <User size={16} className="text-blue-600 group-hover:scale-110 transition-transform" strokeWidth={2.5} />
+            <span>Contact Details</span>
+          </button>
+        </div>
 
-        <div className="mt-8 space-y-5 px-2">
-          {googleDropSuggestions.length > 0 ? (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Search Results</p>
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-300">Low API usage mode</p>
-              </div>
-              <div className="space-y-2">
-                {googleDropSuggestions.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => applySuggestion('drop', item)}
-                    className="flex w-full items-start gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-3 text-left shadow-sm hover:border-blue-200"
-                  >
-                    <Navigation size={14} className="mt-0.5 shrink-0 text-blue-500" />
-                    <div className="min-w-0">
-                      <p className="truncate text-[13px] font-black text-slate-800">{item.label}</p>
-                      {item.secondaryText ? (
-                        <p className="mt-1 truncate text-[11px] font-semibold text-slate-400">{item.secondaryText}</p>
-                      ) : null}
-                    </div>
-                  </button>
-                ))}
-              </div>
+        {/* Contact details badge */}
+        {(senderName || receiverName) && (
+          <div className="mx-1 mb-5 bg-gradient-to-r from-blue-50/70 to-indigo-50/30 rounded-2xl p-4 border-l-4 border-l-blue-600 border border-slate-100 flex items-center justify-between gap-3 text-[12px] shadow-sm">
+            <div className="flex-1 min-w-0 space-y-1.5">
+              {senderName && (
+                <div className="flex items-center gap-2 text-slate-600">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  <span className="font-bold text-slate-800 uppercase tracking-wider text-[10px]">Sender:</span>
+                  <span className="truncate font-semibold text-slate-700">{senderName} ({senderMobile})</span>
+                </div>
+              )}
+              {receiverName && (
+                <div className="flex items-center gap-2 text-slate-600">
+                  <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                  <span className="font-bold text-slate-800 uppercase tracking-wider text-[10px]">Receiver:</span>
+                  <span className="truncate font-semibold text-slate-700">{receiverName} ({receiverMobile})</span>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => setIsContactSheetOpen(true)}
+              className="text-[11px] font-black text-blue-600 hover:text-blue-700 bg-white px-3 py-1.5 rounded-xl border border-slate-100 shadow-sm uppercase tracking-wider shrink-0 transition-colors"
+            >
+              Edit
+            </button>
+          </div>
+        )}
+
+        <div className="mt-5 space-y-5 px-2">
+          <h2 className="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+            {query.trim().length > 0 ? 'Search Results' : 'Suggestions'}
+          </h2>
+
+          {googleSuggestions.length > 0 ? (
+            <div className="space-y-2">
+              {googleSuggestions.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => applySuggestion(activeInput, item)}
+                  className="flex w-full items-start gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-3.5 text-left shadow-sm hover:border-blue-200 transition-colors"
+                >
+                  <div className="mt-0.5 w-8 h-8 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 text-slate-400">
+                    <Navigation size={14} className="text-blue-500 fill-blue-500/10" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[13px] font-black text-slate-800">{item.label}</p>
+                    {item.secondaryText ? (
+                      <p className="mt-0.5 truncate text-[11px] font-semibold text-slate-400">{item.secondaryText}</p>
+                    ) : null}
+                  </div>
+                </button>
+              ))}
             </div>
           ) : null}
 
-          {!drop && nearbyDropSuggestions.length > 0 ? (
-            <div className="space-y-3">
-              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Near Current Pickup</p>
+          {!query.trim().length && nearbySuggestions.length > 0 ? (
+            <div className="space-y-2">
+              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.16em]">Near Current Pickup</p>
               <div className="grid grid-cols-2 gap-2">
-                {nearbyDropSuggestions.map((item) => (
+                {nearbySuggestions.map((item) => (
                   <button
                     key={item}
-                    onClick={() => applySuggestion('drop', item)}
-                    className="flex items-center gap-2 rounded-xl border border-slate-100 bg-white p-3 text-left shadow-sm hover:border-blue-200"
+                    onClick={() => applySuggestion(activeInput, item)}
+                    className="flex items-center gap-2 rounded-xl border border-slate-100 bg-white p-3 text-left shadow-sm hover:border-blue-200 transition-colors"
                   >
                     <MapPin size={12} className="shrink-0 text-emerald-500" />
                     <span className="truncate text-[12px] font-bold text-slate-700">{item}</span>
@@ -1580,27 +1832,27 @@ const SenderReceiverDetails = () => {
             </div>
           ) : null}
 
-          {!drop && dropSuggestions.length > 0 ? (
-            <div className="space-y-3">
-              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Popular Suggestions</p>
+          {!query.trim().length && popularSuggestions.length > 0 ? (
+            <div className="space-y-2">
+              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.16em]">Popular Locations</p>
               <div className="grid grid-cols-2 gap-2">
-                {dropSuggestions.map((item) => (
+                {popularSuggestions.map((item) => (
                   <button
-                    key={item}
-                    onClick={() => applySuggestion('drop', item)}
-                    className="flex items-center gap-2 rounded-xl border border-slate-100 bg-white p-3 text-left shadow-sm hover:border-blue-200"
+                    key={item.title || item}
+                    onClick={() => applySuggestion(activeInput, item)}
+                    className="flex items-center gap-2 rounded-xl border border-slate-100 bg-white p-3 text-left shadow-sm hover:border-blue-200 transition-colors"
                   >
                     <Navigation size={12} className="text-blue-500 shrink-0" />
-                    <span className="text-[12px] font-bold text-slate-700 truncate">{item}</span>
+                    <span className="text-[12px] font-bold text-slate-700 truncate">{item.title || item}</span>
                   </button>
                 ))}
               </div>
             </div>
           ) : null}
 
-          {Boolean(drop) && isFetchingDropSuggestions ? (
-            <div className="rounded-2xl border border-slate-100 bg-white px-4 py-3 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400 shadow-sm">
-              Finding nearby drop suggestions...
+          {Boolean(query) && isFetchingSuggestions ? (
+            <div className="rounded-2xl border border-slate-100 bg-white px-4 py-3 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400 shadow-sm animate-pulse">
+              Finding suggestions...
             </div>
           ) : null}
         </div>
@@ -1609,23 +1861,24 @@ const SenderReceiverDetails = () => {
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }} 
           transition={{ delay: 0.12 }} 
-          className="mt-8 rounded-[28px] bg-slate-900 px-6 py-5 text-white shadow-xl relative overflow-hidden"
+          className="mt-8 rounded-[30px] bg-gradient-to-br from-slate-900 to-slate-950 p-6 text-white shadow-xl relative overflow-hidden border border-slate-800"
         >
-          <div className="absolute right-0 top-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12" />
+          <div className="absolute right-[-20px] top-[-20px] w-36 h-36 bg-blue-600/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute left-[-20px] bottom-[-20px] w-36 h-36 bg-emerald-600/10 rounded-full blur-2xl pointer-events-none" />
           <div className="relative z-10 flex items-center justify-between gap-3">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/40">Approx. Delivery Fare</p>
-              <p className="mt-1 text-2xl font-black">
-                {estimatedFare ? `Rs ${estimatedFare.approx ?? estimatedFare.min}` : '--'}
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">Approx. Delivery Fare</p>
+              <p className="mt-1 text-3xl font-black tracking-tight text-white">
+                {estimatedFare ? `Rs ${estimatedFare.approx ?? estimatedFare.min}` : '—'}
               </p>
-              <p className="mt-1 text-[11px] font-bold text-white/55">
+              <p className="mt-1 text-[11px] font-bold text-slate-400">
                 {estimatedFare
-                  ? `Based on admin pricing for about ${estimatedDistanceKm.toFixed(1)} km`
-                  : 'Enter a drop address to see the live fare'}
+                  ? `Based on distance pricing for about ${estimatedDistanceKm.toFixed(1)} km`
+                  : 'Enter drop location to view live fare'}
               </p>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md">
-              <PackageCheck size={24} className="text-emerald-400" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/10">
+              <PackageCheck size={28} className="text-emerald-400" />
             </div>
           </div>
         </motion.section>

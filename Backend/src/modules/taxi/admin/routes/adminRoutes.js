@@ -150,6 +150,7 @@ import {
   getUserWalletHistory,
   getVehiclePreferenceOptions,
   getVehicleTypeCatalog,
+  getVehicleTypeById,
   getVehicleTypes,
   getWithdrawals,
   getZones,
@@ -311,6 +312,7 @@ adminRouter.delete('/admin/service-stores/:id', deleteServiceStore);
 adminRouter.get('/common/ride_modules', getRideModules);
 adminRouter.get('/admin/types/vehicle-types/list', getVehicleTypes);
 adminRouter.get('/admin/types/vehicle-types', getVehicleTypeCatalog);
+adminRouter.get('/admin/types/vehicle-types/:id', getVehicleTypeById);
 adminRouter.post('/admin/types/vehicle-types', createVehicleType);
 adminRouter.patch('/admin/types/vehicle-types/:id', updateVehicleType);
 adminRouter.delete('/admin/types/vehicle-types/:id', deleteVehicleType);
