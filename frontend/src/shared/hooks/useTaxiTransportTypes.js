@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axiosInstance';
 
-export const useTaxiTransportTypes = () => {
+export const useTaxiTransportTypes = ({ enabled = true } = {}) => {
   const [transportTypes, setTransportTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!enabled) {
+      return undefined;
+    }
+
     const fetchTypes = async () => {
       setLoading(true);
       try {
@@ -30,7 +34,9 @@ export const useTaxiTransportTypes = () => {
     };
 
     fetchTypes();
-  }, []);
+
+    return undefined;
+  }, [enabled]);
 
   return { transportTypes, loading, error };
 };

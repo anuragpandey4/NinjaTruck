@@ -313,7 +313,7 @@ const VehicleType = ({ mode: propMode }) => {
   const [pagination, setPagination] = useState({ total: 0, current_page: 1 });
   const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({ ...defaultFormData, transport_type: '' });
-  const { transportTypes } = useTaxiTransportTypes();
+  const { transportTypes } = useTaxiTransportTypes({ enabled: isEditor });
   const transportTypeOptions = useMemo(() => {
     const normalized = new Map();
 
@@ -342,52 +342,86 @@ const VehicleType = ({ mode: propMode }) => {
       setErrorMessage('');
 
       try {
-        const requests = [
-          api.get('/admin/types/vehicle-types'),
-          api.get('/admin/vehicle_preference'),
-        ];
+        const vehicleCatalogPromise = api.get(isEditor ? '/admin/types/vehicle-types' : '/admin/types/vehicle-types/list');
+        const preferencePromise = isEditor ? api.get('/admin/vehicle_preference') : Promise.resolve(null);
+        const detailPromise = isEditor && id ? api.get(`/admin/types/vehicle-types/${id}`) : Promise.resolve(null);
 
-        if (id) {
-          requests.push(api.get(`/admin/types/vehicle-types/${id}`));
+        if (!id && propMode === 'create') {
+          setFormData(defaultFormData);
         }
 
-        const [vehicleResponse, preferenceResponse, vehicleDetailResponse] = await Promise.all(requests);
+        detailPromise
+          .then((response) => {
+            if (!mounted || !response) {
+              return;
+            }
+
+            const detailPayload = unwrap(response);
+            if (detailPayload) {
+              setFormData(buildVehicleFormData(normalizeVehicle(detailPayload)));
+            }
+          })
+          .catch(() => {});
+
+        vehicleCatalogPromise
+          .then((response) => {
+            if (!mounted) {
+              return;
+            }
+
+            const vehiclePayload = unwrap(response);
+            const vehicleResults = Array.isArray(vehiclePayload?.results)
+              ? vehiclePayload.results
+              : Array.isArray(vehiclePayload)
+                ? vehiclePayload
+                : [];
+            const normalizedVehicles = vehicleResults.map(normalizeVehicle);
+            setVehicles(normalizedVehicles);
+            setPagination(vehiclePayload?.paginator || { total: normalizedVehicles.length, current_page: 1 });
+
+            if (id && !formData.name) {
+              const selectedVehicle = normalizedVehicles.find((item) => String(item.id) === String(id));
+              if (selectedVehicle) {
+                setFormData(buildVehicleFormData(selectedVehicle));
+              }
+            }
+          })
+          .catch(() => {});
+
+        preferencePromise
+          .then((response) => {
+            if (!mounted || !response) {
+              return;
+            }
+
+            const prefPayload = unwrap(response);
+            const prefResults = Array.isArray(prefPayload?.results)
+              ? prefPayload.results
+              : Array.isArray(prefPayload?.data)
+                ? prefPayload.data
+                : Array.isArray(prefPayload)
+                  ? prefPayload
+                  : [];
+            setVehiclePreferences(prefResults);
+          })
+          .catch(() => {});
+
+        const [vehicleCatalogResult, preferenceResult, detailResult] = await Promise.allSettled([
+          vehicleCatalogPromise,
+          preferencePromise,
+          detailPromise,
+        ]);
 
         if (!mounted) {
           return;
         }
 
-        const vehiclePayload = unwrap(vehicleResponse);
-        const vehicleResults = Array.isArray(vehiclePayload?.results)
-          ? vehiclePayload.results
-          : Array.isArray(vehiclePayload)
-            ? vehiclePayload
-            : [];
-        const normalizedVehicles = vehicleResults.map(normalizeVehicle);
-        setVehicles(normalizedVehicles);
-        setPagination(vehiclePayload?.paginator || { total: normalizedVehicles.length, current_page: 1 });
+        const errors = [vehicleCatalogResult, preferenceResult, detailResult]
+          .filter((result) => result.status === 'rejected')
+          .map((result) => result.reason?.message || 'Request failed');
 
-        const prefPayload = unwrap(preferenceResponse);
-        const prefResults = Array.isArray(prefPayload?.results)
-          ? prefPayload.results
-          : Array.isArray(prefPayload?.data)
-            ? prefPayload.data
-          : Array.isArray(prefPayload)
-            ? prefPayload
-            : [];
-        setVehiclePreferences(prefResults);
-
-        if (id) {
-          const detailPayload = vehicleDetailResponse ? unwrap(vehicleDetailResponse) : null;
-          const selectedVehicle = detailPayload?.id
-            ? normalizeVehicle(detailPayload)
-            : normalizedVehicles.find((item) => String(item.id) === String(id));
-
-          if (selectedVehicle) {
-            setFormData(buildVehicleFormData(selectedVehicle));
-          }
-        } else if (propMode === 'create') {
-          setFormData(defaultFormData);
+        if (errors.length === 3 || (id && detailResult.status === 'rejected')) {
+          setErrorMessage(errors[0] || 'Could not load vehicle types.');
         }
       } catch (error) {
         if (mounted) {
