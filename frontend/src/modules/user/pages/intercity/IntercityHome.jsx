@@ -597,19 +597,6 @@ const IntercityHome = () => {
             </div>
           </div>
 
-          {/* Add Stops Button and Badge */}
-          <div className="flex items-center gap-3 mt-4 ml-1">
-            <button
-              type="button"
-              className="border border-[#1E90FF] rounded-lg px-3 py-1.5 text-[#1E90FF] text-[11px] font-black tracking-wide uppercase hover:bg-blue-50/50 transition-colors active:scale-95"
-            >
-              + Add Stops
-            </button>
-            <span className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
-              NEW
-            </span>
-          </div>
-
           {/* TRIP START Picker */}
           <div
             onClick={triggerDateTimePicker}
