@@ -25,9 +25,10 @@ const hasBrowserSupport = () =>
   'serviceWorker' in navigator &&
   typeof Notification !== 'undefined';
 
-const getPushPlatform = () => (
-  typeof window !== 'undefined' && window.__isRydon24WebView ? 'mobile' : 'web'
-);
+const isNativeContainer = () =>
+  typeof window !== 'undefined' && Boolean(window.__isRydon24WebView);
+
+const getPushPlatform = () => 'web';
 
 const getRoleFromPathname = () => {
   if (typeof window === 'undefined') {
@@ -138,6 +139,10 @@ const shouldSkipRegistration = (role, token, platform) => {
 const registerBrowserFcmToken = async ({ interactive = false } = {}) => {
   if (!hasBrowserSupport()) {
     return { ok: false, reason: 'browser-unsupported' };
+  }
+
+  if (isNativeContainer()) {
+    return { ok: false, reason: 'native-container-use-native-fcm' };
   }
 
   if (!hasFirebaseConfig() || !VAPID_KEY) {
