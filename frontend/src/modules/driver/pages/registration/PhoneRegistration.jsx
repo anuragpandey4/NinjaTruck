@@ -11,6 +11,7 @@ import {
     saveDriverRegistrationSession,
     sendDriverLoginOtp,
     sendDriverOtp,
+    startPoolingDriverOnboarding,
 } from '../../services/registrationService';
 
 import { useSettings } from '../../../../shared/context/SettingsContext';
@@ -240,7 +241,10 @@ const PhoneRegistration = () => {
                     response = isLoginPage ? await sendDriverLoginOtp({ phone, role: requestRole }) : await sendDriverOtp({ phone, role: requestRole });
                     loginMode = isLoginPage;
                 } catch (requestError) {
-                    if (isLoginPage && ['driver', 'owner'].includes(requestRole)) {
+                    if (isLoginPage && requestRole === 'pooling_driver' && isAccountNotFoundError(requestError)) {
+                        response = await startPoolingDriverOnboarding({ phone });
+                        loginMode = false;
+                    } else if (isLoginPage && ['driver', 'owner'].includes(requestRole)) {
                         if (!isAccountNotFoundError(requestError)) throw requestError;
 
                         response = await sendDriverOtp({ phone, role: requestRole });
@@ -262,6 +266,7 @@ const PhoneRegistration = () => {
                 registrationId: sessionData.registrationId || '',
                 debugOtp: sessionData.debugOtp || '',
                 loginMode,
+                poolingOnboarding: requestRole === 'pooling_driver' && !loginMode,
                 entryPath: flowEntryPath,
                 referralCode: sharedReferralCode,
             });

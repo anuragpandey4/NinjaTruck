@@ -16,6 +16,7 @@ import { BusSeatHold } from "../../user/models/BusSeatHold.js";
 import { Owner } from "../../admin/models/Owner.js";
 import { BusService } from "../../admin/models/BusService.js";
 import { PoolingVehicle } from "../../admin/models/PoolingVehicle.js";
+import { PoolingBooking } from "../../admin/models/PoolingBooking.js";
 import { ServiceLocation } from "../../admin/models/ServiceLocation.js";
 import { ServiceStore } from "../../admin/models/ServiceStore.js";
 import { ServiceCenterStaff } from "../../admin/models/ServiceCenterStaff.js";
@@ -46,6 +47,13 @@ import {
   startDriverLoginOtp,
   verifyDriverLoginOtp,
 } from "../services/loginOtpService.js";
+import {
+  completePoolingDriverOnboarding,
+  getPoolingDriverOnboardingSession,
+  savePoolingDriverOnboardingDetails,
+  startPoolingDriverOnboarding,
+  verifyPoolingDriverOnboardingOtp,
+} from "../services/poolingOnboardingService.js";
 import { verifyAccessToken } from "../../services/tokenService.js";
 import { clearDriverActiveRideIfStale } from "../../services/rideService.js";
 import { getWalletSettings } from "../../services/appSettingsService.js";
@@ -1849,8 +1857,7 @@ const serializePoolingDriverProfile = (vehicle = {}) => ({
   vehicleColor: vehicle.color || "",
   vehicleImage: Array.isArray(vehicle.images) && vehicle.images.length > 0 ? vehicle.images[0] : "",
   city: "",
-  approve: true,
-  status: vehicle.status || "active",
+  status: vehicle.status || (vehicle.approve === false ? "pending" : "active"),
   rating: 0,
   wallet: {
     balance: 0,
@@ -1866,9 +1873,44 @@ const serializePoolingDriverProfile = (vehicle = {}) => ({
   documents: {},
   emergencyContacts: [],
   poolingVehicle: vehicle,
+  approve: vehicle.approve !== false,
   onboarding: {
     role: "pooling_driver",
   },
+});
+
+const serializePoolingDriverBooking = (booking = {}) => ({
+  id: String(booking._id || ""),
+  bookingId: String(booking.bookingId || ""),
+  seatsBooked: Number(booking.seatsBooked || 0),
+  fare: Number(booking.fare || 0),
+  currency: String(booking.currency || "INR"),
+  paymentStatus: String(booking.paymentStatus || booking.payment?.status || "pending"),
+  bookingStatus: String(booking.bookingStatus || "confirmed"),
+  selectedSeats: Array.isArray(booking.selectedSeats) ? booking.selectedSeats : [],
+  pickupLabel: String(booking.pickupLabel || ""),
+  dropLabel: String(booking.dropLabel || ""),
+  scheduleId: String(booking.scheduleId || ""),
+  otp: String(booking.otp || ""),
+  travelDate: booking.travelDate || null,
+  createdAt: booking.createdAt || null,
+  updatedAt: booking.updatedAt || null,
+  user: booking.user
+    ? {
+        id: String(booking.user._id || booking.user),
+        name: String(booking.user.name || ""),
+        phone: String(booking.user.phone || ""),
+        email: String(booking.user.email || ""),
+      }
+    : null,
+  route: booking.route
+    ? {
+        id: String(booking.route._id || booking.route),
+        routeName: String(booking.route.routeName || ""),
+        originLabel: String(booking.route.originLabel || ""),
+        destinationLabel: String(booking.route.destinationLabel || ""),
+      }
+    : null,
 });
 
 const serializeServiceCenterStaff = (staff = {}, bookingCount = 0) => ({
@@ -2902,6 +2944,23 @@ export const getCurrentDriver = async (req, res) => {
       onboarding: driver.onboarding || {},
       todaySummary: todaySummary || buildDriverTodaySummaryFromDocument(driver),
     },
+  });
+};
+
+export const getPoolingDriverBookings = async (req, res) => {
+  if (String(req.auth?.role || "").toLowerCase() !== "pooling_driver") {
+    throw new ApiError(403, "Pooling driver access is required");
+  }
+
+  const bookings = await PoolingBooking.find({ vehicle: req.auth.sub })
+    .populate("user", "name phone email")
+    .populate("route", "routeName originLabel destinationLabel")
+    .sort({ travelDate: -1, createdAt: -1 })
+    .lean();
+
+  res.json({
+    success: true,
+    data: bookings.map(serializePoolingDriverBooking),
   });
 };
 
@@ -8437,6 +8496,54 @@ export const startDriverLoginOtpRequest = async (req, res) => {
 export const verifyDriverLoginOtpRequest = async (req, res) => {
   const result = await verifyDriverLoginOtp(req.body);
   res.json({ success: true, data: result });
+};
+
+export const startPoolingOnboardingRequest = async (req, res) => {
+  const result = await startPoolingDriverOnboarding(req.body);
+  res.status(201).json({ success: true, data: result });
+};
+
+export const verifyPoolingOnboardingOtpRequest = async (req, res) => {
+  const result = await verifyPoolingDriverOnboardingOtp(req.body);
+  res.json({ success: true, data: result });
+};
+
+export const getPoolingOnboardingSessionRequest = async (req, res) => {
+  const result = await getPoolingDriverOnboardingSession({
+    registrationId: req.params.registrationId,
+    phone: req.query.phone,
+  });
+  res.json({ success: true, data: result });
+};
+
+export const savePoolingOnboardingDetailsRequest = async (req, res) => {
+  const result = await savePoolingDriverOnboardingDetails(req.body);
+  res.json({ success: true, data: result });
+};
+
+export const completePoolingOnboardingRequest = async (req, res) => {
+  const result = await completePoolingDriverOnboarding(req.body);
+  res.status(201).json({ success: true, data: result });
+};
+
+export const uploadPoolingOnboardingImageRequest = async (req, res) => {
+  const image = String(req.body?.image || "").trim();
+
+  if (!image) {
+    throw new ApiError(400, "Image data is required");
+  }
+
+  const result = await uploadDataUrlToCloudinary({
+    dataUrl: image,
+    publicIdPrefix: "pooling-driver-onboarding",
+  });
+
+  res.status(201).json({
+    success: true,
+    data: {
+      url: result.secureUrl,
+    },
+  });
 };
 
 export const startOnboarding = async (req, res) => {

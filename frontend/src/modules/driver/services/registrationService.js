@@ -160,6 +160,26 @@ export const sendDriverLoginOtp = (payload) =>
 export const verifyDriverLoginOtp = (payload) =>
   api.post("/drivers/auth/verify-otp", payload);
 
+export const startPoolingDriverOnboarding = (payload) =>
+  api.post("/drivers/pooling/onboarding/send-otp", payload);
+
+export const verifyPoolingDriverOnboardingOtp = (payload) =>
+  api.post("/drivers/pooling/onboarding/verify-otp", payload);
+
+export const getPoolingDriverOnboardingSession = ({ registrationId, phone }) =>
+  api.get(`/drivers/pooling/onboarding/session/${encodeURIComponent(registrationId)}`, {
+    params: phone ? { phone } : {},
+  });
+
+export const savePoolingDriverOnboardingDetails = (payload) =>
+  api.patch("/drivers/pooling/onboarding/details", payload);
+
+export const completePoolingDriverOnboarding = (payload) =>
+  api.post("/drivers/pooling/onboarding/complete", payload);
+
+export const uploadPoolingDriverOnboardingImage = (image) =>
+  api.post("/drivers/pooling/onboarding/upload-image", { image });
+
 export const getDriverOnboardingSession = ({ registrationId, phone }) =>
   api.get(`/drivers/onboarding/session/${encodeURIComponent(registrationId)}`, {
     params: phone ? { phone } : {},
@@ -404,6 +424,9 @@ const withDriverAuth = (config = {}) => {
 };
 
 export const getCurrentDriver = () => api.get("/drivers/me", withDriverAuth());
+
+export const getPoolingDriverBookings = () =>
+  api.get("/drivers/pooling/bookings", withDriverAuth());
 
 export const getDriverRideHistory = (params = {}) =>
   api.get("/rides", withDriverAuth({ params }));

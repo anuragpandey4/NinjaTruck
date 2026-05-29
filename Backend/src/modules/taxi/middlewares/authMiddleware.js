@@ -108,6 +108,14 @@ export const authenticate = (allowedRoles = [], options = {}) => async (req, _re
 
     if (
       normalizedRole === 'pooling_driver' &&
+      !allowPending &&
+      (entity.approve === false || String(entity.status || '').toLowerCase() === 'pending')
+    ) {
+      throw new ApiError(403, 'Pooling driver account is pending approval');
+    }
+
+    if (
+      normalizedRole === 'pooling_driver' &&
       (entity.poolingEnabled === false ||
         ['inactive', 'maintenance'].includes(String(entity.status || '').toLowerCase()))
     ) {

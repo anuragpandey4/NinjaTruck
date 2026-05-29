@@ -239,7 +239,10 @@ export const adminService = {
   deletePoolingRoute: (id) => api.delete(`/admin/pooling-routes/${id}`),
 
   getPoolingVehicles: () => api.get('/admin/pooling-vehicles'),
+  getPendingPoolingVehicles: (search = '') =>
+    api.get('/admin/pooling-vehicles', { params: { approve: false, search } }),
   createPoolingVehicle: (data) => api.post('/admin/pooling-vehicles', data),
+  approvePoolingVehicle: (id) => api.patch(`/admin/pooling-vehicles/${id}/approve`),
   updatePoolingVehicle: (id, data) => api.patch(`/admin/pooling-vehicles/${id}`, data),
   deletePoolingVehicle: (id) => api.delete(`/admin/pooling-vehicles/${id}`),
 

@@ -33,6 +33,15 @@ const PoolingVehicleForm = ({
   backPath = '/admin/pooling/vehicles',
   backLabel = 'Back to Fleet',
   pageLabel = '',
+  initialFormData = null,
+  hidePricingFields = false,
+  lockDriverPhone = false,
+  onSaveSuccess = null,
+  createActionLabel = 'Create Vehicle',
+  editActionLabel = 'Save Changes',
+  createSuccessMessage = 'Vehicle created successfully',
+  updateSuccessMessage = 'Vehicle updated successfully',
+  helperPanel = '',
 }) => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -85,10 +94,21 @@ const PoolingVehicleForm = ({
       // Set default layout for Sedan
       setFormData(prev => ({
         ...prev,
-        blueprint: generateDefaultLayout('sedan')
+        ...(initialFormData || {}),
+        blueprint: initialFormData?.blueprint || generateDefaultLayout(initialFormData?.vehicleType || 'sedan')
       }));
     }
   }, [id]);
+
+  useEffect(() => {
+    if (!id && initialFormData) {
+      setFormData((prev) => ({
+        ...prev,
+        ...initialFormData,
+        blueprint: initialFormData.blueprint || prev.blueprint,
+      }));
+    }
+  }, [id, initialFormData]);
 
   const loadVehicle = async () => {
     setLoading(true);
@@ -171,11 +191,19 @@ const PoolingVehicleForm = ({
       };
 
       if (isEditMode) {
-        await service.updatePoolingVehicle(id, payload);
-        toast.success('Vehicle updated successfully');
+        const result = await service.updatePoolingVehicle(id, payload);
+        toast.success(updateSuccessMessage);
+        if (typeof onSaveSuccess === 'function') {
+          await onSaveSuccess(result, payload);
+          return;
+        }
       } else {
-        await service.createPoolingVehicle(payload);
-        toast.success('Vehicle created successfully');
+        const result = await service.createPoolingVehicle(payload);
+        toast.success(createSuccessMessage);
+        if (typeof onSaveSuccess === 'function') {
+          await onSaveSuccess(result, payload);
+          return;
+        }
       }
       navigate(backPath);
     } catch (error) {
@@ -229,7 +257,7 @@ const PoolingVehicleForm = ({
                 className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-indigo-200 transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-50"
               >
                 {saving ? <RefreshCcw size={18} className="animate-spin" /> : <Save size={18} />}
-                {isEditMode ? 'Save Changes' : 'Create Vehicle'}
+                {isEditMode ? editActionLabel : createActionLabel}
               </button>
             )}
           </div>
@@ -317,7 +345,7 @@ const PoolingVehicleForm = ({
                       onChange={(e) => setFormData({ ...formData, driverPhone: e.target.value })}
                       placeholder="e.g. 9876543210"
                       className={inputClass}
-                      readOnly={isViewMode}
+                      readOnly={isViewMode || lockDriverPhone}
                     />
                   </div>
                 </div>
@@ -340,38 +368,47 @@ const PoolingVehicleForm = ({
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelClass}>Admin Commission %</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      step="0.01"
-                      value={formData.adminCommissionPercentage}
-                      onChange={(e) => setFormData({ ...formData, adminCommissionPercentage: e.target.value })}
-                      placeholder="e.g. 12.5"
-                      className={inputClass}
-                      readOnly={isViewMode}
-                    />
+                {!hidePricingFields ? (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className={labelClass}>Admin Commission %</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value={formData.adminCommissionPercentage}
+                        onChange={(e) => setFormData({ ...formData, adminCommissionPercentage: e.target.value })}
+                        placeholder="e.g. 12.5"
+                        className={inputClass}
+                        readOnly={isViewMode}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Service Tax %</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value={formData.serviceTaxPercentage}
+                        onChange={(e) => setFormData({ ...formData, serviceTaxPercentage: e.target.value })}
+                        placeholder="e.g. 5"
+                        className={inputClass}
+                        readOnly={isViewMode}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className={labelClass}>Service Tax %</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      step="0.01"
-                      value={formData.serviceTaxPercentage}
-                      onChange={(e) => setFormData({ ...formData, serviceTaxPercentage: e.target.value })}
-                      placeholder="e.g. 5"
-                      className={inputClass}
-                      readOnly={isViewMode}
-                    />
-                  </div>
-                </div>
+                ) : null}
               </div>
             </div>
+
+            {helperPanel ? (
+              <div className="rounded-[32px] border border-teal-100 bg-teal-50 p-6 shadow-sm">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-teal-600">Quick Note</p>
+                <p className="mt-3 text-sm font-semibold leading-6 text-teal-900">{helperPanel}</p>
+              </div>
+            ) : null}
 
             <div className="rounded-[32px] border border-slate-100 bg-white p-8 shadow-sm">
               <div className="mb-6 flex items-center justify-between">
@@ -401,9 +438,13 @@ const PoolingVehicleForm = ({
                           const loadingToast = toast.loading('Uploading image...');
                           try {
                             const res = await service.uploadImage(base64);
+                            const imageUrl = res?.data?.url || res?.data?.data?.url || res?.url || '';
+                            if (!imageUrl) {
+                              throw new Error('Upload response missing image URL');
+                            }
                             setFormData(prev => ({
                               ...prev,
-                              images: [...prev.images, res.data.url]
+                              images: [...prev.images, imageUrl]
                             }));
                             toast.success('Image uploaded', { id: loadingToast });
                           } catch (error) {

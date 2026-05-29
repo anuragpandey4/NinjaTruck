@@ -151,6 +151,9 @@ const DriverIncentives = lazy(() => import('./modules/driver/pages/DriverIncenti
 const BusDriverHome = lazy(() => import('./modules/driver/pages/BusDriverHome'));
 const BusDriverLiveRoute = lazy(() => import('./modules/driver/pages/BusDriverLiveRoute'));
 const PoolingDriverDashboard = lazy(() => import('./modules/driver/pages/PoolingDriverDashboard'));
+const PoolingDriverOnboarding = lazy(() => import('./modules/driver/pages/pooling/PoolingDriverOnboarding'));
+const PoolingDriverPendingStatus = lazy(() => import('./modules/driver/pages/pooling/PoolingDriverPendingStatus'));
+const PoolingDriverBookings = lazy(() => import('./modules/driver/pages/pooling/PoolingDriverBookings'));
 const PortalSupportPage = lazy(() => import('./modules/driver/pages/PortalSupportPage'));
 
 // Driver Module - Settings
@@ -239,6 +242,7 @@ const AdminRentalPackageTypes = lazy(() => import('./modules/admin/pages/price-m
 const AdminGoodsTypes = lazy(() => import('./modules/admin/pages/price-management/GoodsTypes'));
 const AdminPoolingManager = lazy(() => import('./modules/admin/pages/pooling/PoolingManager'));
 const AdminPoolingVehicles = lazy(() => import('./modules/admin/pages/pooling/PoolingVehicles'));
+const AdminPendingPoolingDrivers = lazy(() => import('./modules/admin/pages/pooling/PendingPoolingDrivers'));
 const AdminPoolingVehicleForm = lazy(() => import('./modules/admin/pages/pooling/PoolingVehicleForm'));
 const AdminPoolingBookings = lazy(() => import('./modules/admin/pages/pooling/PoolingBookings'));
 const AdminPoolingCommissionManager = lazy(() => import('./modules/admin/pages/pooling/PoolingCommissionManager'));
@@ -999,6 +1003,9 @@ function App() {
                 <Route path="bus-home" element={<BusDriverHome />} />
                 <Route path="bus-home/live-route" element={<BusDriverLiveRoute />} />
                 <Route path="pooling" element={<PoolingDriverDashboard />} />
+                <Route path="pooling/onboarding" element={<PoolingDriverOnboarding />} />
+                <Route path="pooling/status" element={<PoolingDriverPendingStatus />} />
+                <Route path="pooling/bookings" element={<PoolingDriverBookings />} />
                 <Route path="dashboard" element={<DriverHome />} />
                 <Route path="active-trip" element={<ActiveTrip />} />
                 <Route path="chat" element={<Chat />} />
@@ -1120,6 +1127,7 @@ function App() {
                 <Route path="bus-service/:id" element={<AdminBusServiceDetails />} />
                 <Route path="pooling" element={<Navigate to="/admin/pooling/routes" replace />} />
                 <Route path="pooling/routes" element={<AdminPoolingManager />} />
+                <Route path="pooling/pending-drivers" element={<AdminPendingPoolingDrivers />} />
                 <Route
                   path="pooling/create"
                   element={<AdminPoolingManager mode="create" />}

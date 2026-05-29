@@ -51,6 +51,7 @@ const onboardingRoutes = new Set([
     '/taxi/driver/step-referral',
     '/taxi/driver/step-vehicle',
     '/taxi/driver/step-documents',
+    '/taxi/driver/pooling/onboarding',
     '/taxi/driver/registration-status',
     '/taxi/driver/status',
     '/taxi/owner/lang-select',
@@ -98,8 +99,13 @@ const getAuthenticatedDriverHome = (pathname = '') => (
 );
 
 const getPendingDriverRoute = (pathname = '') => `${getPortalPrefix(pathname)}/registration-status`;
+const getPendingRouteForRole = (pathname = '', role = '') =>
+    String(role || '').toLowerCase() === 'pooling_driver'
+        ? '/taxi/driver/pooling/status'
+        : getPendingDriverRoute(pathname);
 const isBusConsoleRoute = (pathname = '') => pathname.startsWith('/taxi/driver/bus-home');
 const isServiceCenterRoute = (pathname = '') => pathname.startsWith('/taxi/driver/service-center');
+const isPoolingConsoleRoute = (pathname = '') => pathname.startsWith('/taxi/driver/pooling');
 const isPendingAllowedRoute = (pathname = '') =>
     [
         '/taxi/driver/documents',
@@ -112,6 +118,7 @@ const isPendingAllowedRoute = (pathname = '') =>
         '/taxi/owner/support/chat',
         '/taxi/driver/support/tickets',
         '/taxi/owner/support/tickets',
+        '/taxi/driver/pooling/status',
     ].includes(pathname);
 
 const DriverLayout = () => {
@@ -168,6 +175,12 @@ const DriverLayout = () => {
             return;
         }
 
+        if (isPoolingConsoleRoute(currentPath) && authenticatedRole !== 'pooling_driver') {
+            setIsAllowed(false);
+            navigate(authenticatedHome, { replace: true });
+            return;
+        }
+
         if (verifiedTokenRef.current === token && verifiedApprovalRef.current && isAllowed) {
             setIsChecking(false);
             return;
@@ -200,7 +213,7 @@ const DriverLayout = () => {
                     setIsAllowed(false);
                     verifiedTokenRef.current = '';
                     verifiedApprovalRef.current = false;
-                    navigate(getPendingDriverRoute(currentPath), { replace: true });
+                    navigate(getPendingRouteForRole(currentPath, effectiveRole || authenticatedRole), { replace: true });
                     return;
                 }
 
@@ -217,6 +230,11 @@ const DriverLayout = () => {
                     isServiceCenterRoute(currentPath)
                     && !['service_center', 'service_center_staff'].includes(effectiveRole)
                 ) {
+                    navigate(getAuthenticatedDriverHome(currentPath), { replace: true });
+                    return;
+                }
+
+                if (isPoolingConsoleRoute(currentPath) && effectiveRole !== 'pooling_driver') {
                     navigate(getAuthenticatedDriverHome(currentPath), { replace: true });
                     return;
                 }

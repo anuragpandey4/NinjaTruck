@@ -215,6 +215,7 @@ import {
   createPoolingVehicle,
   updatePoolingVehicle,
   deletePoolingVehicle,
+  approvePoolingVehicle,
   getPoolingBookings,
   updatePoolingBookingStatus,
   uploadImage,
@@ -344,6 +345,7 @@ adminRouter.delete('/admin/pooling-routes/:id', deletePoolingRoute);
 
 adminRouter.get('/admin/pooling-vehicles', getPoolingVehicles);
 adminRouter.post('/admin/pooling-vehicles', createPoolingVehicle);
+adminRouter.patch('/admin/pooling-vehicles/:id/approve', approvePoolingVehicle);
 adminRouter.patch('/admin/pooling-vehicles/:id', updatePoolingVehicle);
 adminRouter.delete('/admin/pooling-vehicles/:id', deletePoolingVehicle);
 

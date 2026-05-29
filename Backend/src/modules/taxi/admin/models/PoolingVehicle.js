@@ -34,6 +34,10 @@ const poolingVehicleSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
+    approve: {
+      type: Boolean,
+      default: true,
+    },
     color: {
       type: String,
       trim: true,
@@ -70,7 +74,7 @@ const poolingVehicleSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['active', 'inactive', 'maintenance'],
+      enum: ['pending', 'active', 'inactive', 'maintenance'],
       default: 'active',
     },
     poolingEnabled: {
@@ -82,6 +86,8 @@ const poolingVehicleSchema = new mongoose.Schema(
 );
 
 poolingVehicleSchema.index({ status: 1 });
+poolingVehicleSchema.index({ driverPhone: 1 });
+poolingVehicleSchema.index({ approve: 1, status: 1 });
 
 export const PoolingVehicle =
   mongoose.models.TaxiPoolingVehicle ||
