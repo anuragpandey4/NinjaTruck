@@ -66,6 +66,7 @@ const PoolingDriverOnboarding = () => {
       }}
       hidePricingFields
       lockDriverPhone
+      placeCreateActionAtEnd
       createActionLabel="Submit For Approval"
       createSuccessMessage="Pooling request submitted"
       helperPanel="Your mobile number becomes the login number for this pooling profile. Submit the vehicle setup and we will send it to admin review."

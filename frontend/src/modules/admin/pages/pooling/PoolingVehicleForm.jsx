@@ -42,11 +42,13 @@ const PoolingVehicleForm = ({
   createSuccessMessage = 'Vehicle created successfully',
   updateSuccessMessage = 'Vehicle updated successfully',
   helperPanel = '',
+  placeCreateActionAtEnd = false,
 }) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isViewMode = propMode === 'view';
   const isEditMode = Boolean(id) && !isViewMode;
+  const showHeaderAction = isViewMode || isEditMode || !placeCreateActionAtEnd;
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   
@@ -242,24 +244,26 @@ const PoolingVehicleForm = ({
                 {isViewMode ? 'Review vehicle details and seat layout blueprint' : 'Configure vehicle details and seat layout blueprint'}
               </p>
             </div>
-            {isViewMode ? (
-              <button
-                onClick={() => navigate(`${backPath}/edit/${id}`)}
-                className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-indigo-200 transition-all hover:bg-indigo-700 active:scale-95"
-              >
-                <Save size={18} />
-                Edit Vehicle
-              </button>
-            ) : (
-              <button
-                onClick={handleSubmit}
-                disabled={saving}
-                className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-indigo-200 transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-50"
-              >
-                {saving ? <RefreshCcw size={18} className="animate-spin" /> : <Save size={18} />}
-                {isEditMode ? editActionLabel : createActionLabel}
-              </button>
-            )}
+            {showHeaderAction ? (
+              isViewMode ? (
+                <button
+                  onClick={() => navigate(`${backPath}/edit/${id}`)}
+                  className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-indigo-200 transition-all hover:bg-indigo-700 active:scale-95"
+                >
+                  <Save size={18} />
+                  Edit Vehicle
+                </button>
+              ) : (
+                <button
+                  onClick={handleSubmit}
+                  disabled={saving}
+                  className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-indigo-200 transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-50"
+                >
+                  {saving ? <RefreshCcw size={18} className="animate-spin" /> : <Save size={18} />}
+                  {isEditMode ? editActionLabel : createActionLabel}
+                </button>
+              )
+            ) : null}
           </div>
         </div>
 
@@ -571,6 +575,19 @@ const PoolingVehicleForm = ({
             </div>
           </div>
         </div>
+
+        {!isViewMode && !isEditMode && placeCreateActionAtEnd ? (
+          <div className="mt-8 flex justify-end">
+            <button
+              onClick={handleSubmit}
+              disabled={saving}
+              className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-indigo-200 transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-50"
+            >
+              {saving ? <RefreshCcw size={18} className="animate-spin" /> : <Save size={18} />}
+              {createActionLabel}
+            </button>
+          </div>
+        ) : null}
       </div>
     </div>
   );
