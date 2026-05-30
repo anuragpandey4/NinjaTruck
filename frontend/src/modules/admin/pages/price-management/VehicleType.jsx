@@ -31,6 +31,10 @@ import McvIcon from '../../../../assets/icons/mcv.png';
 import LuxuryIcon from '../../../../assets/icons/Luxury.png';
 import PremiumIcon from '../../../../assets/icons/Premium.png';
 import SuvIcon from '../../../../assets/icons/SUV.png';
+import ScootyIcon from '../../../../assets/icons/scooty.png';
+import HatchbackIcon from '../../../../assets/icons/Hatchback.png';
+import BusIcon from '../../../../assets/icons/bus.png';
+import MiniBusIcon from '../../../../assets/icons/mini_bus.png';
 import MapBackground from '../../../../assets/map_image.png';
 import trucksImg from '@/assets/images/delivery/trucks.png';
 import bikeImg from '@/assets/images/delivery/bike.png';
@@ -51,6 +55,11 @@ const iconMap = {
   Luxary: LuxuryIcon,
   premium: PremiumIcon,
   suv: SuvIcon,
+  scooty: ScootyIcon,
+  car_5_seater: HatchbackIcon,
+  car_7_seater: SuvIcon,
+  bus: BusIcon,
+  mini_bus: MiniBusIcon,
 };
 
 const ICON_TYPE_ALIASES = {
@@ -65,6 +74,30 @@ const ICON_TYPE_ALIASES = {
   lcv: 'LCV',
   mcv: 'MCV',
   luxary: 'Luxary',
+  scooty: 'scooty',
+  'car 5 seater': 'car_5_seater',
+  'car 7 seater': 'car_7_seater',
+  bus: 'bus',
+  'mini bus': 'mini_bus',
+};
+
+const ICON_TYPE_LABELS = {
+  car: 'Car',
+  bike: 'Bike',
+  auto: 'Auto',
+  truck: 'Truck',
+  ehcb: 'Extra Heavy Commercial Vehicle',
+  HCV: 'Heavy Commercial Vehicle',
+  LCV: 'Light Commercial Vehicle',
+  MCV: 'Medium Commercial Vehicle',
+  Luxary: 'Luxury',
+  premium: 'Premium',
+  suv: 'SUV',
+  scooty: 'Scooty',
+  car_5_seater: 'Car 5 Seater',
+  car_7_seater: 'Car 7 Seater',
+  bus: 'Bus',
+  mini_bus: 'Mini Bus',
 };
 
 const normalizeIconType = (value = '') => {
@@ -825,7 +858,7 @@ const VehicleType = ({ mode: propMode }) => {
             <label className={labelClass}>Icon Type *</label>
             <select value={formData.icon_types} onChange={(e) => updateForm('icon_types', e.target.value)} className={inputClass}>
               {Object.keys(iconMap).map((key) => (
-                <option key={key} value={key}>{key}</option>
+                <option key={key} value={key}>{ICON_TYPE_LABELS[key] || key}</option>
               ))}
             </select>
           </div>

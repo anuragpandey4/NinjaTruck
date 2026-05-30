@@ -1382,6 +1382,14 @@ function App() {
                     element={<AdminServiceLocation />}
                   />
                   <Route
+                    path="service-location/jurisdictions"
+                    element={<AdminServiceLocation mode="jurisdictions" />}
+                  />
+                  <Route
+                    path="service-location/jurisdictions/:jurisdictionName"
+                    element={<AdminServiceLocation mode="jurisdictions" />}
+                  />
+                  <Route
                     path="service-location/add"
                     element={<AdminServiceLocation mode="create" />}
                   />

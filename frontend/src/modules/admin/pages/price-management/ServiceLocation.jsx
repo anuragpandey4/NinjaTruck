@@ -44,12 +44,26 @@ const defaultFormData = {
 
 const inputClass = "w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-semibold text-gray-800 bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 outline-none transition-all placeholder:text-gray-300";
 const labelClass = "block text-xs font-bold text-gray-500 mb-2";
+const getCountryName = (value) => {
+  if (value == null) return '';
+
+  if (typeof value === 'object') {
+    if (typeof value.name === 'string') return value.name;
+    if (typeof value.name === 'number') return String(value.name);
+    if (typeof value.label === 'string') return value.label;
+    if (typeof value.country === 'string') return value.country;
+    return '';
+  }
+
+  return String(value);
+};
 
 const ServiceLocation = ({ mode }) => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id, jurisdictionName } = useParams();
   const isCreate = mode === 'create';
   const isEdit = mode === 'edit';
+  const isJurisdictions = mode === 'jurisdictions';
   const isList = !isCreate && !isEdit;
 
   const [locations, setLocations] = useState([]);
@@ -126,10 +140,81 @@ const ServiceLocation = ({ mode }) => {
     const q = searchTerm.toLowerCase();
     if (!Array.isArray(locations)) return [];
     return locations.filter(l => {
-      const countryName = typeof l.country === 'object' ? l.country?.name : l.country;
+      const countryName = getCountryName(l.country);
       return [l.name, l.service_location_name, countryName].some(v => String(v || '').toLowerCase().includes(q));
     });
   }, [locations, searchTerm]);
+
+  const jurisdictionSummary = useMemo(() => {
+    const grouped = new Map();
+
+    locations.forEach((location) => {
+      const countryName = getCountryName(location.country).trim();
+      if (!countryName) return;
+
+      if (!grouped.has(countryName)) {
+        grouped.set(countryName, {
+          name: countryName,
+          locationCount: 0,
+          timezones: new Set(),
+          currencies: new Set(),
+        });
+      }
+
+      const current = grouped.get(countryName);
+      current.locationCount += 1;
+      if (location.timezone) current.timezones.add(location.timezone);
+      if (location.currency_code) current.currencies.add(location.currency_code);
+    });
+
+    return Array.from(grouped.values())
+      .map((item) => ({
+        ...item,
+        timezones: Array.from(item.timezones),
+        currencies: Array.from(item.currencies),
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [locations]);
+
+  const filteredJurisdictions = useMemo(() => {
+    const q = searchTerm.toLowerCase().trim();
+    if (!q) return jurisdictionSummary;
+
+    return jurisdictionSummary.filter((item) => {
+      const haystack = [
+        item.name,
+        item.timezones.join(' '),
+        item.currencies.join(' '),
+        String(item.locationCount),
+      ].join(' ').toLowerCase();
+
+      return haystack.includes(q);
+    });
+  }, [jurisdictionSummary, searchTerm]);
+
+  const decodedJurisdictionName = useMemo(
+    () => decodeURIComponent(jurisdictionName || '').trim(),
+    [jurisdictionName],
+  );
+
+  const selectedJurisdiction = useMemo(() => {
+    if (decodedJurisdictionName) {
+      const matched = jurisdictionSummary.find(
+        (item) => item.name.toLowerCase() === decodedJurisdictionName.toLowerCase(),
+      );
+      if (matched) return matched;
+    }
+
+    return filteredJurisdictions[0] || null;
+  }, [decodedJurisdictionName, filteredJurisdictions, jurisdictionSummary]);
+
+  const selectedJurisdictionLocations = useMemo(() => {
+    if (!selectedJurisdiction) return [];
+
+    return locations.filter(
+      (location) => getCountryName(location.country).trim().toLowerCase() === selectedJurisdiction.name.toLowerCase(),
+    );
+  }, [locations, selectedJurisdiction]);
 
   const handleSave = async (e) => {
     if (e) e.preventDefault();
@@ -166,6 +251,233 @@ const ServiceLocation = ({ mode }) => {
     } catch (err) {}
   };
 
+  if (isJurisdictions) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6 lg:p-8 animate-in fade-in duration-500 font-sans">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-2 font-medium uppercase tracking-widest">
+                <span>Pricing</span>
+                <ChevronRight size={12} />
+                <button
+                  type="button"
+                  onClick={() => navigate('/admin/pricing/service-location')}
+                  className="text-gray-500 transition-colors hover:text-gray-700"
+                >
+                  Service Locations
+                </button>
+                <ChevronRight size={12} />
+                <span className="text-gray-700">Market Jurisdictions</span>
+              </div>
+              <h1 className="text-xl font-bold text-gray-900 tracking-tight">Market Jurisdictions</h1>
+              <p className="text-xs text-gray-500 mt-1 font-medium">
+                Browse each jurisdiction, how many service locations sit inside it, and the currency and timezone coverage.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => navigate('/admin/pricing/service-location')}
+              className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:border-indigo-200 hover:text-indigo-700"
+            >
+              <ArrowLeft size={16} />
+              Back To Locations
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="rounded-2xl border border-indigo-100 bg-white p-6 shadow-sm">
+              <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500">Jurisdictions</p>
+              <h3 className="mt-2 text-3xl font-black text-gray-900">{jurisdictionSummary.length}</h3>
+            </div>
+            <div className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
+              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Covered Hubs</p>
+              <h3 className="mt-2 text-3xl font-black text-gray-900">{locations.length}</h3>
+            </div>
+            <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+              <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Currency Profiles</p>
+              <h3 className="mt-2 text-3xl font-black text-gray-900">
+                {[...new Set(jurisdictionSummary.flatMap((item) => item.currencies))].filter(Boolean).length}
+              </h3>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+            <div className="border-b border-gray-100 bg-gray-50/50 p-4">
+              <div className="relative w-full max-w-sm">
+                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search jurisdictions..."
+                  className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm font-medium transition-all focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/10"
+                />
+              </div>
+            </div>
+
+            {loading ? (
+              <div className="flex flex-col items-center justify-center gap-3 py-24">
+                <Loader2 className="animate-spin text-indigo-600" size={32} />
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Loading Jurisdictions</p>
+              </div>
+            ) : filteredJurisdictions.length > 0 ? (
+              <div className="space-y-5 p-5">
+                {selectedJurisdiction ? (
+                  <div className="rounded-[28px] border border-indigo-100 bg-gradient-to-br from-indigo-50 via-white to-blue-50 p-6 shadow-sm">
+                    <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                      <div className="flex items-start gap-4">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-indigo-100 bg-white text-indigo-600 shadow-sm">
+                          <Globe2 size={24} />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500">Selected Jurisdiction</p>
+                          <h2 className="mt-1 text-2xl font-black text-gray-900">{selectedJurisdiction.name}</h2>
+                          <p className="mt-2 text-xs font-medium text-gray-500">
+                            This jurisdiction currently contains {selectedJurisdiction.locationCount} service location{selectedJurisdiction.locationCount === 1 ? '' : 's'}.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        <div className="rounded-xl border border-white/80 bg-white px-4 py-3 shadow-sm">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Locations</p>
+                          <p className="mt-1 text-xl font-black text-gray-900">{selectedJurisdiction.locationCount}</p>
+                        </div>
+                        <div className="rounded-xl border border-white/80 bg-white px-4 py-3 shadow-sm">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Currencies</p>
+                          <p className="mt-1 text-xl font-black text-gray-900">{selectedJurisdiction.currencies.length}</p>
+                        </div>
+                        <div className="rounded-xl border border-white/80 bg-white px-4 py-3 shadow-sm">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Timezones</p>
+                          <p className="mt-1 text-xl font-black text-gray-900">{selectedJurisdiction.timezones.length}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+                      <div className="rounded-2xl border border-indigo-100 bg-white p-5 shadow-sm">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Currency Coverage</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {selectedJurisdiction.currencies.length ? selectedJurisdiction.currencies.map((currency) => (
+                            <span key={currency} className="rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-bold text-indigo-700">
+                              {currency}
+                            </span>
+                          )) : <span className="text-xs font-semibold text-gray-400">No currencies mapped</span>}
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Timezone Coverage</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {selectedJurisdiction.timezones.length ? selectedJurisdiction.timezones.map((timezone) => (
+                            <span key={timezone} className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">
+                              {timezone}
+                            </span>
+                          )) : <span className="text-xs font-semibold text-gray-400">No timezones mapped</span>}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Service Locations In This Jurisdiction</p>
+                      <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+                        {selectedJurisdictionLocations.map((location) => (
+                          <button
+                            key={location._id || location.id}
+                            type="button"
+                            onClick={() => navigate(`/admin/pricing/service-location/edit/${location._id || location.id}`)}
+                            className="flex items-center justify-between rounded-2xl border border-gray-100 bg-gray-50/70 px-4 py-3 text-left transition-all hover:border-indigo-200 hover:bg-indigo-50/40"
+                          >
+                            <div>
+                              <p className="text-sm font-bold text-gray-900">{location.name || location.service_location_name}</p>
+                              <p className="mt-1 text-xs font-medium text-gray-500">{location.timezone || 'Timezone not set'}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-xs font-black uppercase tracking-widest text-indigo-500">{location.currency_code || 'N/A'}</p>
+                              <p className="mt-1 text-xs font-semibold text-gray-400">{location.currency_symbol || 'No symbol'}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
+                <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                {filteredJurisdictions.map((item) => (
+                  <button
+                    key={item.name}
+                    type="button"
+                    onClick={() => navigate(`/admin/pricing/service-location/jurisdictions/${encodeURIComponent(item.name)}`)}
+                    className={`rounded-2xl border p-5 text-left shadow-sm transition-all ${
+                      selectedJurisdiction?.name === item.name
+                        ? 'border-indigo-200 bg-indigo-50/70'
+                        : 'border-gray-100 bg-gray-50/60 hover:border-indigo-100 hover:bg-indigo-50/30'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-indigo-100 bg-indigo-50 text-indigo-600">
+                          <Globe2 size={20} />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500">Jurisdiction</p>
+                          <h3 className="text-lg font-black text-gray-900">{item.name}</h3>
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-right">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Locations</p>
+                        <p className="text-lg font-black text-gray-900">{item.locationCount}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div className="rounded-xl border border-gray-200 bg-white p-4">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Currencies</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {item.currencies.length ? item.currencies.map((currency) => (
+                            <span key={currency} className="rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-bold text-indigo-700">
+                              {currency}
+                            </span>
+                          )) : <span className="text-xs font-semibold text-gray-400">Not assigned</span>}
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl border border-gray-200 bg-white p-4">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Timezones</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {item.timezones.length ? item.timezones.map((timezone) => (
+                            <span key={timezone} className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700">
+                              {timezone}
+                            </span>
+                          )) : <span className="text-xs font-semibold text-gray-400">Not assigned</span>}
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+                </div>
+              </div>
+            ) : (
+              <div className="py-24 text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-gray-100 bg-gray-50 text-gray-200">
+                  <Globe size={32} />
+                </div>
+                <h3 className="text-sm font-bold text-gray-900">No Jurisdictions Found</h3>
+                <p className="mx-auto mt-1 max-w-xs text-xs text-gray-400">
+                  Add service locations first, then this page will summarize each market jurisdiction automatically.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (isList) {
     return (
       <div className="min-h-screen bg-gray-50 p-6 lg:p-8 animate-in fade-in duration-500 font-sans">
@@ -198,15 +510,24 @@ const ServiceLocation = ({ mode }) => {
               { label: 'Operational Hubs', value: Array.isArray(locations) ? locations.length : 0, icon: MapPin, color: 'emerald' },
               { label: 'Active Currencies', value: Array.isArray(locations) ? [...new Set(locations.map(l => l.currency_code))].filter(Boolean).length : 0, icon: DollarSign, color: 'blue' }
             ].map((stat, i) => (
-              <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 group hover:border-indigo-100 transition-colors">
+              <button
+                key={i}
+                type="button"
+                onClick={i === 0 ? () => navigate('/admin/pricing/service-location/jurisdictions') : undefined}
+                className={`bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 group transition-colors text-left ${
+                  i === 0
+                    ? 'cursor-pointer hover:border-indigo-200 hover:bg-indigo-50/30 active:scale-[0.99]'
+                    : 'cursor-default'
+                }`}
+              >
                 <div className={`w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shadow-sm group-hover:scale-110 transition-transform`}>
                   <stat.icon size={24} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</p>
+                  <p className={`text-[10px] font-black uppercase tracking-widest ${i === 0 ? 'text-indigo-600' : 'text-gray-400'}`}>{stat.label}</p>
                   <h3 className="text-2xl font-black text-gray-900 mt-1">{stat.value}</h3>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
 
@@ -250,7 +571,13 @@ const ServiceLocation = ({ mode }) => {
                            </div>
                         </td>
                         <td className="px-6 py-4">
-                           <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">{typeof l.country === 'object' ? l.country?.name : l.country || '-'}</span>
+                           <button
+                             type="button"
+                             onClick={() => navigate(`/admin/pricing/service-location/jurisdictions/${encodeURIComponent(getCountryName(l.country).trim())}`)}
+                             className="text-xs font-bold uppercase tracking-wider text-indigo-600 transition-colors hover:text-indigo-800 hover:underline"
+                           >
+                             {typeof l.country === 'object' ? l.country?.name : l.country || '-'}
+                           </button>
                         </td>
                         <td className="px-6 py-4 text-center">
                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-50 border border-gray-100 rounded-lg">

@@ -18,6 +18,10 @@ import LcvIcon from '../../../../assets/icons/LCV.png';
 import McvIcon from '../../../../assets/icons/mcv.png';
 import HcvIcon from '../../../../assets/icons/hcv.png';
 import EhcvIcon from '../../../../assets/icons/ehcv.png';
+import ScootyIcon from '../../../../assets/icons/scooty.png';
+import HatchbackIcon from '../../../../assets/icons/Hatchback.png';
+import BusIcon from '../../../../assets/icons/bus.png';
+import MiniBusIcon from '../../../../assets/icons/mini_bus.png';
 
 const MAP_CONTAINER_STYLE = { width: '100%', height: '100%' };
 const SELECT_VEHICLE_MAP_OPTIONS = {
@@ -406,6 +410,26 @@ const getVehicleMapIcon = (type) => {
 
   const value = getIconValue(type);
 
+  if (value.includes('scooty')) {
+    return '/scooty.png';
+  }
+
+  if (value.includes('car_5_seater')) {
+    return '/Hatchback.png';
+  }
+
+  if (value.includes('car_7_seater')) {
+    return '/SUV.png';
+  }
+
+  if (value.includes('mini_bus') || value.includes('minibus')) {
+    return '/mini_bus.png';
+  }
+
+  if (value.includes('bus')) {
+    return '/bus.png';
+  }
+
   if (value.includes('bike')) {
     return '/1_Bike.png';
   }
@@ -457,6 +481,11 @@ const getVehiclePreviewImage = (type) => {
 
   const value = getIconValue(type);
 
+  if (value.includes('scooty')) return ScootyIcon;
+  if (value.includes('car_5_seater')) return HatchbackIcon;
+  if (value.includes('car_7_seater')) return SuvIcon;
+  if (value.includes('mini_bus') || value.includes('minibus')) return MiniBusIcon;
+  if (value.includes('bus')) return BusIcon;
   if (value.includes('bike')) return BikeIcon;
   if (value.includes('auto')) return AutoIcon;
   if (value.includes('ehc')) return EhcvIcon;
@@ -473,6 +502,26 @@ const getVehiclePreviewImage = (type) => {
 
 const getCapacity = (type) => {
   const value = getIconValue(type);
+
+  if (value.includes('scooty')) {
+    return 1;
+  }
+
+  if (value.includes('bus') && !value.includes('mini')) {
+    return 40;
+  }
+
+  if (value.includes('mini_bus') || value.includes('minibus')) {
+    return 15;
+  }
+
+  if (value.includes('car_7_seater')) {
+    return 7;
+  }
+
+  if (value.includes('car_5_seater')) {
+    return 5;
+  }
 
   if (value.includes('bike')) {
     return 1;
