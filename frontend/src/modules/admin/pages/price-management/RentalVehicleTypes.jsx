@@ -213,6 +213,7 @@ const buildDefaultForm = () => {
     short_description: '',
     description: '',
     vehicleCategory: 'Car',
+    rental_type: 'both',
     image: '',
     coverImage: '',
     galleryImages: [],
@@ -343,6 +344,7 @@ const RentalVehicleTypes = ({ mode: propMode }) => {
               short_description: selected.short_description || '',
               description: selected.description || '',
               vehicleCategory: selected.vehicleCategory || 'Car',
+              rental_type: selected.rental_type || 'both',
               image: getCoverImage(selected),
               coverImage: getCoverImage(selected),
               galleryImages: getGalleryImages(selected),
@@ -1013,6 +1015,26 @@ const RentalVehicleTypes = ({ mode: propMode }) => {
               ))}
             </select>
             <p className="mt-2 text-xs text-slate-500">Choose the overall class so the layout and pricing feel matched to the vehicle type.</p>
+          </div>
+
+          <div>
+            <label className={labelClass}>Rental Type *</label>
+            <select
+              value={formData.rental_type || 'both'}
+              onChange={(event) => updateForm('rental_type', event.target.value)}
+              className={inputClass}
+            >
+              {[
+                { value: 'both', label: 'Both (With & Without Driver)' },
+                { value: 'with_driver', label: 'With Driver Only' },
+                { value: 'without_driver', label: 'Without Driver Only' },
+              ].map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <p className="mt-2 text-xs text-slate-500">Specify whether this vehicle type includes a driver option.</p>
           </div>
 
           <div>

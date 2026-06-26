@@ -9,10 +9,10 @@ const ServiceTile = ({ icon, label, description, path, accentClass, loading }) =
 
   if (loading) {
     return (
-      <div className="flex w-full min-h-[112px] items-center justify-center">
-        <div className="flex h-[100px] w-[90%] animate-pulse flex-col items-center justify-center gap-2 rounded-[16px] border border-white/20 bg-white/65 px-1 py-1.5">
-        <div className="h-[72px] w-[72px] rounded-[16px] bg-gray-200" />
-          <div className="h-3 w-12 rounded-full bg-gray-200" />
+      <div className="flex w-full items-center justify-center">
+        <div className="flex h-[102px] w-[95%] animate-pulse flex-col items-center justify-center gap-1.5 rounded-[16px] border border-white/20 bg-white/65 px-1 py-1">
+          <div className="h-[72px] w-[72px] rounded-[16px] bg-gray-200" />
+          <div className="h-2 w-10 rounded-full bg-gray-200" />
         </div>
       </div>
     );
@@ -23,15 +23,30 @@ const ServiceTile = ({ icon, label, description, path, accentClass, loading }) =
       type="button"
       whileHover={{ y: -1.5 }}
       whileTap={{ scale: 0.98 }}
-      onClick={() => path && navigate(path)}
-      className="flex h-full min-h-[112px] w-full items-center justify-center transition-transform"
+      onClick={() => {
+        if (!path) return;
+        const lowerLabel = String(label || '').toLowerCase();
+        const state = {};
+        if (lowerLabel.includes('without driver')) {
+          state.rentalType = 'without_driver';
+        } else if (lowerLabel.includes('with driver')) {
+          state.rentalType = 'with_driver';
+        } else if (lowerLabel.includes('outstation')) {
+          state.isOutstation = true;
+          state.deliveryScope = 'outstation';
+        } else if (lowerLabel.includes('movers')) {
+          state.category = 'movers';
+        }
+        navigate(path, { state });
+      }}
+      className="flex h-full w-full items-center justify-center transition-transform"
     >
-      <div className="flex h-[108px] w-[92%] flex-col items-center justify-center gap-1.5 px-1 py-1">
-        <div className={`flex h-[82px] w-[82px] items-center justify-center rounded-[18px] overflow-hidden ${accentClass || 'bg-gray-50'}`}>
+      <div className="flex h-[102px] w-full flex-col items-center justify-center gap-1 px-1 py-0.5">
+        <div className={`flex h-[72px] w-[72px] items-center justify-center rounded-[18px] overflow-hidden ${accentClass || 'bg-gray-50'}`}>
           <img 
             src={icon} 
             alt={label} 
-            className="h-full w-full object-contain p-1.5 rounded-[14px] drop-shadow-sm transition-transform duration-300 hover:scale-105" 
+            className="h-full w-full object-contain p-1 rounded-[14px] drop-shadow-sm transition-transform duration-300 hover:scale-105" 
             style={{ 
               mixBlendMode: 'multiply',
               filter: 'contrast(1.08) brightness(1.04)'
@@ -39,8 +54,8 @@ const ServiceTile = ({ icon, label, description, path, accentClass, loading }) =
           />
         </div>
 
-        <div className="flex flex-col items-center gap-0.5 text-center">
-          <span className="min-h-[24px] text-[10.5px] font-semibold leading-tight text-slate-900 line-clamp-2 uppercase">
+        <div className="flex flex-col items-center text-center">
+          <span className="min-h-[22px] text-[10px] font-bold leading-tight text-slate-800 line-clamp-2 uppercase tracking-wide">
             {label}
           </span>
           <span className="sr-only">{description}</span>
@@ -107,10 +122,29 @@ const ServiceGrid = () => {
     console.log('[DEBUG] ServiceGrid modules received:', modules, 'settingsLoading:', settingsLoading);
     if (settingsLoading) return;
     
-    // Only show active modules
-    const activeModules = (modules || []).filter(m => m.active);
-    
-    const mapped = activeModules.map((m, idx) => ({
+    const desiredOrder = [
+      'delivery',
+      'courier',
+      'rental without driver',
+      'rental with driver',
+      'delivery outstation',
+      'packers & movers'
+    ];
+
+    // Filter active modules to match desiredOrder names
+    const matchedModules = (modules || []).filter(m => {
+      const name = String(m.name || '').toLowerCase().trim();
+      return m.active && desiredOrder.includes(name);
+    });
+
+    // Sort active modules based on desiredOrder
+    matchedModules.sort((a, b) => {
+      const nameA = String(a.name || '').toLowerCase().trim();
+      const nameB = String(b.name || '').toLowerCase().trim();
+      return desiredOrder.indexOf(nameA) - desiredOrder.indexOf(nameB);
+    });
+
+    const mapped = matchedModules.map((m, idx) => ({
       icon: normalizeAssetUrl(m.mobile_menu_icon),
       label: m.name,
       description: m.short_description,
@@ -121,9 +155,6 @@ const ServiceGrid = () => {
     setServices(mapped);
     setLoading(false);
   }, [modules, settingsLoading]);
-
-  const optionCount = loading ? '...' : services.length;
-  const optionLabel = services.length === 1 ? 'option' : 'options';
 
   return (
     <div className="px-5">
@@ -139,19 +170,19 @@ const ServiceGrid = () => {
             <h2 className="mt-1 text-[18px] font-semibold text-slate-900">Choose your ride</h2>
             <p className="mt-0.5 text-[11px] font-medium text-slate-500">Tap to start quickly.</p>
           </div>
-
-          <div className="rounded-full border border-white/80 bg-white/90 px-3 py-2 text-[11px] font-medium text-slate-600 shadow-sm">
-            {optionCount} {optionLabel}
-          </div>
         </div>
 
-        <div className="mt-4 grid auto-rows-fr grid-cols-3 gap-3 md:grid-cols-4">
+        <div className="mt-4">
           {loading ? (
-             [...Array(4)].map((_, i) => <ServiceTile key={i} loading />)
+            <div className="grid grid-cols-3 gap-3">
+              {[...Array(6)].map((_, i) => <ServiceTile key={i} loading />)}
+            </div>
           ) : (
-            services.map((service, index) => (
-              <ServiceTile key={getServiceKey(service, index)} {...service} />
-            ))
+            <div className="grid grid-cols-3 gap-3">
+              {services.slice(0, 6).map((service, index) => (
+                <ServiceTile key={getServiceKey(service, index)} {...service} />
+              ))}
+            </div>
           )}
         </div>
       </motion.section>

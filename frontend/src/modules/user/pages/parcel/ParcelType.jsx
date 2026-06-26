@@ -70,6 +70,7 @@ const DELIVERY_CATEGORY_OPTIONS = [
 const ParcelType = () => {
   const location = useLocation();
   const routeState = location.state || {};
+  const isOutstation = Boolean(routeState.isOutstation || routeState.deliveryScope === 'outstation');
   const savedLocation = getSavedLocation();
   const savedPickupLabel = String(savedLocation?.address || '').trim();
   const savedPickupCoords = getSavedLocationCoords();
@@ -224,6 +225,8 @@ const ParcelType = () => {
       deliveryCategory: category.id,
       pickup: pickupAddress,
       pickupCoords,
+      isOutstation,
+      deliveryScope: isOutstation ? 'outstation' : 'city',
     };
 
     if (typeof window !== 'undefined') {
@@ -232,8 +235,18 @@ const ParcelType = () => {
 
     navigate('/taxi/user/parcel/details', {
       state: nextState,
+      replace: Boolean(routeState.category),
     });
   };
+
+  useEffect(() => {
+    if (!loading && routeState.category) {
+      const selectedCat = DELIVERY_CATEGORY_OPTIONS.find((c) => c.id === routeState.category);
+      if (selectedCat) {
+        handleCategorySelect(selectedCat);
+      }
+    }
+  }, [loading, routeState.category]);
 
   return (
     <div className="min-h-screen bg-[#F5F8FF] max-w-lg mx-auto flex flex-col font-sans relative overflow-x-hidden">
@@ -253,7 +266,7 @@ const ParcelType = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
            className="bg-white rounded-[24px] p-4 flex items-center gap-4 shadow-lg border border-white/50"
-            onClick={() => navigate('/taxi/user/parcel/details', { state: { editPickup: true, pickup: pickupAddress, pickupCoords } })}
+             onClick={() => navigate('/taxi/user/parcel/details', { state: { editPickup: true, pickup: pickupAddress, pickupCoords, isOutstation, deliveryScope: isOutstation ? 'outstation' : 'city' } })}
            >
              <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
                <MapPin size={20} className="text-emerald-500 fill-emerald-500/20" />

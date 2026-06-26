@@ -363,6 +363,14 @@ const normalizeParcelPayload = (parcel = {}) => ({
   senderMobile: String(parcel.senderMobile || '').trim(),
   receiverName: String(parcel.receiverName || '').trim(),
   receiverMobile: String(parcel.receiverMobile || '').trim(),
+  packersAndMovers: parcel.packersAndMovers ? {
+    houseType: String(parcel.packersAndMovers.houseType || '').trim(),
+    pickupFloor: Number(parcel.packersAndMovers.pickupFloor || 0),
+    dropFloor: Number(parcel.packersAndMovers.dropFloor || 0),
+    liftAvailable: String(parcel.packersAndMovers.liftAvailable || 'no').trim(),
+    laborSupport: Number(parcel.packersAndMovers.laborSupport || 0),
+    packingMaterial: Boolean(parcel.packersAndMovers.packingMaterial),
+  } : undefined,
 });
 
 const normalizeIntercityPayload = (intercity = {}) => ({

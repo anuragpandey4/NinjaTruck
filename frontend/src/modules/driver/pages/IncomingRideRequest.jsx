@@ -138,7 +138,9 @@ const IncomingRideRequest = ({
       ? (isParcel ? 'Scheduled delivery request' : isIntercity ? 'Scheduled intercity request' : 'Scheduled ride request')
       : (isParcel ? 'New delivery request' : isIntercity ? 'New intercity request' : 'New ride request'));
   const intercityRoute = [data.raw?.intercity?.fromCity, data.raw?.intercity?.toCity].filter(Boolean).join(' to ');
-  const category = data.raw?.parcel?.category || data.raw?.parcel?.weight || (isParcel ? 'Parcel delivery' : isIntercity ? intercityRoute || 'Intercity trip' : 'Passenger ride');
+  const category = data.raw?.parcel?.category === 'movers'
+    ? 'Packers & Movers'
+    : (data.raw?.parcel?.category || data.raw?.parcel?.weight || (isParcel ? 'Parcel delivery' : isIntercity ? intercityRoute || 'Intercity trip' : 'Passenger ride'));
   const payment = normalizePayment(data.payment);
   const timerProgress = Math.max(0, Math.min(100, (timer / requestDurationSeconds) * 100));
   const accentClass = isParcel ? 'bg-orange-500' : isIntercity ? 'bg-yellow-400' : 'bg-blue-600';
@@ -170,8 +172,8 @@ const IncomingRideRequest = ({
   const themeBgGradient = isParcel 
     ? 'from-orange-50/90 to-white' 
     : isIntercity 
-      ? 'from-teal-50/90 to-white' 
-      : 'from-emerald-50/95 to-white';
+    ? 'from-teal-50/90 to-white' 
+    : 'from-emerald-50/95 to-white';
   const accentBg = isParcel ? 'bg-orange-500' : isIntercity ? 'bg-teal-500' : 'bg-emerald-500';
   const accentText = isParcel ? 'text-orange-600' : isIntercity ? 'text-teal-600' : 'text-emerald-600';
   const accentHoverBg = isParcel ? 'hover:bg-orange-600' : isIntercity ? 'hover:bg-teal-600' : 'hover:bg-emerald-600';
@@ -180,8 +182,8 @@ const IncomingRideRequest = ({
   const glowShadow = isParcel 
     ? 'shadow-[0_12px_24px_rgba(249,115,22,0.3)]' 
     : isIntercity 
-      ? 'shadow-[0_12px_24px_rgba(13,148,136,0.3)]' 
-      : 'shadow-[0_12px_24px_rgba(16,185,129,0.3)]';
+    ? 'shadow-[0_12px_24px_rgba(13,148,136,0.3)]' 
+    : 'shadow-[0_12px_24px_rgba(16,185,129,0.3)]';
 
   return (
     <AnimatePresence mode="wait">
@@ -365,6 +367,38 @@ const IncomingRideRequest = ({
                 </div>
               </div>
             </div>
+
+            {isParcel && data.raw?.parcel?.packersAndMovers && (() => {
+              const movers = data.raw.parcel.packersAndMovers;
+              return (
+                <div className="mb-4 rounded-[20px] border border-orange-100 bg-orange-50/30 p-3.5 space-y-2">
+                  <div className="flex items-center justify-between border-b border-orange-100/50 pb-1.5">
+                    <p className="text-[9px] font-black uppercase tracking-[0.15em] text-orange-600 font-bold">Packers & Movers Requirement</p>
+                    <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[9px] font-black text-orange-700">{movers.houseType}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Floors</span>
+                      <span className="font-bold text-slate-700">F{movers.pickupFloor} → F{movers.dropFloor}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Lift</span>
+                      <span className="font-bold text-slate-700 uppercase">{movers.liftAvailable || 'no'}</span>
+                    </div>
+                    <div className="flex justify-between col-span-2">
+                      <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Helpers Required</span>
+                      <span className="font-bold text-slate-700">{movers.laborSupport === 0 ? 'None (Driver only)' : `${movers.laborSupport} Helper${movers.laborSupport > 1 ? 's' : ''}`}</span>
+                    </div>
+                    {movers.packingMaterial && (
+                      <div className="col-span-2 text-[9px] font-bold text-orange-700 flex items-center gap-1.5 pt-1 border-t border-orange-100/30">
+                        <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                        <span>Packing materials needed</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
 
             <div className="mb-5 rounded-[24px] border border-slate-100 bg-white p-4 shadow-[0_8px_24px_rgba(15,23,42,0.02)]">
               <div className="relative flex flex-col gap-5">

@@ -964,6 +964,14 @@ const SenderReceiverDetails = () => {
   const storedUser = useMemo(() => readStoredUserInfo(), []);
   const [senderName, setSenderName] = useState(() => parcelState.senderName || storedUser?.name || '');
   const [senderMobile, setSenderMobile] = useState(() => parcelState.senderMobile || storedUser?.phone || '');
+
+  // Packers & Movers custom fields
+  const [houseType, setHouseType] = useState(() => parcelState.parcel?.packersAndMovers?.houseType || '1BHK');
+  const [pickupFloor, setPickupFloor] = useState(() => Number(parcelState.parcel?.packersAndMovers?.pickupFloor || 0));
+  const [dropFloor, setDropFloor] = useState(() => Number(parcelState.parcel?.packersAndMovers?.dropFloor || 0));
+  const [liftAvailable, setLiftAvailable] = useState(() => parcelState.parcel?.packersAndMovers?.liftAvailable || 'no');
+  const [laborSupport, setLaborSupport] = useState(() => Number(parcelState.parcel?.packersAndMovers?.laborSupport || 0));
+  const [packingMaterial, setPackingMaterial] = useState(() => Boolean(parcelState.parcel?.packersAndMovers?.packingMaterial || false));
   const [useSelfForReceiver, setUseSelfForReceiver] = useState(() => {
     const receiverNameSeed = String(parcelState.receiverName || '').trim();
     const receiverMobileSeed = String(parcelState.receiverMobile || '').trim();
@@ -1019,8 +1027,16 @@ const SenderReceiverDetails = () => {
       drop,
       pickupCoords,
       dropCoords,
+      packersAndMovers: {
+        houseType,
+        pickupFloor,
+        dropFloor,
+        liftAvailable,
+        laborSupport,
+        packingMaterial,
+      },
     }));
-  }, [drop, dropCoords, parcelState, pickup, pickupCoords, receiverMobile, receiverName, senderMobile, senderName]);
+  }, [drop, dropCoords, parcelState, pickup, pickupCoords, receiverMobile, receiverName, senderMobile, senderName, houseType, pickupFloor, dropFloor, liftAvailable, laborSupport, packingMaterial]);
 
   useEffect(() => {
     let active = true;
@@ -1674,6 +1690,14 @@ const SenderReceiverDetails = () => {
           senderMobile,
           receiverName,
           receiverMobile,
+          packersAndMovers: parcelState.category === 'movers' ? {
+            houseType,
+            pickupFloor,
+            dropFloor,
+            liftAvailable,
+            laborSupport,
+            packingMaterial,
+          } : undefined,
         },
         isParcel: true,
         searchNonce: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -1882,6 +1906,137 @@ const SenderReceiverDetails = () => {
               Edit
             </button>
           </div>
+        )}
+
+        {/* Packers & Movers Custom Fields Card */}
+        {parcelState.category === 'movers' && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mx-1 mb-5 rounded-[28px] bg-white p-5 shadow-[0_20px_50px_rgba(0,0,0,0.06)] border border-slate-100/80 space-y-5"
+          >
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Add-on details</p>
+              <h3 className="text-lg font-black tracking-tight text-slate-900 mt-0.5">Movers & Packers Requirements</h3>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {/* House size */}
+              <div className="col-span-2 space-y-1.5">
+                <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-slate-400">House Size</label>
+                <select
+                  value={houseType}
+                  onChange={(e) => setHouseType(e.target.value)}
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/75 px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition-all focus:border-blue-300 focus:bg-white"
+                >
+                  {['1BHK', '2BHK', '3BHK', '4BHK+', 'Villa / House', 'Office / Commercial', 'Few Items'].map((val) => (
+                    <option key={val} value={val}>{val}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Pickup Floor */}
+              <div className="space-y-1.5">
+                <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-slate-400">Pickup Floor</label>
+                <div className="flex items-center justify-between border border-slate-205 bg-slate-50/70 rounded-2xl p-2">
+                  <button
+                    type="button"
+                    onClick={() => setPickupFloor((prev) => Math.max(0, prev - 1))}
+                    className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 active:scale-95 transition-all shadow-sm"
+                  >
+                    -
+                  </button>
+                  <span className="text-xs font-bold text-slate-800">{pickupFloor === 0 ? 'Ground' : `${pickupFloor} Floor`}</span>
+                  <button
+                    type="button"
+                    onClick={() => setPickupFloor((prev) => prev + 1)}
+                    className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 active:scale-95 transition-all shadow-sm"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* Drop Floor */}
+              <div className="space-y-1.5">
+                <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-slate-400">Drop Floor</label>
+                <div className="flex items-center justify-between border border-slate-205 bg-slate-50/70 rounded-2xl p-2">
+                  <button
+                    type="button"
+                    onClick={() => setDropFloor((prev) => Math.max(0, prev - 1))}
+                    className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 active:scale-95 transition-all shadow-sm"
+                  >
+                    -
+                  </button>
+                  <span className="text-xs font-bold text-slate-800">{dropFloor === 0 ? 'Ground' : `${dropFloor} Floor`}</span>
+                  <button
+                    type="button"
+                    onClick={() => setDropFloor((prev) => prev + 1)}
+                    className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 active:scale-95 transition-all shadow-sm"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* Lift Availability */}
+              <div className="col-span-2 space-y-1.5">
+                <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-slate-400">Lift Availability</label>
+                <select
+                  value={liftAvailable}
+                  onChange={(e) => setLiftAvailable(e.target.value)}
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50/75 px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition-all focus:border-blue-300 focus:bg-white"
+                >
+                  <option value="no">No Lift</option>
+                  <option value="both">Lift Available at Both Locations</option>
+                  <option value="pickup">Lift Available at Pickup Only</option>
+                  <option value="drop">Lift Available at Drop Only</option>
+                </select>
+              </div>
+
+              {/* Labor Support count */}
+              <div className="col-span-2 flex items-center justify-between bg-slate-50/40 rounded-2xl p-3.5 border border-slate-100">
+                <div className="space-y-0.5">
+                  <p className="text-[13px] font-black text-slate-900">Labor Support</p>
+                  <p className="text-[11px] font-medium text-slate-400">Need helpers for loading/unloading?</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setLaborSupport((prev) => Math.max(0, prev - 1))}
+                    className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 active:scale-90 shadow-sm"
+                  >
+                    -
+                  </button>
+                  <span className="text-xs font-bold text-slate-800 min-w-[20px] text-center">
+                    {laborSupport === 0 ? 'None' : `${laborSupport} Helper${laborSupport > 1 ? 's' : ''}`}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setLaborSupport((prev) => prev + 1)}
+                    className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 active:scale-90 shadow-sm"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* Packing Materials Checkbox */}
+              <div className="col-span-2 flex items-center justify-between bg-slate-50/40 rounded-2xl p-3.5 border border-slate-100">
+                <div className="space-y-0.5">
+                  <p className="text-[13px] font-black text-slate-900">Packing Materials</p>
+                  <p className="text-[11px] font-medium text-slate-400">Bubble wrap, boxes and tape support</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPackingMaterial((prev) => !prev)}
+                  className={`relative h-7 w-14 rounded-full transition-all ${packingMaterial ? 'bg-blue-600' : 'bg-slate-300'}`}
+                >
+                  <span className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-all ${packingMaterial ? 'left-8' : 'left-1'}`} />
+                </button>
+              </div>
+            </div>
+          </motion.div>
         )}
 
         <div className="mt-5 space-y-5 px-2">

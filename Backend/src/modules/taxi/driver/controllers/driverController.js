@@ -2752,6 +2752,7 @@ export const goOnline = async (req, res) => {
   }
 
   const todayKey = new Date().toISOString().slice(0, 10);
+  const hasTodaySelfie = existingDriver.onlineSelfie?.forDate === todayKey;
   // Selfie check bypassed
 
   await ensureDriverWalletCanAcceptRide(existingDriver);

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Fuel, Shield, ChevronRight, Star, Info, Car, Search, X, Bike } from 'lucide-react';
 import { userService } from '../../services/userService';
@@ -121,6 +121,7 @@ const normalizeRentalVehicle = (item = {}, index = 0) => {
     tag,
     tagColor,
     tagBg,
+    rentalType: item.rental_type || 'both',
     image: item.image || '',
     rating: '4.8',
     fuel: isBike ? 'Self-drive · License required' : 'Self-drive · Clean and sanitized',
@@ -185,6 +186,8 @@ const RentalSkeleton = () => (
 );
 
 const BikeRentalHome = () => {
+  const location = useLocation();
+  const rentalTypeFilter = location.state?.rentalType; // 'with_driver' or 'without_driver'
   const [selectedDuration, setSelectedDuration] = useState('Hourly');
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -224,7 +227,11 @@ const BikeRentalHome = () => {
         setVehicles(
           results
             .map((item, index) => normalizeRentalVehicle(item, index))
-            .filter((item) => Object.values(item.prices).some((price) => Number(price) > 0)),
+            .filter((item) => Object.values(item.prices).some((price) => Number(price) > 0))
+            .filter((item) => {
+              if (!rentalTypeFilter) return true;
+              return item.rentalType === 'both' || item.rentalType === rentalTypeFilter;
+            }),
         );
       } catch (error) {
         if (mounted) {

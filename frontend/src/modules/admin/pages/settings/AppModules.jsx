@@ -74,7 +74,7 @@ const AppModules = ({ mode: propMode }) => {
   const fetchModules = async () => {
     try {
       setLoading(true);
-      const res = await adminService.getAppModules({});
+      const res = await adminService.getAppModules({ limit: 100 });
       const data = res.data?.data?.results || res.data?.results || (Array.isArray(res.data?.data) ? res.data.data : []);
       setModules(data);
     } catch (err) {
@@ -90,7 +90,7 @@ const AppModules = ({ mode: propMode }) => {
     } else if (isEdit && id) {
       const fetchItem = async () => {
         try {
-          const res = await adminService.getAppModules({});
+          const res = await adminService.getAppModules({ limit: 100 });
           const data = res.data?.data?.results || res.data?.results || (Array.isArray(res.data?.data) ? res.data.data : []);
           const item = data.find(m => String(m._id || m.id) === String(id));
           if (item) {

@@ -840,38 +840,13 @@ const Home = () => {
         {showDeferredSections ? (
           <>
             <LocationMapSection />
-            
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.05, ease: 'easeOut' }}
-              className="mx-5"
-            >
-              <motion.button
-                type="button"
-                whileTap={{ scale: 0.99 }}
-                onClick={() => navigate('/ride/select-location')}
-                className="flex w-full items-center gap-2 rounded-[18px] border border-white/80 bg-white/95 px-3.5 py-3 text-left shadow-[0_12px_26px_rgba(15,23,42,0.06)]"
-              >
-                <Search size={16} className="text-slate-500" strokeWidth={2.5} />
-                <span className="min-w-0 flex-1 truncate text-[12px] font-medium text-slate-500">
-                  Search destination
-                </span>
-                <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-600">Go</span>
-              </motion.button>
-            </motion.div>
-
             <ServiceGrid />
-            <ActionsSection />
-            <PromoBanners />
             <ExplorerSection />
-
           </>
         ) : (
           <div className="space-y-4 px-5">
             <div className="h-[170px] animate-pulse rounded-[20px] border border-white/80 bg-white/70 shadow-[0_10px_22px_rgba(15,23,42,0.05)]" />
             <div className="h-[112px] animate-pulse rounded-[24px] border border-white/80 bg-white/70 shadow-[0_10px_22px_rgba(15,23,42,0.05)]" />
-            <div className="h-[160px] animate-pulse rounded-[24px] border border-white/80 bg-white/70 shadow-[0_10px_22px_rgba(15,23,42,0.05)]" />
           </div>
         )}
         <div

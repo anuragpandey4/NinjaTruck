@@ -6,7 +6,7 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
-  BusFron
+  BusFront,
   ArrowRightLeft,
   Loader2,
   Route,
@@ -386,7 +386,7 @@ const BusHome = () => {
                   className="w-full bg-transparent text-base font-semibold text-slate-900 focus:outline-none placeholder:text-slate-300"
                 />
               </div>
-              
+
               <div className="absolute right-6 top-1/2 -translate-y-1/2 z-10">
                 <button
                   type="button"
@@ -439,11 +439,10 @@ const BusHome = () => {
                   key={item.value}
                   type="button"
                   onClick={() => setDate(item.value)}
-                  className={`rounded-full px-4 py-2 text-xs font-bold transition-all ${
-                    date === item.value
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-slate-50 text-slate-600 border border-slate-100 hover:border-slate-300'
-                  }`}
+                  className={`rounded-full px-4 py-2 text-xs font-bold transition-all ${date === item.value
+                    ? 'bg-slate-900 text-white'
+                    : 'bg-slate-50 text-slate-600 border border-slate-100 hover:border-slate-300'
+                    }`}
                 >
                   {item.label}
                 </button>
@@ -542,7 +541,7 @@ const BusHome = () => {
 
       {calendarOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-sm flex items-end justify-center p-4">
-          <motion.div 
+          <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl"
@@ -601,15 +600,14 @@ const BusHome = () => {
                     type="button"
                     disabled={isDisabled}
                     onClick={() => selectCalendarDate(day)}
-                    className={`aspect-square rounded-xl text-sm font-bold transition-all flex items-center justify-center ${
-                      isSelected
-                        ? 'bg-slate-900 text-white shadow-lg'
-                        : isDisabled
-                          ? 'text-slate-200'
-                          : isCurrentMonth
-                            ? 'text-slate-800 hover:bg-slate-50'
-                            : 'text-slate-300'
-                    }`}
+                    className={`aspect-square rounded-xl text-sm font-bold transition-all flex items-center justify-center ${isSelected
+                      ? 'bg-slate-900 text-white shadow-lg'
+                      : isDisabled
+                        ? 'text-slate-200'
+                        : isCurrentMonth
+                          ? 'text-slate-800 hover:bg-slate-50'
+                          : 'text-slate-300'
+                      }`}
                   >
                     {day.getDate()}
                   </button>

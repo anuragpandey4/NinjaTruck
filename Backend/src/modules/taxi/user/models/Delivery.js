@@ -146,6 +146,34 @@ const deliverySchema = new mongoose.Schema(
         default: '',
         trim: true,
       },
+      packersAndMovers: {
+        houseType: {
+          type: String,
+          default: '',
+          trim: true,
+        },
+        pickupFloor: {
+          type: Number,
+          default: 0,
+        },
+        dropFloor: {
+          type: Number,
+          default: 0,
+        },
+        liftAvailable: {
+          type: String,
+          default: 'no',
+          trim: true,
+        },
+        laborSupport: {
+          type: Number,
+          default: 0,
+        },
+        packingMaterial: {
+          type: Boolean,
+          default: false,
+        },
+      },
     },
     acceptedAt: {
       type: Date,

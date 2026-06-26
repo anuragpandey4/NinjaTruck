@@ -213,6 +213,13 @@ const rentalVehicleTypeSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    rental_type: {
+      type: String,
+      enum: ['with_driver', 'without_driver', 'both'],
+      default: 'both',
+      lowercase: true,
+      trim: true,
+    },
   },
   { timestamps: true },
 );

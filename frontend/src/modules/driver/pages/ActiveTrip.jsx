@@ -2045,6 +2045,46 @@ const ActiveTrip = () => {
                                     <button onClick={() => callContact(pickupContact?.phone)} className="w-11 h-11 bg-slate-50 rounded-xl flex items-center justify-center active:scale-95 transition-transform" style={{ color: routeStrokeColor }} aria-label="Call contact"><Phone size={18} strokeWidth={2.5} /></button>
                                 </div>
                             </div>
+
+                            {/* Packers & Movers Details for Driver */}
+                            {isParcel && (liveRaw?.parcel?.packersAndMovers || effectiveState?.parcel?.packersAndMovers) && (() => {
+                                const movers = liveRaw?.parcel?.packersAndMovers || effectiveState?.parcel?.packersAndMovers;
+                                return (
+                                    <div className="mb-4 rounded-2xl border border-blue-100 bg-blue-50/40 p-4 space-y-3">
+                                        <div className="flex items-center justify-between border-b border-blue-50 pb-2">
+                                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 font-bold">Packers & Movers Request</p>
+                                            <span className="rounded-full bg-blue-105 px-2.5 py-0.5 text-[9px] font-bold text-blue-700">{movers.houseType}</span>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2 text-xs">
+                                            <div>
+                                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Pickup Floor</p>
+                                                <p className="font-bold text-slate-700 mt-0.5">{movers.pickupFloor === 0 ? 'Ground Floor' : `${movers.pickupFloor} Floor`}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Drop Floor</p>
+                                                <p className="font-bold text-slate-700 mt-0.5">{movers.dropFloor === 0 ? 'Ground Floor' : `${movers.dropFloor} Floor`}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Lift Available</p>
+                                                <p className="font-bold text-slate-700 mt-0.5 uppercase tracking-wide">
+                                                    {movers.liftAvailable === 'both' ? 'Yes (Both)' : movers.liftAvailable === 'pickup' ? 'Yes (Pickup)' : movers.liftAvailable === 'drop' ? 'Yes (Drop)' : 'No Lift'}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Labor Required</p>
+                                                <p className="font-bold text-slate-700 mt-0.5">{movers.laborSupport === 0 ? 'Driver Only' : `${movers.laborSupport} Helper${movers.laborSupport > 1 ? 's' : ''}`}</p>
+                                            </div>
+                                            {movers.packingMaterial && (
+                                                <div className="col-span-2 pt-1 border-t border-blue-50/50 flex items-center gap-1.5 text-blue-700 font-bold text-[10px] uppercase tracking-wider">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+                                                    <span>Packing Materials Requested</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })()}
+
                             <div className="mb-4 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3">
                                 <div className="flex items-center justify-between gap-3">
                                     <div>
@@ -2195,20 +2235,60 @@ const ActiveTrip = () => {
                                     </button>
                                 </div>
                             </div>
-                            <div className="bg-slate-50 rounded-2xl p-3 mb-6 border border-slate-100 flex items-center justify-between gap-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
-                                        {isParcel ? <Package size={18} className="text-white" /> : <User size={18} className="text-white opacity-40" />}
-                                    </div>
-                                    <div className="min-w-0 space-y-0.5">
-                                        <p className="text-[13px] font-semibold text-slate-900 leading-none uppercase truncate">{isParcel ? tripData.receiver.name : tripData.user.name}</p>
-                                        <p className="text-[8px] font-semibold text-slate-400 uppercase tracking-wide">{isParcel ? 'Receiver' : 'Passenger'}</p>
-                                    </div>
-                                </div>
-                                <button onClick={() => callContact(destinationContact?.phone)} className="shrink-0 w-9 h-9 bg-white rounded-lg border border-slate-100 flex items-center justify-center" style={{ color: routeStrokeColor }} aria-label="Call destination contact"><Phone size={16} strokeWidth={2.5} /></button>
-                            </div>
-                            {isParcel && (
-                                <div className="mb-4 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3">
+                             <div className="bg-slate-50 rounded-2xl p-3 mb-6 border border-slate-100 flex items-center justify-between gap-3">
+                                 <div className="flex items-center gap-3">
+                                     <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
+                                         {isParcel ? <Package size={18} className="text-white" /> : <User size={18} className="text-white opacity-40" />}
+                                     </div>
+                                     <div className="min-w-0 space-y-0.5">
+                                         <p className="text-[13px] font-semibold text-slate-900 leading-none uppercase truncate">{isParcel ? tripData.receiver.name : tripData.user.name}</p>
+                                         <p className="text-[8px] font-semibold text-slate-400 uppercase tracking-wide">{isParcel ? 'Receiver' : 'Passenger'}</p>
+                                     </div>
+                                 </div>
+                                 <button onClick={() => callContact(destinationContact?.phone)} className="shrink-0 w-9 h-9 bg-white rounded-lg border border-slate-100 flex items-center justify-center" style={{ color: routeStrokeColor }} aria-label="Call destination contact"><Phone size={16} strokeWidth={2.5} /></button>
+                             </div>
+
+                             {/* Packers & Movers Details for Driver */}
+                             {isParcel && (liveRaw?.parcel?.packersAndMovers || effectiveState?.parcel?.packersAndMovers) && (() => {
+                                 const movers = liveRaw?.parcel?.packersAndMovers || effectiveState?.parcel?.packersAndMovers;
+                                 return (
+                                     <div className="mb-4 rounded-2xl border border-blue-100 bg-blue-50/40 p-4 space-y-3">
+                                         <div className="flex items-center justify-between border-b border-blue-50 pb-2">
+                                             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 font-bold">Packers & Movers Request</p>
+                                             <span className="rounded-full bg-blue-105 px-2.5 py-0.5 text-[9px] font-bold text-blue-700">{movers.houseType}</span>
+                                         </div>
+                                         <div className="grid grid-cols-2 gap-2 text-xs">
+                                             <div>
+                                                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Pickup Floor</p>
+                                                 <p className="font-bold text-slate-700 mt-0.5">{movers.pickupFloor === 0 ? 'Ground Floor' : `${movers.pickupFloor} Floor`}</p>
+                                             </div>
+                                             <div>
+                                                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Drop Floor</p>
+                                                 <p className="font-bold text-slate-700 mt-0.5">{movers.dropFloor === 0 ? 'Ground Floor' : `${movers.dropFloor} Floor`}</p>
+                                             </div>
+                                             <div>
+                                                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Lift Available</p>
+                                                 <p className="font-bold text-slate-700 mt-0.5 uppercase tracking-wide">
+                                                     {movers.liftAvailable === 'both' ? 'Yes (Both)' : movers.liftAvailable === 'pickup' ? 'Yes (Pickup)' : movers.liftAvailable === 'drop' ? 'Yes (Drop)' : 'No Lift'}
+                                                 </p>
+                                             </div>
+                                             <div>
+                                                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Labor Required</p>
+                                                 <p className="font-bold text-slate-700 mt-0.5">{movers.laborSupport === 0 ? 'Driver Only' : `${movers.laborSupport} Helper${movers.laborSupport > 1 ? 's' : ''}`}</p>
+                                             </div>
+                                             {movers.packingMaterial && (
+                                                 <div className="col-span-2 pt-1 border-t border-blue-50/50 flex items-center gap-1.5 text-blue-700 font-bold text-[10px] uppercase tracking-wider">
+                                                     <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+                                                     <span>Packing Materials Requested</span>
+                                                 </div>
+                                             )}
+                                         </div>
+                                     </div>
+                                 );
+                             })()}
+
+                             {isParcel && (
+                                 <div className="mb-4 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3">
                                     <div className="flex items-center justify-between gap-3">
                                         <div>
                                             <p className="text-[9px] font-black uppercase tracking-[0.22em] text-slate-400">Delivery Radius</p>
