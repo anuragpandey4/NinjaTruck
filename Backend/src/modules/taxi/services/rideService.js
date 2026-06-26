@@ -371,6 +371,9 @@ const normalizeParcelPayload = (parcel = {}) => ({
     laborSupport: Number(parcel.packersAndMovers.laborSupport || 0),
     packingMaterial: Boolean(parcel.packersAndMovers.packingMaterial),
   } : undefined,
+  courierDetails: parcel.courierDetails ? {
+    pincode: String(parcel.courierDetails.pincode || '').trim(),
+  } : undefined,
 });
 
 const normalizeIntercityPayload = (intercity = {}) => ({

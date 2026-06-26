@@ -986,6 +986,7 @@ const SenderReceiverDetails = () => {
   });
   const [receiverName, setReceiverName] = useState(() => parcelState.receiverName || '');
   const [receiverMobile, setReceiverMobile] = useState(() => parcelState.receiverMobile || '');
+  const [courierPincode, setCourierPincode] = useState(() => parcelState.parcel?.courierDetails?.pincode || '');
   const [pickup, setPickup] = useState(() => parcelState.pickup || '');
   const [drop, setDrop] = useState(() => parcelState.drop || '');
   const [pickupCoords, setPickupCoords] = useState(() => parcelState.pickupCoords || getCoords(parcelState.pickup || '', [75.8577, 22.7196]));
@@ -1296,12 +1297,15 @@ const SenderReceiverDetails = () => {
 
   const validate = () => {
     const nextErrors = {};
-    if (!senderName.trim()) nextErrors.senderName = 'Sender name is required';
-    if (!PHONE_REGEX.test(senderMobile)) nextErrors.senderMobile = 'Enter a valid 10-digit number';
-    if (!receiverName.trim()) nextErrors.receiverName = 'Receiver name is required';
+    if (parcelState.category !== 'courier') {
+      if (!senderName.trim()) nextErrors.senderName = 'Sender name is required';
+      if (!PHONE_REGEX.test(senderMobile)) nextErrors.senderMobile = 'Enter a valid 10-digit number';
+      if (!receiverName.trim()) nextErrors.receiverName = 'Receiver name is required';
+    }
     if (!PHONE_REGEX.test(receiverMobile)) nextErrors.receiverMobile = 'Enter a valid 10-digit number';
     if (!pickup.trim()) nextErrors.pickup = 'Pickup location is required';
     if (!drop.trim()) nextErrors.drop = 'Drop location is required';
+    if (parcelState.category === 'courier' && !courierPincode.trim()) nextErrors.courierPincode = 'Pincode is required';
     setErrors(nextErrors);
     return {
       isValid: Object.keys(nextErrors).length === 0,
@@ -1698,6 +1702,9 @@ const SenderReceiverDetails = () => {
             laborSupport,
             packingMaterial,
           } : undefined,
+          courierDetails: parcelState.category === 'courier' ? {
+            pincode: courierPincode,
+          } : undefined,
         },
         isParcel: true,
         searchNonce: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -1871,17 +1878,19 @@ const SenderReceiverDetails = () => {
             <span>Pin on map</span>
           </button>
           
-          <button
-            onClick={() => setIsContactSheetOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2 bg-white border border-slate-100 rounded-2xl py-3.5 shadow-sm hover:shadow-md hover:border-slate-200 active:scale-95 transition-all text-[13px] font-bold text-slate-800 group"
-          >
-            <User size={16} className="text-blue-600 group-hover:scale-110 transition-transform" strokeWidth={2.5} />
-            <span>Contact Details</span>
-          </button>
+          {parcelState.category !== 'courier' && (
+            <button
+              onClick={() => setIsContactSheetOpen(true)}
+              className="flex-1 flex items-center justify-center gap-2 bg-white border border-slate-100 rounded-2xl py-3.5 shadow-sm hover:shadow-md hover:border-slate-200 active:scale-95 transition-all text-[13px] font-bold text-slate-800 group"
+            >
+              <User size={16} className="text-blue-600 group-hover:scale-110 transition-transform" strokeWidth={2.5} />
+              <span>Contact Details</span>
+            </button>
+          )}
         </div>
 
         {/* Contact details badge */}
-        {(senderName || receiverName) && (
+        {parcelState.category !== 'courier' && (senderName || receiverName) && (
           <div className="mx-1 mb-5 bg-gradient-to-r from-blue-50/70 to-indigo-50/30 rounded-2xl p-4 border-l-4 border-l-blue-600 border border-slate-100 flex items-center justify-between gap-3 text-[12px] shadow-sm">
             <div className="flex-1 min-w-0 space-y-1.5">
               {senderName && (
@@ -1906,6 +1915,49 @@ const SenderReceiverDetails = () => {
               Edit
             </button>
           </div>
+        )}
+
+        {/* Courier Custom Fields Card */}
+        {parcelState.category === 'courier' && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mx-1 mb-5 rounded-[28px] bg-white p-5 shadow-[0_20px_50px_rgba(0,0,0,0.06)] border border-slate-100/80 space-y-5"
+          >
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Details</p>
+              <h3 className="text-lg font-black tracking-tight text-slate-900 mt-0.5">Courier Requirements</h3>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-slate-400">Pincode</label>
+                <div className={`flex items-center gap-3 rounded-[18px] border p-4 transition-all focus-within:border-blue-400 focus-within:bg-white ${errors.courierPincode ? 'border-red-200 bg-red-50' : 'border-slate-200 bg-slate-50/80'}`}>
+                  <MapPin size={16} className="text-slate-400" />
+                  <input
+                    type="text"
+                    value={courierPincode}
+                    onChange={(e) => {
+                      setCourierPincode(e.target.value);
+                      clearError('courierPincode');
+                    }}
+                    placeholder="Drop Pincode"
+                    className="flex-1 bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-300"
+                  />
+                </div>
+                {errors.courierPincode && <p className="text-[11px] font-black text-red-500 ml-1">{errors.courierPincode}</p>}
+              </div>
+
+              <PhoneInput 
+                label="Contact No" 
+                value={receiverMobile} 
+                onChange={setReceiverMobile} 
+                error={errors.receiverMobile} 
+                name="receiverMobile" 
+                onClearError={clearError} 
+              />
+            </div>
+          </motion.div>
         )}
 
         {/* Packers & Movers Custom Fields Card */}

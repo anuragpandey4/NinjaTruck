@@ -174,6 +174,13 @@ const deliverySchema = new mongoose.Schema(
           default: false,
         },
       },
+      courierDetails: {
+        pincode: {
+          type: String,
+          default: '',
+          trim: true,
+        }
+      },
     },
     acceptedAt: {
       type: Date,

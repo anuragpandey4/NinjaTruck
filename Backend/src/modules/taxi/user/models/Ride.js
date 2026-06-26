@@ -201,6 +201,13 @@ const rideSchema = new mongoose.Schema(
           default: false,
         },
       },
+      courierDetails: {
+        pincode: {
+          type: String,
+          default: '',
+          trim: true,
+        }
+      },
     },
     scheduledAt: {
       type: Date,

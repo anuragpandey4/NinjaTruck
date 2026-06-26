@@ -36,6 +36,8 @@ const ServiceTile = ({ icon, label, description, path, accentClass, loading }) =
           state.deliveryScope = 'outstation';
         } else if (lowerLabel.includes('movers')) {
           state.category = 'movers';
+        } else if (lowerLabel.includes('courier')) {
+          state.category = 'courier';
         }
         navigate(path, { state });
       }}

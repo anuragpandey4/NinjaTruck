@@ -48,22 +48,42 @@ const getVehicleRecencyScore = (vehicle = {}) => {
 
 const DELIVERY_CATEGORY_OPTIONS = [
   {
-    id: 'trucks',
-    title: 'Trucks',
-    img: trucksImg,
-    searchTokens: ['truck', 'lcv', 'hcv', 'mcv', 'loader'],
-  },
-  {
-    id: '2wheeler',
-    title: '2 Wheeler',
+    id: 'bike',
+    title: 'Bike',
     img: bikeImg,
     searchTokens: ['bike', 'scooter', 'cycle', '2-wheeler'],
+  },
+  {
+    id: '3wheeler',
+    title: '3 Wheeler',
+    img: trucksImg,
+    searchTokens: ['3-wheeler', '3 wheeler', 'ape', 'auto'],
+  },
+  {
+    id: 'tata-ace',
+    title: 'Tata Ace',
+    img: trucksImg,
+    searchTokens: ['tata ace', 'chota hathi', 'mini truck'],
+  },
+  {
+    id: 'pickup14ft',
+    title: 'Pickup 14FT',
+    img: trucksImg,
+    searchTokens: ['pickup', '14ft', '14 ft', 'large truck'],
   },
   {
     id: 'movers',
     title: 'Packers & Movers',
     img: moversImg,
     searchTokens: ['mover', 'packers'],
+    hidden: true,
+  },
+  {
+    id: 'courier',
+    title: 'Courier',
+    img: bikeImg,
+    searchTokens: ['courier', 'parcel', 'document'],
+    hidden: true,
   }
 ];
 
@@ -285,7 +305,7 @@ const ParcelType = () => {
         
         {/* Category Grid */}
         <div className="grid grid-cols-3 gap-3 mb-8">
-          {DELIVERY_CATEGORY_OPTIONS.map((cat, idx) => (
+          {DELIVERY_CATEGORY_OPTIONS.filter(cat => !cat.hidden).map((cat, idx) => (
             <motion.button
               key={cat.id}
               initial={{ opacity: 0, scale: 0.9 }}
