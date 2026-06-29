@@ -124,7 +124,9 @@ const normalizeRentalVehicle = (item = {}, index = 0) => {
     rentalType: item.rental_type || 'both',
     image: item.image || '',
     rating: '4.8',
-    fuel: isBike ? 'Self-drive · License required' : 'Self-drive · Clean and sanitized',
+    fuel: item.rental_type === 'with_driver'
+      ? 'Chauffeur driven · Clean and sanitized'
+      : isBike ? 'Self-drive · License required' : 'Self-drive · Clean and sanitized',
     prices,
     kmLimit,
     features: Array.from(featureSet).slice(0, 4),
@@ -187,7 +189,14 @@ const RentalSkeleton = () => (
 
 const BikeRentalHome = () => {
   const location = useLocation();
-  const rentalTypeFilter = location.state?.rentalType; // 'with_driver' or 'without_driver'
+  const rentalTypeFilter = (() => {
+    const fromState = location.state?.rentalType;
+    if (fromState) {
+      try { window.sessionStorage.setItem('rentalTypeFilter', fromState); } catch {}
+      return fromState;
+    }
+    try { return window.sessionStorage.getItem('rentalTypeFilter') || undefined; } catch { return undefined; }
+  })();
   const [selectedDuration, setSelectedDuration] = useState('Hourly');
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -1174,6 +1174,7 @@ const serializeRentalVehicleType = (item = {}) => ({
   id: String(item._id || item.id || ''),
   _id: item._id,
   transport_type: item.transport_type || 'rental',
+  rental_type: item.rental_type || 'both',
   name: item.name || '',
   short_description: item.short_description || '',
   description: item.description || '',

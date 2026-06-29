@@ -36,8 +36,14 @@ const ServiceTile = ({ icon, label, description, path, accentClass, loading }) =
           state.deliveryScope = 'outstation';
         } else if (lowerLabel.includes('movers')) {
           state.category = 'movers';
+          state.deliveryCategory = 'movers';
+          navigate('/taxi/user/parcel/details', { state });
+          return;
         } else if (lowerLabel.includes('courier')) {
           state.category = 'courier';
+          state.deliveryCategory = 'courier';
+          navigate('/taxi/user/parcel/details', { state });
+          return;
         }
         navigate(path, { state });
       }}
