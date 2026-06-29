@@ -36,8 +36,8 @@ const calculatePremium = async (vehicleType, duration) => {
 
 // Create a new insurance purchase request
 export const createInsuranceRequest = asyncHandler(async (req, res) => {
-  const { vehicleNumber, vehicleType, duration } = req.body;
-  const userId = req.user?.id || req.user?.sub;
+  const { vehicleNumber, vehicleType, duration, provider } = req.body;
+  const userId = req.auth?.sub;
 
   if (!userId) {
     throw new ApiError(401, 'Authorization token is required');
@@ -55,6 +55,7 @@ export const createInsuranceRequest = asyncHandler(async (req, res) => {
     vehicleType,
     duration,
     premiumAmount,
+    provider: provider || '',
     status: 'pending',
   });
 
@@ -67,7 +68,7 @@ export const createInsuranceRequest = asyncHandler(async (req, res) => {
 
 // Get user's insurance history
 export const getUserInsurances = asyncHandler(async (req, res) => {
-  const userId = req.user?.id || req.user?.sub;
+  const userId = req.auth?.sub;
 
   if (!userId) {
     throw new ApiError(401, 'Authorization token is required');

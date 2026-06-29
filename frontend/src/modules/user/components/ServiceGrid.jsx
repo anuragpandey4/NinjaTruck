@@ -121,7 +121,6 @@ const ServiceGrid = () => {
   const { modules, loading: settingsLoading } = useSettings();
 
   useEffect(() => {
-    console.log('[DEBUG] ServiceGrid modules received:', modules, 'settingsLoading:', settingsLoading);
     if (settingsLoading) return;
     
     const desiredOrder = [

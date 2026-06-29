@@ -1370,12 +1370,10 @@ const AdminLayout = () => {
     socketService.connect({ role: 'admin', token });
 
     socketService.on('new_sos', (data) => {
-      console.log('SOS ALERT RECEIVED:', data);
       alert(`SOS ALERT: Driver ${data.driver_name} is in trouble!`);
     });
 
-    socketService.on('new_driver_registration', (data) => {
-      console.log('New driver registration:', data);
+    socketService.on('new_driver_registration', () => {
     });
 
     const handleSupportChatNotification = (payload = {}) => {

@@ -874,6 +874,7 @@ const DriverHome = () => {
         }
 
         const currentType = normalizeJobType(job);
+        const rawJob = JSON.parse(JSON.stringify(job || {}));
 
         navigate('/taxi/driver/active-trip', {
             replace: true,
@@ -892,7 +893,7 @@ const DriverHome = () => {
                     requestId: job.rideId,
                     rideId: job.rideId,
                     otp: job.otp || '',
-                    raw: job,
+                    raw: rawJob,
                 },
                 currentDriverCoords: driverCoordsRef.current || job.lastDriverLocation?.coordinates || null,
             },
@@ -1686,18 +1687,25 @@ const DriverHome = () => {
             };
 
             const openAcceptedRide = async (payload) => {
-                if (!payload?.rideId || payload.rideId !== acceptingRideIdRef.current) {
+                console.log('[driver-home] openAcceptedRide triggered with payload:', payload);
+                console.log('[driver-home] current acceptingRideIdRef.current:', acceptingRideIdRef.current);
+                if (!payload?.rideId) {
+                    console.warn('[driver-home] openAcceptedRide ignored: empty payload.rideId.');
                     return;
                 }
 
                 const activeRequest = currentRequestRef.current;
+                console.log('[driver-home] activeRequest:', activeRequest);
                 const nextType = activeRequest?.type || 'ride';
                 const scheduledAt = activeRequest?.raw?.scheduledAt || payload?.scheduledAt || null;
                 let currentJob = null;
 
                 try {
+                    console.log('[driver-home] fetching active job for type:', nextType);
                     currentJob = await fetchActiveJob(nextType);
-                } catch {
+                    console.log('[driver-home] fetchActiveJob result:', currentJob);
+                } catch (err) {
+                    console.error('[driver-home] fetchActiveJob failed:', err);
                     currentJob = null;
                 }
 
@@ -1706,12 +1714,14 @@ const DriverHome = () => {
                 acceptingRideIdRef.current = '';
                 setAcceptingRideId('');
                 if (isScheduledRideForFuture(scheduledAt)) {
+                    console.log('[driver-home] is scheduled ride, not navigating to active-trip');
                     setStatusMessage(`Scheduled ride confirmed for ${formatScheduledDateTime(scheduledAt)}.`);
                     loadScheduledRides();
                     return;
                 }
 
-                navigate('/taxi/driver/active-trip', {
+                const rawCurrentJob = currentJob ? JSON.parse(JSON.stringify(currentJob)) : null;
+                const navigationState = {
                     state: {
                         type: nextType,
                         rideId: currentJob?.rideId || payload.rideId,
@@ -1720,7 +1730,7 @@ const DriverHome = () => {
                             ...activeRequest,
                             rideId: currentJob?.rideId || payload.rideId,
                             otp: currentJob?.otp || payload?.otp || activeRequest?.raw?.otp || '',
-                            raw: currentJob || {
+                            raw: rawCurrentJob || {
                                 ...(activeRequest?.raw || {}),
                                 otp: payload?.otp || activeRequest?.raw?.otp || '',
                                 status: payload.status,
@@ -1730,7 +1740,9 @@ const DriverHome = () => {
                         },
                         currentDriverCoords: driverCoordsRef.current || readStoredDriverCoords() || null,
                     },
-                });
+                };
+                console.log('[driver-home] navigating to /taxi/driver/active-trip with state:', navigationState);
+                navigate('/taxi/driver/active-trip', navigationState);
             };
 
             const onWalletUpdated = (payload) => {
@@ -1899,14 +1911,18 @@ const DriverHome = () => {
     const dutyMins = Math.floor((liveActiveSeconds % 3600) / 60);
 
     const handleAccept = () => {
+        console.log('[driver-home] handleAccept called. currentRequest:', currentRequest);
         if (!currentRequest?.rideId || acceptingRideId) {
+            console.warn('[driver-home] handleAccept early exit: no currentRequest.rideId or already accepting.');
             return;
         }
 
         acceptingRideIdRef.current = currentRequest.rideId;
         setAcceptingRideId(currentRequest.rideId);
+        console.log('[driver-home] acceptingRideIdRef.current set to:', acceptingRideIdRef.current);
         setStatusMessage('Accepting ride...');
         stopRideRequestAlertSound();
+        console.log('[driver-home] emitting acceptRide event via socket for rideId:', currentRequest.rideId);
         socketService.emit('acceptRide', { rideId: currentRequest.rideId });
     };
 

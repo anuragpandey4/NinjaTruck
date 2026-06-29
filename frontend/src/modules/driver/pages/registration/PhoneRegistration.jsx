@@ -19,11 +19,6 @@ import taxiBg from '../../../../assets/images/light-taxi-bg.png';
 
 const ROLE_CONFIG = [
     { id: 'driver', label: 'Driver', Icon: UserRound, color: '#FFB300' },
-    { id: 'pooling_driver', label: 'Pooling', Icon: Car, color: '#14B8A6' },
-    { id: 'owner', label: 'Owner', Icon: Briefcase, color: '#10B981' },
-    { id: 'bus_driver', label: 'Bus', Icon: ShieldCheck, color: '#3B82F6' },
-    { id: 'service_center', label: 'Center', Icon: Building2, color: '#8B5CF6' },
-    { id: 'service_center_staff', label: 'Staff', Icon: UserRound, color: '#F43F5E' },
 ];
 
 const getErrorMessage = (err) => String(
@@ -336,34 +331,37 @@ const PhoneRegistration = () => {
                     </header>
 
                     {/* Highly Visible Tabs */}
-                    <section className="space-y-4">
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-center">
-                            Select Your Role
-                        </p>
-                        <div className="flex gap-2 overflow-x-auto no-scrollbar py-2 px-1">
-                            {roleOptions.map((item) => {
-                                const active = role === item.id;
-                                return (
-                                    <motion.button
-                                        key={item.id}
-                                        onClick={() => {
-                                            setRole(item.id);
-                                            setError('');
-                                        }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className={`flex-none flex items-center gap-2.5 py-3 px-5 rounded-2xl transition-all border-2 ${
-                                            active
-                                                ? 'bg-white border-amber-400 text-slate-900 shadow-lg shadow-amber-100'
-                                                : 'bg-white/50 border-transparent text-slate-400'
-                                        }`}
-                                    >
-                                        <item.Icon size={16} strokeWidth={active ? 3 : 2} style={{ color: active ? item.color : '#CBD5E1' }} />
-                                        <span className="text-xs font-black uppercase tracking-wider">{item.label}</span>
-                                    </motion.button>
-                                );
-                            })}
-                        </div>
-                    </section>
+                    {/* Highly Visible Tabs */}
+                    {roleOptions.length > 1 && (
+                        <section className="space-y-4">
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-center">
+                                Select Your Role
+                            </p>
+                            <div className="flex gap-2 overflow-x-auto no-scrollbar py-2 px-1 justify-center">
+                                {roleOptions.map((item) => {
+                                    const active = role === item.id;
+                                    return (
+                                        <motion.button
+                                            key={item.id}
+                                            onClick={() => {
+                                                setRole(item.id);
+                                                setError('');
+                                            }}
+                                            whileTap={{ scale: 0.95 }}
+                                            className={`flex-none flex items-center gap-2.5 py-3 px-5 rounded-2xl transition-all border-2 ${
+                                                active
+                                                    ? 'bg-white border-amber-400 text-slate-900 shadow-lg shadow-amber-100'
+                                                    : 'bg-white/50 border-transparent text-slate-400'
+                                            }`}
+                                        >
+                                            <item.Icon size={16} strokeWidth={active ? 3 : 2} style={{ color: active ? item.color : '#CBD5E1' }} />
+                                            <span className="text-xs font-black uppercase tracking-wider">{item.label}</span>
+                                        </motion.button>
+                                    );
+                                })}
+                            </div>
+                        </section>
+                    )}
 
                     {/* Clean Input Card */}
                     <motion.div 

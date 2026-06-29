@@ -379,8 +379,12 @@ const BikeRentalHome = () => {
                 <ArrowLeft size={20} className="text-white group-hover:opacity-80 transition-opacity" strokeWidth={2.5} />
               </motion.button>
               <div className="min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500/60 leading-none mb-1.5">Self-drive rentals</p>
-                <h1 className="text-[24px] font-[900] tracking-tight text-slate-950 leading-none">Choose Ride</h1>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500/60 leading-none mb-1.5">
+                  {rentalTypeFilter === 'with_driver' ? 'Chauffeur rentals' : rentalTypeFilter === 'without_driver' ? 'Self-drive rentals' : 'All rentals'}
+                </p>
+                <h1 className="text-[24px] font-[900] tracking-tight text-slate-950 leading-none">
+                  {rentalTypeFilter === 'with_driver' ? 'With Driver' : rentalTypeFilter === 'without_driver' ? 'Self Drive' : 'Choose Ride'}
+                </h1>
               </div>
             </div>
             <div className="flex flex-col items-end">

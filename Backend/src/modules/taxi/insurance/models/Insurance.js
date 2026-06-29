@@ -43,6 +43,12 @@ const insuranceSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    provider: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      default: '',
+    },
   },
   {
     timestamps: true,

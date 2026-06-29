@@ -279,7 +279,7 @@ const DriverRideRequestListener = () => {
         };
 
         const openAcceptedRide = async (payload) => {
-            if (!payload?.rideId || payload.rideId !== acceptingRideIdRef.current) return;
+            if (!payload?.rideId) return;
 
             stopRideRequestAlertSound();
             const activeRequest = requestRef.current;
@@ -303,6 +303,7 @@ const DriverRideRequestListener = () => {
             if (isScheduledRideForFuture(scheduledAt)) {
               return;
             }
+            const rawCurrentJob = currentJob ? JSON.parse(JSON.stringify(currentJob)) : null;
             navigate('/taxi/driver/active-trip', {
                 state: {
                     type: nextType,
@@ -312,7 +313,7 @@ const DriverRideRequestListener = () => {
                         ...activeRequest,
                         rideId: currentJob?.rideId || payload.rideId,
                         otp: currentJob?.otp || payload?.otp || activeRequest?.raw?.otp || '',
-                        raw: currentJob || {
+                        raw: rawCurrentJob || {
                             ...(activeRequest?.raw || {}),
                             otp: payload?.otp || activeRequest?.raw?.otp || '',
                             status: payload.status,
