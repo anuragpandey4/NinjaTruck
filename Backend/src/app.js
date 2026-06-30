@@ -10,7 +10,12 @@ export const createApp = () => {
 
 app.use(
   cors({
-    origin: true,
+    origin: function (origin, callback) {
+      if (!origin || env.corsOrigin === '*') return callback(null, true);
+      const allowed = (env.corsOrigin || '').split(',').map(o => o.trim().replace(/\/$/, ''));
+      if (allowed.includes(origin)) return callback(null, true);
+      callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

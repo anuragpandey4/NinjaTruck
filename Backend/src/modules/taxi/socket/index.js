@@ -43,7 +43,12 @@ const onAsync = (socket, handler) => async (payload = {}) => {
 export const configureTaxiSocketServer = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: true,
+      origin: function (origin, callback) {
+        if (!origin || env.corsOrigin === '*') return callback(null, true);
+        const allowed = (env.corsOrigin || '').split(',').map(o => o.trim().replace(/\/$/, ''));
+        if (allowed.includes(origin)) return callback(null, true);
+        callback(new Error(`Socket CORS blocked for origin: ${origin}`));
+      },
       credentials: true,
     },
   });
