@@ -545,8 +545,7 @@ const UserUpcomingRideReminderBootstrap = () => {
 
     const syncReminders = async () => {
       try {
-        const [busResult, poolingResult, scheduledRideResult] = await Promise.all([
-          userBusService.getMyBookings({ page: 1, limit: 20, tripState: 'upcoming' }),
+        const [poolingResult, scheduledRideResult] = await Promise.all([
           userService.getMyPoolingBookings(),
           api.get('/rides', {
             params: {
@@ -561,7 +560,6 @@ const UserUpcomingRideReminderBootstrap = () => {
           return;
         }
 
-        const busPayload = getResponsePayload(busResult);
         const poolingPayload = getResponsePayload(poolingResult);
         const scheduledRidePayload = getResponsePayload(scheduledRideResult);
 
@@ -603,7 +601,7 @@ const UserUpcomingRideReminderBootstrap = () => {
         });
 
         syncUpcomingRideReminders({
-          busBookings: Array.isArray(busPayload?.results) ? busPayload.results : [],
+          busBookings: [],
           poolingBookings,
           scheduledRides: Array.isArray(scheduledRidePayload?.results) ? scheduledRidePayload.results : [],
         });
