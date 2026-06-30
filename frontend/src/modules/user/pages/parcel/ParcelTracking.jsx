@@ -249,10 +249,17 @@ const ParcelTracking = () => {
       return;
     }
 
+    // Only overwrite local rating/comment from the server if the feedback
+    // was already persisted (has a submittedAt timestamp). This prevents
+    // background polling from resetting the user's in-progress selections.
+    if (!feedback.submittedAt) {
+      return;
+    }
+
     setRating(Number(feedback.rating || 0));
     setComment(feedback.comment || '');
     setSelectedTip(Number(feedback.tipAmount || 0));
-    setIsFeedbackSubmitted(Boolean(feedback.submittedAt));
+    setIsFeedbackSubmitted(true);
   }, [rideRealtime?.feedback, state.feedback]);
 
   useEffect(() => {

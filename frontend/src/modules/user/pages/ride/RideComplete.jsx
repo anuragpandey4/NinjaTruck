@@ -180,14 +180,14 @@ const RideComplete = () => {
           setRideLiveStatus(nextLiveStatus);
         }
 
-        if (!active || !feedback) {
+        if (!active || !feedback || !feedback.submittedAt) {
           return;
         }
 
         setRating(Number(feedback.rating || 0));
         setComment(feedback.comment || '');
         setSelectedTip(Number(feedback.tipAmount || 0));
-        setIsSubmitted(Boolean(feedback.submittedAt));
+        setIsSubmitted(true);
       } catch (rideError) {
         console.error('Failed to refresh completed ride receipt:', rideError);
       }
