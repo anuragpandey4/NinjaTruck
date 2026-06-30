@@ -7,20 +7,20 @@ const LinksPage = () => {
   const links = [
     {
       id: 'user',
-      title: 'Rydon24 - User app',
-      subtitle: 'Book rides, send parcels, and more.',
+      title: 'Ninja Truck - User Login',
+      subtitle: 'Book rides, send parcels, and track everything in real time.',
       description: 'Get where you need to go with ease. Request a ride or send packages across the city in minutes.',
-      url: 'https://play.google.com/store/apps/details?id=com.rydon24.user',
+      url: '/login',
       type: 'Customer App',
       icon: <Zap className="link-icon" />,
       color: '#FFB300'
     },
     {
       id: 'driver',
-      title: 'Rydon24 Driver',
-      subtitle: 'Drive and earn with Rydon24.',
+      title: 'Ninja Truck Driver Login',
+      subtitle: 'Drive and earn with Ninja Truck.',
       description: 'Join our fleet of professional drivers. Flexible hours, great earnings, and a supportive community.',
-      url: 'https://play.google.com/store/apps/details?id=com.rydon24.driver',
+      url: '/taxi/driver/login',
       type: 'Partner App',
       icon: <Shield className="link-icon" />,
       color: '#2563EB'

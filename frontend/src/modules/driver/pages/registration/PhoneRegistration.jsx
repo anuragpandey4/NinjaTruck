@@ -15,7 +15,7 @@ import {
 } from '../../services/registrationService';
 
 import { useSettings } from '../../../../shared/context/SettingsContext';
-import taxiBg from '../../../../assets/images/light-taxi-bg.png';
+import taxiBg from '../../../../assets/ninja_truck_hero_fixed.png';
 
 const ROLE_CONFIG = [
     { id: 'driver', label: 'Driver', Icon: UserRound, color: '#FFB300' },

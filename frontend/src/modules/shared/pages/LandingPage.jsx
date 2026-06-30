@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import { useSettings } from '../../../shared/context/SettingsContext';
 
 import newHeroImg from '@/assets/ninja_truck_hero_fixed.png';
-import checkUsOutImg from '@/assets/check_us_out.jpg';
+import checkUsOutImg from '@/assets/premium_grid_map.png';
 
 // Reusable animation variants
 const fadeUpVariant = {
@@ -34,8 +34,8 @@ export default function LandingPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const appLinks = [
-    { label: 'User App', href: 'https://play.google.com/store/apps/details?id=com.rydon24.user' },
-    { label: 'Driver App', href: 'https://play.google.com/store/apps/details?id=com.rydon24.driver' },
+    { label: 'User Login', href: '/login' },
+    { label: 'Driver Login', href: '/taxi/driver/login' },
   ];
 
   const handleRedirect = (path, tabName) => (e) => {
@@ -123,7 +123,7 @@ export default function LandingPage() {
             <button onClick={() => navigate('/login')} className="font-bold text-slate-300 hover:text-white px-4 py-2 transition-colors">
               LOGIN
             </button>
-            <button onClick={() => window.open(appLinks[0].href, '_blank')} className="bg-[#F9C105] text-[#111111] hover:bg-[#e6b204] px-8 py-3 font-black tracking-widest uppercase transition-all hover:scale-105 active:scale-95 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)]">
+            <button onClick={() => navigate('/login')} className="bg-[#F9C105] text-[#111111] hover:bg-[#e6b204] px-8 py-3 font-black tracking-widest uppercase transition-all hover:scale-105 active:scale-95 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)]">
               BOOK TRUCK
             </button>
           </div>
@@ -150,7 +150,7 @@ export default function LandingPage() {
                 {link.name}
               </a>
             ))}
-            <button onClick={() => window.open(appLinks[0].href, '_blank')} className="mt-6 bg-[#F9C105] text-[#111111] w-full py-5 font-black text-xl tracking-widest shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)]">
+            <button onClick={() => navigate('/login')} className="mt-6 bg-[#F9C105] text-[#111111] w-full py-5 font-black text-xl tracking-widest shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)]">
               BOOK A TRUCK NOW
             </button>
           </motion.div>
@@ -181,7 +181,7 @@ export default function LandingPage() {
             </motion.p>
             
             <motion.div variants={fadeUpVariant} className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto mt-4">
-              <button onClick={() => window.open(appLinks[0].href, '_blank')} className="group flex items-center justify-center gap-3 bg-[#F9C105] text-[#111111] hover:bg-[#e6b204] px-10 py-5 font-black text-xl tracking-widest uppercase shadow-[6px_6px_0px_0px_rgba(255,255,255,0.05)] transition-all hover:translate-x-1 hover:-translate-y-1 w-full sm:w-auto">
+              <button onClick={() => navigate('/login')} className="group flex items-center justify-center gap-3 bg-[#F9C105] text-[#111111] hover:bg-[#e6b204] px-10 py-5 font-black text-xl tracking-widest uppercase shadow-[6px_6px_0px_0px_rgba(255,255,255,0.05)] transition-all hover:translate-x-1 hover:-translate-y-1 w-full sm:w-auto">
                 <span>Book Ride</span>
                 <ArrowRight size={24} className="transition-transform group-hover:translate-x-2" />
               </button>
@@ -344,15 +344,13 @@ export default function LandingPage() {
           className="max-w-7xl mx-auto text-center"
         >
           <motion.h2 variants={fadeUpVariant} className="text-[#F9C105] font-black tracking-widest text-lg uppercase mb-4">- JOIN THE NETWORK -</motion.h2>
-          <motion.h3 variants={fadeUpVariant} className="text-4xl lg:text-6xl font-black text-white tracking-tighter uppercase mb-16">Download App Today</motion.h3>
+          <motion.h3 variants={fadeUpVariant} className="text-4xl lg:text-6xl font-black text-white tracking-tighter uppercase mb-16">Get Started Today</motion.h3>
           
           <motion.div variants={fadeUpVariant} className="flex flex-col sm:flex-row items-center justify-center gap-8">
             {appLinks.map((link, idx) => (
-              <a 
+              <button 
                 key={idx}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={() => navigate(link.href)}
                 className={`flex items-center justify-center gap-4 px-10 py-6 font-black text-xl tracking-widest uppercase shadow-[6px_6px_0px_0px_rgba(255,255,255,0.05)] transition-all hover:-translate-y-1 w-full sm:w-auto min-w-[300px] ${
                   idx === 0 
                     ? 'bg-[#F9C105] text-[#111111] hover:bg-[#e6b204]' 
@@ -360,7 +358,7 @@ export default function LandingPage() {
                 }`}
               >
                 <span>{link.label}</span>
-              </a>
+              </button>
             ))}
           </motion.div>
         </motion.div>

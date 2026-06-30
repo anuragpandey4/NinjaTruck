@@ -58,7 +58,7 @@ const ServicesPage = () => {
             </p>
             <div className="flex gap-4">
               <button
-                onClick={() => window.open('https://play.google.com/store/apps/details?id=com.rydon24.user', '_blank')}
+                onClick={() => navigate('/login')}
                 className="px-6 py-3.5 rounded-xl bg-[#FFB300] hover:bg-[#e09e00] text-gray-900 font-bold uppercase tracking-wider text-xs transition-colors"
               >
                 Book Your Ride

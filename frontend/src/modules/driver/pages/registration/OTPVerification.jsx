@@ -18,7 +18,7 @@ import {
     verifyDriverOtp,
     verifyPoolingDriverOnboardingOtp,
 } from '../../services/registrationService';
-import taxiBg from '../../../../assets/images/light-taxi-bg.png';
+import taxiBg from '../../../../assets/ninja_truck_hero_fixed.png';
 
 const unwrap = (response) => response?.data?.data || response?.data || response;
 const normalizeDriverRole = (role) => {
