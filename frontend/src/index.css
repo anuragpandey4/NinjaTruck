@@ -28,7 +28,7 @@ body {
 }
 
 @theme {
-  --color-primary: #E85D04;
+  --color-primary: #F9C105;
   --color-secondary: #F48C06;
   --font-sans: 'Outfit', system-ui, sans-serif;
   --font-display: 'Outfit', sans-serif;
@@ -67,7 +67,7 @@ body {
     --color-secondary: #334155;    /* Driver Brand Secondary (Lighter Slate) */
     
     /* Dedicated Variable-Based Mapping */
-    --driver-accent: #FFD700;
+    --driver-accent: #F9C105;
     --driver-bg-soft: #F8F9FA;
     --driver-card-white: #FFFFFF;
     

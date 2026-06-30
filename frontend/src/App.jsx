@@ -379,19 +379,19 @@ const MainLayout = ({ children }) => {
     location.pathname.startsWith('/owner');
 
   if (isAdminPath) {
-    return <div className="redigo-admin-root h-screen bg-gray-50 overflow-hidden">{children}</div>;
+    return <div className="ninjatruck-admin-root h-screen bg-gray-50 overflow-hidden">{children}</div>;
   }
 
   if (isStaticPath) {
     return (
-      <div className="redigo-landing-root min-h-screen bg-white">
+      <div className="ninjatruck-landing-root min-h-screen bg-white">
         <main className="min-h-screen">{children}</main>
       </div>
     );
   }
 
   return (
-    <div className="redigo-app min-h-[100dvh] bg-gray-50/50 w-full overflow-x-hidden">
+    <div className="ninjatruck-app min-h-[100dvh] bg-gray-50/50 w-full overflow-x-hidden">
       <main className="max-w-lg w-full mx-auto shadow-2xl bg-white min-h-[100dvh] relative overflow-x-hidden">
         {children}
       </main>

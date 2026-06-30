@@ -13,7 +13,7 @@ import CheckUsOutSection from '../components/CheckUsOutSection';
 import BottomNavbar from '../components/BottomNavbar';
 import carIcon from '../../../assets/icons/car.png';
 import bikeIcon from '../../../assets/icons/bike.png';
-import indiaGateRealImg from '@/assets/india_gate_real.png';
+
 import autoIcon from '../../../assets/icons/auto.png';
 import deliveryIcon from '../../../assets/icons/Delivery.png';
 import api from '../../../shared/api/axiosInstance';
@@ -569,7 +569,7 @@ const Home = () => {
 
   const rentalTimerLabel = serviceType === 'rental' ? formatRentalTime(rentalElapsedSeconds) : '';
   const footerIllustrationBg = {
-    backgroundImage: `url(${indiaGateRealImg})`,
+    background: 'linear-gradient(to top, rgba(249, 193, 5, 0.1), transparent)',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center bottom',
     backgroundSize: 'cover',
