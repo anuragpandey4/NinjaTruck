@@ -16,7 +16,7 @@ const bootstrap = async () => {
   configureTaxiSocketServer(httpServer);
   await restoreScheduledDispatches();
 
-  httpServer.listen(env.port, () => {
+  httpServer.listen(env.port, '0.0.0.0', () => {
     console.log(`Taxi backend listening on port ${env.port}`);
   });
 };
