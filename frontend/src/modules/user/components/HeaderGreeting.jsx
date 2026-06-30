@@ -76,7 +76,7 @@ const HeaderGreeting = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.03, ease: 'easeOut' }}
               whileTap={{ scale: 0.99 }}
-              onClick={() => navigate('/ride/select-location')}
+              onClick={() => navigate('/taxi/user/parcel/type')}
               className="group flex min-w-0 flex-1 items-center gap-2 rounded-lg bg-transparent text-left transition-opacity active:opacity-80"
             >
               <MapPin size={16} className="text-indigo-400 transition-colors group-hover:text-indigo-300 shrink-0" strokeWidth={2.5} />

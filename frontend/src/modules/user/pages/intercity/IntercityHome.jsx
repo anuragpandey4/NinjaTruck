@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
@@ -77,7 +78,7 @@ const formatTimeTo12Hour = (timeStr) => {
 
 const IntercityHome = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const routePrefix = location.pathname.startsWith('/taxi/user') ? '/taxi/user' : '';
 
   const [packages, setPackages] = useState([]);

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft, 
@@ -88,7 +89,7 @@ const DELIVERY_CATEGORY_OPTIONS = [
 ];
 
 const ParcelType = () => {
-  const location = useLocation();
+  const location = usePersistedLocation();
   const routeState = location.state || {};
   const isOutstation = Boolean(routeState.isOutstation || routeState.deliveryScope === 'outstation');
   const savedLocation = getSavedLocation();

@@ -1,5 +1,6 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useSettings } from '../../../../shared/context/SettingsContext';
@@ -71,7 +72,7 @@ const services = [
 
 const CabHome = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const { settings } = useSettings();
   const showBusService = isEnabledFlag(settings?.transportRide?.enable_bus_service);
   const visibleServices = services.filter((service) => showBusService || service.id !== 'bus');

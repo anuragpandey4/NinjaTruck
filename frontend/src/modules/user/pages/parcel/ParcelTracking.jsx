@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Phone, 
@@ -141,7 +142,7 @@ const getInitials = (name = '') =>
 
 const ParcelTracking = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const routePrefix = useMemo(
     () => (location.pathname.startsWith('/taxi/user') ? '/taxi/user' : ''),
     [location.pathname],

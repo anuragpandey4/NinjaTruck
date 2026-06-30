@@ -130,13 +130,14 @@ const IncomingRideRequest = ({
 
   const isParcel = data.type === 'parcel';
   const isIntercity = data.type === 'intercity';
+  const isRental = data.raw?.serviceType === 'rental' || data.type === 'rental';
   const scheduledAt = data.scheduledAt || data.raw?.scheduledAt || data.raw?.ride?.scheduledAt || null;
   const isScheduledRequest = Boolean(scheduledAt);
   const title = isPreviewMode
-    ? (isParcel ? 'Scheduled delivery' : isIntercity ? 'Scheduled intercity trip' : 'Scheduled ride')
+    ? (isRental ? 'Scheduled rental' : isParcel ? 'Scheduled delivery' : isIntercity ? 'Scheduled intercity trip' : 'Scheduled ride')
     : (isScheduledRequest
-      ? (isParcel ? 'Scheduled delivery request' : isIntercity ? 'Scheduled intercity request' : 'Scheduled ride request')
-      : (isParcel ? 'New delivery request' : isIntercity ? 'New intercity request' : 'New ride request'));
+      ? (isRental ? 'Scheduled rental request' : isParcel ? 'Scheduled delivery request' : isIntercity ? 'Scheduled intercity request' : 'Scheduled ride request')
+      : (isRental ? 'New rental request' : isParcel ? 'New delivery request' : isIntercity ? 'New intercity request' : 'New ride request'));
   const intercityRoute = [data.raw?.intercity?.fromCity, data.raw?.intercity?.toCity].filter(Boolean).join(' to ');
   const category = data.raw?.parcel?.category === 'movers'
     ? 'Packers & Movers'
@@ -169,16 +170,18 @@ const IncomingRideRequest = ({
     ? Array.from({ length: Math.max(1, Math.floor((bidMaxFare - bidFloorFare) / bidStepAmount) + 1) }, (_, index) => bidFloorFare + (index * bidStepAmount))
     : [];
 
-  const themeBgGradient = isParcel 
+  const themeBgGradient = isRental
+    ? 'from-purple-50/90 to-white'
+    : isParcel 
     ? 'from-orange-50/90 to-white' 
     : isIntercity 
     ? 'from-teal-50/90 to-white' 
     : 'from-emerald-50/95 to-white';
-  const accentBg = isParcel ? 'bg-orange-500' : isIntercity ? 'bg-teal-500' : 'bg-emerald-500';
-  const accentText = isParcel ? 'text-orange-600' : isIntercity ? 'text-teal-600' : 'text-emerald-600';
-  const accentHoverBg = isParcel ? 'hover:bg-orange-600' : isIntercity ? 'hover:bg-teal-600' : 'hover:bg-emerald-600';
-  const lightBg = isParcel ? 'bg-orange-50/80' : isIntercity ? 'bg-teal-50/80' : 'bg-emerald-50/80';
-  const lightBorder = isParcel ? 'border-orange-100' : isIntercity ? 'border-teal-100' : 'border-emerald-100';
+  const accentBg = isRental ? 'bg-purple-500' : isParcel ? 'bg-orange-500' : isIntercity ? 'bg-teal-500' : 'bg-emerald-500';
+  const accentText = isRental ? 'text-purple-600' : isParcel ? 'text-orange-600' : isIntercity ? 'text-teal-600' : 'text-emerald-600';
+  const accentHoverBg = isRental ? 'hover:bg-purple-600' : isParcel ? 'hover:bg-orange-600' : isIntercity ? 'hover:bg-teal-600' : 'hover:bg-emerald-600';
+  const lightBg = isRental ? 'bg-purple-50/80' : isParcel ? 'bg-orange-50/80' : isIntercity ? 'bg-teal-50/80' : 'bg-emerald-50/80';
+  const borderLight = isRental ? 'border-purple-100/60' : isParcel ? 'border-orange-100/60' : isIntercity ? 'border-teal-100/60' : 'border-emerald-100/60';
   const glowShadow = isParcel 
     ? 'shadow-[0_12px_24px_rgba(249,115,22,0.3)]' 
     : isIntercity 
@@ -418,18 +421,34 @@ const IncomingRideRequest = ({
                   </div>
                 </div>
 
-                {/* Drop Pin */}
-                <div className="flex items-start gap-4">
-                  <div className="relative z-10 mt-1 flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-rose-100 shadow-sm border border-white">
-                    <span className="h-2.5 w-2.5 rounded bg-rose-600" />
+                {/* Drop Pin or Rental Package */}
+                {isRental ? (
+                  <div className="flex items-start gap-4">
+                    <div className="relative z-10 mt-1 flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-purple-100 shadow-sm border border-white">
+                      <Clock size={12} className="text-purple-600" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="inline-flex rounded bg-purple-50 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-purple-700">
+                        Rental Package
+                      </span>
+                      <p className="mt-1 text-[14px] font-bold leading-snug text-slate-800">
+                        {data.raw?.rentalPackage?.durationHours ? `${data.raw.rentalPackage.durationHours} Hours Rental` : 'Hourly Rental'}
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <span className="inline-flex rounded bg-rose-50 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-rose-700">
-                      Drop
-                    </span>
-                    <p className="mt-1 text-[14px] font-bold leading-snug text-slate-800">{dropAddress}</p>
+                ) : (
+                  <div className="flex items-start gap-4">
+                    <div className="relative z-10 mt-1 flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-rose-100 shadow-sm border border-white">
+                      <span className="h-2.5 w-2.5 rounded bg-rose-600" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="inline-flex rounded bg-rose-50 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-rose-700">
+                        Drop
+                      </span>
+                      <p className="mt-1 text-[14px] font-bold leading-snug text-slate-800">{dropAddress}</p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
 

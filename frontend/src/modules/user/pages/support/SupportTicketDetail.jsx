@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Loader2, Send } from 'lucide-react';
 import { supportTicketService } from '../../../shared/services/supportTicketService';
@@ -12,7 +13,7 @@ const STATUS_STYLES = {
 
 const SupportTicketDetail = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const { id: ticketCode } = useParams();
   const pathRole = window.location.pathname.includes('/taxi/driver') ? 'driver' : 'user';
   const ticketFromState = location.state?.ticket || null;

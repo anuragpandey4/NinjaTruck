@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion } from 'framer-motion';
 import { CheckCircle2, MapPin, Clock, Camera, Home, Upload } from 'lucide-react';
 import { useSettings } from '../../../../shared/context/SettingsContext';
@@ -120,7 +121,7 @@ const computeRentalLiveCharge = (ride = {}, pricingSummary = {}, elapsedSeconds 
 
 const RentalConfirmed = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const { settings } = useSettings();
   const appName = settings.general?.app_name || 'App';
   const state = location.state || {};

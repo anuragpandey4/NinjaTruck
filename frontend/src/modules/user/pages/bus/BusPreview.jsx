@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -52,7 +53,7 @@ const stopBadgeTone = {
 
 const BusPreview = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const routePrefix = useMemo(() => getRoutePrefix(location.pathname), [location.pathname]);
   const state = location.state || {};
   const { bus, fromCity, toCity, date } = state;

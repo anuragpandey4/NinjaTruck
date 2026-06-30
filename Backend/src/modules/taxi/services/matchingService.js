@@ -226,15 +226,21 @@ const filterDriversForMatchedZone = ({ drivers = [], zone = null, pickupCoords, 
   drivers.filter((driver) => {
     const coordinates = getDriverMatchCoordinates(driver);
     if (!coordinates) {
+      console.log('[matchingService] filterDropped (no coordinates):', driver._id);
       return false;
     }
 
     if (!isDriverWithinMatchedZone(driver, zone)) {
+      console.log('[matchingService] filterDropped (not in matched zone):', driver._id, zone?._id);
       return false;
     }
 
     if (Number.isFinite(maxDistance) && maxDistance > 0) {
-      return getDistanceBetweenMeters(pickupCoords, coordinates) <= maxDistance;
+      const dist = getDistanceBetweenMeters(pickupCoords, coordinates);
+      if (dist > maxDistance) {
+        console.log('[matchingService] filterDropped (distance):', driver._id, dist, '>', maxDistance);
+        return false;
+      }
     }
 
     return true;
@@ -316,6 +322,11 @@ const findDriversForZone = async ({
       .limit(limit)
       .select(selectedFields),
   ]);
+
+  console.log('[matchingService] findDriversForZone DB results. liveLocationDrivers:', liveLocationDrivers.length, 'routeBookingDrivers:', routeBookingDrivers.length);
+  if (liveLocationDrivers.length === 0) {
+    console.log('[matchingService] findDriversForZone query filters used:', JSON.stringify(commonFilters));
+  }
 
   return sortDriversByDispatchAnchorDistance(
     [...liveLocationDrivers, ...routeBookingDrivers].filter(

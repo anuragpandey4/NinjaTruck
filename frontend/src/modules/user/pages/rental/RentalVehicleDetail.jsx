@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GoogleMap, MarkerF } from '@react-google-maps/api';
 import {
@@ -452,7 +453,7 @@ const readStoredUserInfo = () => {
 
 const RentalVehicleDetail = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const { settings } = useSettings();
   const appName = settings.general?.app_name || 'App';
   const storedDetail = useMemo(() => readStoredRentalVehicleDetail(), []);

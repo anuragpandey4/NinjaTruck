@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Users, ChevronRight, Calendar, Clock, MapPin } from 'lucide-react';
 
@@ -12,7 +13,7 @@ const VEHICLES = [
 
 const SpiritualTripVehicle = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const { isSpiritualTrip, trip } = location.state || {};
 
   const [date, setDate] = useState('');

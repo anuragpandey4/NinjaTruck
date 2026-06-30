@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Upload, CheckCircle2, ChevronRight, ShieldCheck, X } from 'lucide-react';
 import { uploadService } from '../../../../shared/services/uploadService';
@@ -16,7 +17,7 @@ const fileToDataUrl = (file) =>
 
 const RentalKYC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const state = location.state || {};
   if (!state.vehicle) { navigate('/rental'); return null; }
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, ChevronRight, Clock3, Info, MapPin, Users } from 'lucide-react';
 import { useSettings } from '../../../../shared/context/SettingsContext';
@@ -119,7 +120,7 @@ const getDisplayDate = (rideMode, travelDate) => (rideMode === 'schedule' ? trav
 
 const IntercityVehicle = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const { settings } = useSettings();
   const routePrefix = location.pathname.startsWith('/taxi/user') ? '/taxi/user' : '';
   const {

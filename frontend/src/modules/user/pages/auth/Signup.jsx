@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import * as Motion from 'framer-motion';
 import AuthLayout from '../../components/AuthLayout';
 import { User, Mail, Camera, Smartphone, ImagePlus, LifeBuoy, FileText, ShieldCheck } from 'lucide-react';
@@ -31,7 +32,7 @@ const notifyAuthReady = () => {
 };
 
 const Signup = () => {
-  const location = useLocation();
+  const location = usePersistedLocation();
   const { settings } = useSettings();
   const referralCodeFromQuery = new URLSearchParams(location.search).get('ref') || '';
   const preservedPhone = typeof window !== 'undefined' ? sessionStorage.getItem(PENDING_SIGNUP_PHONE_KEY) || '' : '';

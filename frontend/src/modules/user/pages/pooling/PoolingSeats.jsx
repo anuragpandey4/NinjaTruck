@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import {
   ArrowLeft,
   ChevronRight,
@@ -45,7 +46,7 @@ const computePoolingFareBreakdown = (route, selectedVehicle, seatCount) => {
 const PoolingSeats = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const travelDate = location.state?.travelDate || '';
 
   const [route, setRoute] = useState(null);

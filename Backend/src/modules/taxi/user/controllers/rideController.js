@@ -141,7 +141,7 @@ const loadCompletedRideForUser = async (rideId, userId, session = null) => {
   const ride = await Ride.findOne({
     _id: rideId,
     userId,
-    status: RIDE_STATUS.COMPLETED,
+    status: { $in: [RIDE_STATUS.COMPLETED, 'delivered'] },
   }).session(session);
 
   if (!ride) {
@@ -295,7 +295,7 @@ const razorpayRequest = async ({ method, path, body, keyId, keySecret }) => {
 };
 
 export const createRide = async (req, res) => {
-  const { pickup, drop, pickupAddress, dropAddress, fare, estimatedDistanceMeters, estimatedDurationMinutes, vehicleTypeId, vehicleTypeIds, vehicleIconType, vehicleIconUrl, paymentMethod, serviceType, intercity, promo_code, zone_id, service_location_id, transport_type, scheduledAt, bookingMode, userMaxBidFare, bidStepAmount } =
+  const { pickup, drop, pickupAddress, dropAddress, fare, estimatedDistanceMeters, estimatedDurationMinutes, vehicleTypeId, vehicleTypeIds, vehicleIconType, vehicleIconUrl, paymentMethod, serviceType, intercity, promo_code, zone_id, service_location_id, transport_type, scheduledAt, bookingMode, userMaxBidFare, bidStepAmount, rentalPackage } =
     req.body;
 
   if (!pickup || !drop) {
@@ -326,6 +326,7 @@ export const createRide = async (req, res) => {
     bookingMode,
     userMaxBidFare,
     bidStepAmount,
+    rentalPackage,
   });
 
   await startDispatchFlow(ride);

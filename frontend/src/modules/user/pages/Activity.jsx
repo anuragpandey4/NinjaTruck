@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../hooks/usePersistedLocation';
 import BottomNavbar from '../components/BottomNavbar';
 import ActivityHeader from '../components/activity/ActivityHeader';
 import ActivityTabs from '../components/activity/ActivityTabs';
@@ -288,7 +289,7 @@ const Activity = () => {
     hasPrevPage: false,
   });
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const routePrefix = location.pathname.startsWith('/taxi/user') ? '/taxi/user' : '';
 
   useEffect(() => {

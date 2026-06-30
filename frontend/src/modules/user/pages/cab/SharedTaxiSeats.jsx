@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, MapPin, Clock, Users, ChevronRight, Star } from 'lucide-react';
 
@@ -16,7 +17,7 @@ const INIT_SEATS = [
 
 const SharedTaxiSeats = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const { route, date } = location.state || {};
   if (!route) { navigate('/cab/shared'); return null; }
 

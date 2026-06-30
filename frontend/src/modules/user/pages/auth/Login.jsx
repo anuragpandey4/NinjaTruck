@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, ChevronRight, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { getLocalUserToken, userAuthService } from '../../services/authService';
@@ -51,7 +52,7 @@ const getFriendlyLoginError = (message) => {
 };
 
 const Login = () => {
-  const location = useLocation();
+  const location = usePersistedLocation();
   const navigate = useNavigate();
   const { settings } = useSettings();
   const phoneInputRef = useRef(null);
@@ -109,7 +110,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#E7F5E8] flex flex-col font-['Outfit'] select-none overflow-hidden relative">
+    <div className="w-full min-h-[100dvh] bg-[#E7F5E8] flex flex-col font-['Outfit'] select-none overflow-hidden relative">
       <div className="absolute top-0 left-0 right-0 h-[65%] z-0">
         <motion.img 
           initial={{ opacity: 0, scale: 1.1 }}

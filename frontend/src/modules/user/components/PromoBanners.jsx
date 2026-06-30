@@ -10,7 +10,7 @@ const rotatingCards = [
     title: 'In a hurry?',
     description: 'Auto for shorter wait times.',
     actionClass: 'bg-orange-50 text-orange-500',
-    path: '/taxi/user/ride/select-location',
+    path: '/taxi/user/parcel/type',
     images: [
       { src: '/2_AutoRickshaw.png', alt: 'Auto' },
       { src: '/1_Bike.png', alt: 'Bike' },
@@ -22,7 +22,7 @@ const rotatingCards = [
     title: 'Need more space?',
     description: 'Cab for luggage or comfort.',
     actionClass: 'bg-blue-50 text-blue-500',
-    path: '/taxi/user/ride/select-location',
+    path: '/taxi/user/parcel/type',
     images: [
       { src: '/4_Taxi.png', alt: 'Taxi' },
       { src: '/white_sedan_banner_car.png', alt: 'Sedan' },

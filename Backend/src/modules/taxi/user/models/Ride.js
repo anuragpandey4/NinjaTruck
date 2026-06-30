@@ -209,6 +209,28 @@ const rideSchema = new mongoose.Schema(
         }
       },
     },
+    rentalPackage: {
+      packageId: {
+        type: String,
+        default: '',
+        trim: true,
+      },
+      durationHours: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+      price: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+      extraHourPrice: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+    },
     scheduledAt: {
       type: Date,
       default: null,

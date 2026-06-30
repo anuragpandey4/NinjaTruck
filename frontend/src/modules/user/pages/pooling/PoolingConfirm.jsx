@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import {
   ArrowLeft,
   ShieldCheck,
@@ -83,7 +84,7 @@ const formatDateTime = (dateValue, scheduleLabel = '') => {
 };
 
 const PoolingConfirm = () => {
-  const location = useLocation();
+  const location = usePersistedLocation();
   const navigate = useNavigate();
   const { route, vehicle, selectedSeats, totalFare, fareBreakdown: routeFareBreakdown, travelDate, schedule, pickupStop, dropStop } = location.state || {};
 

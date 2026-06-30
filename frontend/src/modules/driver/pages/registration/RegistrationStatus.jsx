@@ -118,14 +118,11 @@ const RegistrationStatus = () => {
       const token = getLocalDriverToken();
 
       if (!token) {
-        if (mountedRef.current) {
-          setChecking(false);
-          setStatusMessage(
-            "Registration session not found. Please start again.",
-          );
-        }
-        redirectToDriverLogin(navigate);
+        // Stop polling immediately — no point hitting the API without a token
+        clearInterval(timeoutRef.current);
+        mountedRef.current = false;
         requestInFlightRef.current = false;
+        redirectToDriverLogin(navigate);
         return;
       }
 
@@ -160,13 +157,17 @@ const RegistrationStatus = () => {
           return;
         }
 
-        if (error?.status === 401) {
-          redirectToDriverLogin(navigate);
+        if (error?.status === 401 || error?.status === 403) {
+          clearInterval(timeoutRef.current);
+          mountedRef.current = false;
           requestInFlightRef.current = false;
+          redirectToDriverLogin(navigate);
           return;
         }
 
         if (error?.status === 404) {
+          clearInterval(timeoutRef.current);
+          mountedRef.current = false;
           setStatusMessage("Driver account deleted. Redirecting to login...");
           redirectToDriverLogin(navigate);
           requestInFlightRef.current = false;

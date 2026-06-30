@@ -1,6 +1,7 @@
 import { createDeliveryRecord, getActiveDeliveryForIdentity, getDeliveryById, listDeliveriesForIdentity } from '../services/deliveryService.js';
 
 export const createDelivery = async (req, res) => {
+  console.log('[deliveryController] POST /deliveries body:', req.body);
   const { pickup, drop, pickupAddress, dropAddress, fare, vehicleTypeId, vehicleTypeIds, vehicleIconType, vehicleIconUrl, paymentMethod, parcel } = req.body;
 
   const delivery = await createDeliveryRecord({

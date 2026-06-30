@@ -1,5 +1,6 @@
 import React, { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertCircle,
@@ -950,7 +951,7 @@ const ContactDetailsSheet = ({
 
 const SenderReceiverDetails = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const routePrefix = useMemo(
     () => (location.pathname.startsWith('/taxi/user') ? '/taxi/user' : ''),
     [location.pathname],

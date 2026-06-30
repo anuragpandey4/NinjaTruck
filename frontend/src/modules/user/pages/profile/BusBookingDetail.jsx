@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft, 
@@ -93,7 +94,7 @@ const computeSelectionQuote = (booking, selectedSeatIds) => {
 
 const BusBookingDetail = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const { id } = useParams();
   const routePrefix = useMemo(() => getRoutePrefix(location.pathname), [location.pathname]);
   const [booking, setBooking] = useState(null);

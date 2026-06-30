@@ -65,7 +65,7 @@ const DriverBottomNav = () => {
       ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-100 shadow-[0_-1px_0_0_#f1f5f9] font-['Poppins'] max-w-lg mx-auto left-1/2 -translate-x-1/2 w-full">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-100 shadow-[0_-1px_0_0_#f1f5f9] font-['Poppins'] max-w-lg mx-auto w-full">
       <div
         className="grid w-full pb-[env(safe-area-inset-bottom)]"
         style={{ gridTemplateColumns: `repeat(${navItems.length}, minmax(0, 1fr))` }}

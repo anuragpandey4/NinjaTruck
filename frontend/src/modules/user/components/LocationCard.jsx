@@ -76,7 +76,7 @@ const LocationCard = ({ location = 'Fetching location...' }) => {
         </motion.div>
 
         <motion.button
-          onClick={() => navigate('/ride/select-location')}
+          onClick={() => navigate('/taxi/user/parcel/type')}
           className="mt-4 flex w-full items-center gap-3 rounded-[18px] border border-slate-100 bg-slate-50 px-4 py-4 text-left transition-all hover:border-slate-200 hover:bg-white active:scale-[0.99]"
           whileHover={{ y: -1 }}
           whileTap={{ scale: 0.985 }}
@@ -107,7 +107,7 @@ const LocationCard = ({ location = 'Fetching location...' }) => {
             <motion.button
               key={`${String(place || '').trim() || 'place'}-${index}`}
               type="button"
-              onClick={() => navigate('/ride/select-location')}
+              onClick={() => navigate('/taxi/user/parcel/type')}
               className="shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-[12px] font-black text-slate-600 transition-all active:scale-95"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}

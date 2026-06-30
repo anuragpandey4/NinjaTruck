@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion } from 'framer-motion';
 import { Calendar, CheckCircle2, Clock3, LoaderCircle, Navigation } from 'lucide-react';
 import api from '../../../../shared/api/axiosInstance';
@@ -12,7 +13,7 @@ const generateSearchNonce = () =>
 
 const IntercityConfirm = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const routePrefix = location.pathname.startsWith('/taxi/user') ? '/taxi/user' : '';
   const state = useMemo(() => location.state || {}, [location.state]);
   const [status, setStatus] = useState('saving');

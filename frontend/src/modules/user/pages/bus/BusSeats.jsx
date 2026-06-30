@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ChevronRight, Loader2 } from 'lucide-react';
 import userBusService from '../../services/busService';
@@ -110,7 +111,7 @@ const SeatDeck = ({ title, rows, selectedSeatIds, onToggle }) => {
 
 const BusSeats = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const routePrefix = useMemo(() => getRoutePrefix(location.pathname), [location.pathname]);
   const state = location.state || {};
   const { bus, fromCity, toCity, date } = state;

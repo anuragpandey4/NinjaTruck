@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Send, Phone, Smile, Loader2 } from 'lucide-react';
 import SupportChatPanel from '../../../shared/components/SupportChatPanel';
@@ -52,7 +53,7 @@ const buildPeerFromRideState = (ride, chatRole, fallbackPeer = {}) => {
 
 const Chat = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const searchParams = new URLSearchParams(location.search);
   const isAdminChat = searchParams.get('admin') === 'true';
   const routeRole = searchParams.get('role');

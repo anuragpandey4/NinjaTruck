@@ -7525,7 +7525,7 @@ export const getOwnerFleetDashboard = async (req, res) => {
               totalBookings: { $sum: 1 },
               completedBookings: {
                 $sum: {
-                  $cond: [{ $eq: ["$status", RIDE_STATUS.COMPLETED] }, 1, 0],
+                  $cond: [{ $in: ["$status", [RIDE_STATUS.COMPLETED, 'delivered']] }, 1, 0],
                 },
               },
               cancelledBookings: {
@@ -7550,7 +7550,7 @@ export const getOwnerFleetDashboard = async (req, res) => {
               grossRevenue: {
                 $sum: {
                   $cond: [
-                    { $eq: ["$status", RIDE_STATUS.COMPLETED] },
+                    { $in: ["$status", [RIDE_STATUS.COMPLETED, 'delivered']] },
                     { $ifNull: ["$fare", 0] },
                     0,
                   ],
@@ -7559,7 +7559,7 @@ export const getOwnerFleetDashboard = async (req, res) => {
               ownerEarnings: {
                 $sum: {
                   $cond: [
-                    { $eq: ["$status", RIDE_STATUS.COMPLETED] },
+                    { $in: ["$status", [RIDE_STATUS.COMPLETED, 'delivered']] },
                     { $ifNull: ["$driverEarnings", 0] },
                     0,
                   ],
@@ -7591,7 +7591,7 @@ export const getOwnerFleetDashboard = async (req, res) => {
               totalBookings: { $sum: 1 },
               completedBookings: {
                 $sum: {
-                  $cond: [{ $eq: ["$status", RIDE_STATUS.COMPLETED] }, 1, 0],
+                  $cond: [{ $in: ["$status", [RIDE_STATUS.COMPLETED, 'delivered']] }, 1, 0],
                 },
               },
               cancelledBookings: {
@@ -7616,7 +7616,7 @@ export const getOwnerFleetDashboard = async (req, res) => {
               grossRevenue: {
                 $sum: {
                   $cond: [
-                    { $eq: ["$status", RIDE_STATUS.COMPLETED] },
+                    { $in: ["$status", [RIDE_STATUS.COMPLETED, 'delivered']] },
                     { $ifNull: ["$fare", 0] },
                     0,
                   ],
@@ -7625,7 +7625,7 @@ export const getOwnerFleetDashboard = async (req, res) => {
               ownerEarnings: {
                 $sum: {
                   $cond: [
-                    { $eq: ["$status", RIDE_STATUS.COMPLETED] },
+                    { $in: ["$status", [RIDE_STATUS.COMPLETED, 'delivered']] },
                     { $ifNull: ["$driverEarnings", 0] },
                     0,
                   ],
@@ -7652,13 +7652,13 @@ export const getOwnerFleetDashboard = async (req, res) => {
               trips: { $sum: 1 },
               completedTrips: {
                 $sum: {
-                  $cond: [{ $eq: ["$status", RIDE_STATUS.COMPLETED] }, 1, 0],
+                  $cond: [{ $in: ["$status", [RIDE_STATUS.COMPLETED, 'delivered']] }, 1, 0],
                 },
               },
               earnings: {
                 $sum: {
                   $cond: [
-                    { $eq: ["$status", RIDE_STATUS.COMPLETED] },
+                    { $in: ["$status", [RIDE_STATUS.COMPLETED, 'delivered']] },
                     { $ifNull: ["$driverEarnings", 0] },
                     0,
                   ],

@@ -655,6 +655,7 @@ const normalizeBusServicePayload = (payload = {}, existing = {}) => {
       : countSeatsInBlueprintDeck(blueprint.lowerDeck) + countSeatsInBlueprintDeck(blueprint.upperDeck);
 
   return {
+    ...payload,
     operatorName: sanitizeBusText(payload.operatorName, existing.operatorName || ''),
     busName: sanitizeBusText(payload.busName, existing.busName || ''),
     serviceNumber: sanitizeBusText(payload.serviceNumber, existing.serviceNumber || ''),
@@ -993,7 +994,9 @@ const normalizeRentalVehiclePayload = (payload = {}, existing = {}) => {
     countSeatsInBlueprintDeck(blueprint.lowerDeck) + countSeatsInBlueprintDeck(blueprint.upperDeck);
 
   return {
+    ...payload,
     transport_type: sanitizeBusText(payload.transport_type, existing.transport_type || 'rental') || 'rental',
+    rental_type: sanitizeBusText(payload.rental_type, existing.rental_type || 'both') || 'both',
     name: sanitizeBusText(payload.name, existing.name || ''),
     short_description: sanitizeBusText(payload.short_description, existing.short_description || ''),
     description: sanitizeBusText(payload.description, existing.description || ''),
@@ -1086,6 +1089,7 @@ const normalizePoolingSchedule = (schedule = {}, index = 0) => ({
 });
 
 const normalizePoolingPayload = (payload = {}, existing = {}) => ({
+  ...payload,
   routeName: sanitizePoolingText(payload.routeName, existing.routeName || ''),
   routeCode: sanitizePoolingText(payload.routeCode, existing.routeCode || ''),
   originLabel: sanitizePoolingText(payload.originLabel, existing.originLabel || ''),
@@ -7466,7 +7470,7 @@ export const getDashboardData = async () => {
     return value >= rangeStart && value <= rangeEnd;
   };
 
-  const isCompletedRide = (ride) => String(ride?.status || '').toLowerCase() === RIDE_STATUS.COMPLETED;
+  const isCompletedRide = (ride) => [RIDE_STATUS.COMPLETED, 'delivered'].includes(String(ride?.status || '').toLowerCase());
   const isCancelledRide = (ride) => String(ride?.status || '').toLowerCase() === RIDE_STATUS.CANCELLED;
   const isScheduledRide = (ride) => !isCompletedRide(ride) && !isCancelledRide(ride);
 

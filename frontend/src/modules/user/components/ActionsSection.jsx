@@ -66,13 +66,13 @@ const ActionsSection = () => {
 
       <div className="grid grid-cols-2 gap-4">
         <ActionCard
-          title="Ride"
-          description="Bike, auto, and cab rides."
-          image="/1_Bike.png"
+          title="Rentals"
+          description="Book trucks by the hour."
+          image="/rental_service_icon.png"
           surfaceClass="bg-gradient-to-br from-orange-50/60 via-white/80 to-orange-100/40"
           glowClass="249,115,22"
           buttonBgClass="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
-          path="/ride/select-location"
+          path="/taxi/user/rental"
         />
 
         <ActionCard
@@ -82,7 +82,7 @@ const ActionsSection = () => {
           surfaceClass="bg-gradient-to-br from-indigo-50/60 via-white/80 to-indigo-100/40"
           glowClass="99,102,241"
           buttonBgClass="bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600"
-          path="/parcel/type"
+          path="/taxi/user/parcel/type"
         />
       </div>
     </div>

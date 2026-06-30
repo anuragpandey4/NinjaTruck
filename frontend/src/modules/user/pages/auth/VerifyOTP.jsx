@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, CheckCircle2, ChevronRight, MessageSquare } from 'lucide-react';
 import { userAuthService } from '../../services/authService';
@@ -28,7 +29,7 @@ const notifyAuthReady = () => {
 };
 
 const VerifyOTP = () => {
-  const location = useLocation();
+  const location = usePersistedLocation();
   const navigate = useNavigate();
   const { settings } = useSettings();
   const inputs = useRef([]);

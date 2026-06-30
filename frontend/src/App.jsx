@@ -391,8 +391,8 @@ const MainLayout = ({ children }) => {
   }
 
   return (
-    <div className="redigo-app min-h-screen bg-gray-50/50">
-      <main className="max-w-lg mx-auto shadow-2xl bg-white min-h-screen relative overflow-x-hidden">
+    <div className="redigo-app min-h-[100dvh] bg-gray-50/50 w-full overflow-x-hidden">
+      <main className="max-w-lg w-full mx-auto shadow-2xl bg-white min-h-[100dvh] relative overflow-x-hidden">
         {children}
       </main>
     </div>

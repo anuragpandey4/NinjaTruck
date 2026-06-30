@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Fuel, Shield, ChevronRight, Star, Info, Car, Search, X, Bike } from 'lucide-react';
 import { userService } from '../../services/userService';
@@ -188,7 +189,7 @@ const RentalSkeleton = () => (
 );
 
 const BikeRentalHome = () => {
-  const location = useLocation();
+  const location = usePersistedLocation();
   const rentalTypeFilter = (() => {
     const fromState = location.state?.rentalType;
     if (fromState) {

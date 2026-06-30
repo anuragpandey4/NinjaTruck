@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion as Motion } from 'framer-motion';
 import { ArrowLeft, ChevronRight, ShieldCheck, CreditCard, Wallet, Smartphone } from 'lucide-react';
 import { userService } from '../../services/userService';
@@ -83,7 +84,7 @@ const buildRentalBookingPayload = ({
 
 const RentalDeposit = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const { settings } = useSettings();
   const routeState = location.state && Object.keys(location.state).length > 0 ? location.state : null;
   const restoredState = useMemo(() => {

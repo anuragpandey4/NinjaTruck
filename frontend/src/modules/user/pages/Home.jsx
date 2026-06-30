@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../hooks/usePersistedLocation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CalendarClock, ChevronRight, Clock3, MapPin, Search, ShieldCheck, User } from 'lucide-react';
 import HeaderGreeting from '../components/HeaderGreeting';
@@ -191,7 +192,7 @@ const normalizeRentalCurrentRideSnapshot = (ride = {}, previousRide = {}) => {
 
 const Home = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const { settings } = useSettings();
   const appName = settings.general?.app_name || 'App';
 

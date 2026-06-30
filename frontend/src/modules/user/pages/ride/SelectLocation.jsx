@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, MapPin, X, Plus, Minus, Check, Map as MapIcon, LoaderCircle, Navigation, AlertTriangle, ChevronRight } from 'lucide-react';
 import { GoogleMap, MarkerF } from '@react-google-maps/api';
@@ -159,7 +160,7 @@ const findMatchingZone = (coords, zones = []) => {
 };
 
 const SelectLocation = () => {
-  const location = useLocation();
+  const location = usePersistedLocation();
   const routeState = location.state || {};
   const serviceLocationId = routeState.service_location_id || routeState.serviceLocationId || '';
   const routeActiveInput = routeState.activeInput === 'pickup' || routeState.activeInput === 'drop'
@@ -1052,8 +1053,12 @@ const SelectLocation = () => {
               <ArrowLeft size={22} className="text-white" strokeWidth={3} />
             </button>
             <div className="min-w-0 text-left">
-              <p className="text-[10px] font-black uppercase tracking-wider text-indigo-300">Ride</p>
-              <h1 className="mt-0.5 text-[20px] font-black text-white tracking-tight leading-none truncate">Where to?</h1>
+              <p className="text-[10px] font-black uppercase tracking-wider text-indigo-300">
+                {isParcelFlow ? 'Delivery' : 'Logistics'}
+              </p>
+              <h1 className="mt-0.5 text-[20px] font-black text-white tracking-tight leading-none truncate">
+                {isParcelFlow ? 'Select Location' : 'Where to?'}
+              </h1>
             </div>
           </div>
         </div>

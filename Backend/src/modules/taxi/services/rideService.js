@@ -886,6 +886,7 @@ export const createRideRecord = async ({
   bookingMode,
   userMaxBidFare,
   bidStepAmount,
+  rentalPackage,
 }) => {
   const user = await User.findById(userId);
 
@@ -1098,6 +1099,7 @@ export const createRideRecord = async ({
       pricingSnapshot,
       parcel: normalizeParcelPayload(parcel),
       intercity: normalizeIntercityPayload(intercity),
+      rentalPackage,
       scheduledAt: normalizedScheduledAt,
       status: RIDE_STATUS.SEARCHING,
       liveStatus: RIDE_LIVE_STATUS.SEARCHING,
@@ -1153,6 +1155,7 @@ export const createRideRecord = async ({
             pricingSnapshot,
             parcel: normalizeParcelPayload(parcel),
             intercity: normalizeIntercityPayload(intercity),
+            rentalPackage,
             scheduledAt: normalizedScheduledAt,
             status: RIDE_STATUS.SEARCHING,
             liveStatus: RIDE_LIVE_STATUS.SEARCHING,
@@ -2099,7 +2102,7 @@ export const submitRideFeedback = async ({ rideId, userId, rating, comment = '',
   const ride = await Ride.findOne({
     _id: rideId,
     userId,
-    status: RIDE_STATUS.COMPLETED,
+    status: { $in: [RIDE_STATUS.COMPLETED, 'delivered'] },
   });
 
   if (!ride) {

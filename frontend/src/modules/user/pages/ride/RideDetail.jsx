@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Bike, HelpCircle, Repeat, Share2, Star } from 'lucide-react';
 import api from '../../../../shared/api/axiosInstance';
@@ -45,7 +46,7 @@ const RideDetail = () => {
   const appName = settings.general?.app_name || 'App';
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const [shareToast, setShareToast] = useState(false);
   const [ride, setRide] = useState(location.state?.ride || null);
   const [loading, setLoading] = useState(!location.state?.ride);

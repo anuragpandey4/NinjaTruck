@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
@@ -209,8 +210,8 @@ const DateTimePickerCard = ({
 
 const RentalSchedule = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { vehicle, duration, selectedPackage, serviceLocation } = location.state || {};
+  const location = usePersistedLocation();
+  const { vehicle, duration, selectedPackage, serviceLocation, rentalType } = location.state || {};
 
   if (!vehicle) {
     navigate('/rental');
@@ -475,19 +476,44 @@ const RentalSchedule = () => {
         <motion.button
           whileTap={{ scale: 0.98 }}
           disabled={!isValid}
-          onClick={() =>
-            navigate('/rental/kyc', {
-              state: {
-                vehicle,
-                duration,
-                selectedPackage,
-                serviceLocation,
-                pickup,
-                returnTime: returnDateTimeValue,
-                totalCost,
-              },
-            })
-          }
+          onClick={() => {
+            if (rentalType === 'with_driver') {
+              navigate('/taxi/user/ride/searching', {
+                state: {
+                  ...location.state,
+                  rentalType: 'with_driver',
+                  serviceType: 'rental',
+                  pickupCoords: serviceLocation?.latitude ? [serviceLocation.longitude, serviceLocation.latitude] : [75.8937, 22.7533],
+                  dropCoords: serviceLocation?.latitude ? [serviceLocation.longitude, serviceLocation.latitude] : [75.8937, 22.7533],
+                  pickup: serviceLocation?.address || serviceLocation?.name || 'My Location',
+                  drop: serviceLocation?.address || serviceLocation?.name || 'My Location',
+                  fare: totalCost,
+                  vehicleTypeId: vehicle.id || vehicle._id,
+                  vehicleIconUrl: vehicle.image,
+                  vehicleIconType: vehicle.vehicleCategory,
+                  scheduledAt: pickup,
+                  rentalPackage: {
+                    packageId: selectedPackage?.id || selectedPackage?.packageId,
+                    durationHours: selectedPackage?.durationHours,
+                    price: selectedPackage?.price,
+                    extraHourPrice: selectedPackage?.extraHourPrice,
+                  }
+                },
+              });
+            } else {
+              navigate('/rental/kyc', {
+                state: {
+                  vehicle,
+                  duration,
+                  selectedPackage,
+                  serviceLocation,
+                  pickup,
+                  returnTime: returnDateTimeValue,
+                  totalCost,
+                },
+              });
+            }
+          }}
           className={`pointer-events-auto w-full py-4 rounded-[18px] text-[15px] font-bold text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)] flex items-center justify-center gap-2 transition-all ${
             isValid ? 'bg-slate-950' : 'bg-slate-300'
           }`}

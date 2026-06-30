@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -100,7 +101,7 @@ const getRouteKey = (route, index) => {
 
 const BusHome = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const { settings } = useSettings();
   const routePrefix = useMemo(() => getRoutePrefix(location.pathname), [location.pathname]);
   const busEnabled = isEnabledFlag(settings?.transportRide?.enable_bus_service);

@@ -86,6 +86,7 @@ const matchDispatchDrivers = async ({
   radius,
   dispatchVehicleTypeIds,
 }) => {
+  console.log('[dispatchService] matchDispatchDrivers called for ride:', ride._id, 'radius:', radius, 'dispatchVehicleTypeIds:', dispatchVehicleTypeIds);
   const sharedOptions = {
     maxDistance: radius,
     vehicleTypeId: ride.vehicleTypeId,
@@ -97,11 +98,14 @@ const matchDispatchDrivers = async ({
     serviceLocationId: ride.service_location_id || null,
   });
 
+  console.log('[dispatchService] matchDrivers first result length:', result.drivers.length);
+
   if (!result.drivers.length && ride.service_location_id) {
     result = await matchDrivers(ride.pickupLocation.coordinates, {
       ...sharedOptions,
       serviceLocationId: null,
     });
+    console.log('[dispatchService] matchDrivers fallback result length:', result.drivers.length);
   }
 
   return result;

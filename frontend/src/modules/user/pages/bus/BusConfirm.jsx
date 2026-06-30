@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Ticket, QrCode, Home, Share2, Phone, Route, BusFront } from 'lucide-react';
 import { scheduleBusBookingReminders } from '../../utils/upcomingRideReminderService';
@@ -40,7 +41,7 @@ const formatBusRegistrationNumber = (value = '') => String(value || '').trim().t
 
 const BusConfirm = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const routePrefix = getRoutePrefix(location.pathname);
   const state = location.state || {};
   const { booking, fromCity, toCity, date } = state;

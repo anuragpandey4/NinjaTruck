@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { usePersistedLocation } from '../../../../hooks/usePersistedLocation';
 import { motion } from 'framer-motion';
 import { CheckCircle2, ChevronRight, MapPin, Calendar, User, ArrowLeft, Star } from 'lucide-react';
 
 const SpiritualTripConfirm = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = usePersistedLocation();
   const state = location.state || {};
   const [mounted, setMounted] = useState(false);
 
