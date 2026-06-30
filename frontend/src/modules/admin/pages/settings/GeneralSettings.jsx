@@ -67,7 +67,7 @@ const InputField = ({ label, name, value, onChange, placeholder, info }) => {
       {info && (
         <div className="mt-2 bg-[#FFF8F0] border border-orange-100 rounded-lg px-4 py-2 flex items-center gap-2">
            <span className="text-[11px] text-gray-500 italic">Example: {info.prefix}</span>
-           <span className="text-[11px] bg-[#00BFA5] text-white px-2 py-0.5 rounded font-bold">{value || info.default}</span>
+           <span className="text-[11px] bg-slate-900 text-white px-2 py-0.5 rounded font-bold">{value || info.default}</span>
         </div>
       )}
     </div>
@@ -131,7 +131,7 @@ const ImageUploadBox = ({ title, size, preview, onUpload, onClear }) => {
           )}
           
           <div className="absolute top-4 right-4 flex items-center gap-2">
-             <button onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }} className="w-8 h-8 rounded-lg bg-[#E6F8F6] text-[#00BFA5] shadow-sm border border-[#C2EFE9] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+             <button onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }} className="w-8 h-8 rounded-lg bg-[#E6F8F6] text-slate-900 shadow-sm border border-[#C2EFE9] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <Upload size={14} />
              </button>
              {preview && (
@@ -417,7 +417,7 @@ const GeneralSettings = () => {
 
       {/* Persistence Controls */}
       <div className="fixed bottom-10 right-10">
-         <button onClick={handleUpdate} disabled={saving} className="bg-[#00BFA5] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-[0_15px_40px_rgba(0,191,165,0.4)] hover:bg-[#00AC95] active:scale-90 transition-all disabled:opacity-50">
+         <button onClick={handleUpdate} disabled={saving} className="bg-slate-900 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-[0_15px_40px_rgba(0,191,165,0.4)] hover:bg-[#0f172a] active:scale-90 transition-all disabled:opacity-50">
             {saving ? <Loader2 size={24} className="animate-spin" /> : <Save size={24} />}
          </button>
       </div>

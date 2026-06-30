@@ -100,17 +100,17 @@ const DriverIncentive = () => {
          <div className="flex border-b border-gray-100 h-16">
             <button 
               onClick={() => setActiveTab('daily')}
-              className={`flex-1 flex items-center justify-center text-[12px] font-black uppercase tracking-widest transition-all relative ${activeTab === 'daily' ? 'text-[#00BFA5]' : 'text-gray-400 hover:text-gray-600'}`}
+              className={`flex-1 flex items-center justify-center text-[12px] font-black uppercase tracking-widest transition-all relative ${activeTab === 'daily' ? 'text-slate-900' : 'text-gray-400 hover:text-gray-600'}`}
             >
                Daily
-               {activeTab === 'daily' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#00BFA5]" />}
+               {activeTab === 'daily' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-slate-900" />}
             </button>
             <button 
               onClick={() => setActiveTab('weekly')}
-              className={`flex-1 flex items-center justify-center text-[12px] font-black uppercase tracking-widest transition-all relative ${activeTab === 'weekly' ? 'text-[#00BFA5]' : 'text-gray-400 hover:text-gray-600'}`}
+              className={`flex-1 flex items-center justify-center text-[12px] font-black uppercase tracking-widest transition-all relative ${activeTab === 'weekly' ? 'text-slate-900' : 'text-gray-400 hover:text-gray-600'}`}
             >
                Weekly
-               {activeTab === 'weekly' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#00BFA5]" />}
+               {activeTab === 'weekly' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-slate-900" />}
             </button>
          </div>
 
@@ -162,7 +162,7 @@ const DriverIncentive = () => {
 
       {/* Floating Design element */}
       <div className="fixed bottom-10 right-10">
-         <button className="w-14 h-14 bg-[#00BFA5] text-white rounded-full flex items-center justify-center shadow-2xl hover:rotate-[360deg] transition-all duration-700">
+         <button className="w-14 h-14 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-2xl hover:rotate-[360deg] transition-all duration-700">
             <div className="flex flex-col gap-1 items-center">
                <div className="w-6 h-[2.5px] bg-white rounded-full"></div>
                <div className="w-6 h-[2px] bg-white/70 rounded-full"></div>

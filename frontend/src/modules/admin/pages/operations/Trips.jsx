@@ -200,7 +200,7 @@ const Trips = () => {
             </table>
           </div>
 
-          <button className="fixed bottom-10 right-10 w-14 h-14 bg-[#00BFA5] text-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform z-50">
+          <button className="fixed bottom-10 right-10 w-14 h-14 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform z-50">
             <Menu size={24} />
           </button>
         </div>

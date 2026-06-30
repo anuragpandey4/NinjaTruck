@@ -229,19 +229,19 @@ const HeatMap = () => {
                     <input 
                       type="range" min="0" max="1" step="0.01" value={opacity} 
                       onChange={e => setOpacity(Number(e.target.value))}
-                      className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-[#00BFA5]"
+                      className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-slate-900"
                     />
                  </div>
 
                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
                        <label className={labelClass}>Gradient Radius</label>
-                       <span className="text-[10px] font-black text-[#00BFA5] bg-emerald-50 px-2 py-1 rounded font-mono">{radius}px</span>
+                       <span className="text-[10px] font-black text-slate-900 bg-emerald-50 px-2 py-1 rounded font-mono">{radius}px</span>
                     </div>
                     <input 
                       type="range" min="1" max="100" step="1" value={radius} 
                       onChange={e => setRadius(Number(e.target.value))}
-                      className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-[#00BFA5]"
+                      className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-slate-900"
                     />
                  </div>
               </div>

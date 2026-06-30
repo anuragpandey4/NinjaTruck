@@ -225,7 +225,7 @@ const GodsEye = () => {
               </div>
 
               <div className="flex items-center gap-3 mt-8 pt-8 border-t border-gray-50">
-                 <button onClick={fetchMapData} className="px-8 py-3 bg-[#00BFA5] text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-[#00BFA5]/20 hover:scale-[1.02] transition-all">
+                 <button onClick={fetchMapData} className="px-8 py-3 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-slate-900/20 hover:scale-[1.02] transition-all">
                     Apply Grid
                  </button>
                  <button onClick={() => { setDriverMode('all'); setVehicleType('all'); }} className="px-8 py-3 bg-rose-500 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-rose-100 hover:scale-[1.02] transition-all">

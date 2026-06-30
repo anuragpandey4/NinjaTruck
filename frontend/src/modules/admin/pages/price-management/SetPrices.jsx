@@ -133,7 +133,7 @@ const togglePaymentType = (currentValue, targetValue) => {
 const StatusToggle = ({ active, onToggle }) => (
   <button
     onClick={(e) => { e.stopPropagation(); onToggle(); }}
-    className={`w-11 h-6 rounded-full transition-colors relative flex items-center ${active ? 'bg-[#00BFA5]' : 'bg-gray-200'}`}
+    className={`w-11 h-6 rounded-full transition-colors relative flex items-center ${active ? 'bg-slate-900' : 'bg-gray-200'}`}
   >
     <div className={`absolute w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${active ? 'translate-x-[22px]' : 'translate-x-1'}`} />
   </button>
@@ -545,7 +545,7 @@ const SetPrices = ({ mode }) => {
                )}
                
                <div className="flex justify-end mb-4">
-                  <button className="text-[11px] font-bold text-[#00BFA5] underline decoration-dotted underline-offset-4">How It Works</button>
+                  <button className="text-[11px] font-bold text-slate-900 underline decoration-dotted underline-offset-4">How It Works</button>
                </div>
 
                <form onSubmit={handleSave} className="space-y-10">
@@ -810,7 +810,7 @@ const SetPrices = ({ mode }) => {
 
                   {/* Footer Action */}
                   <div className="pt-8 flex justify-end">
-                     <button type="submit" disabled={saving} className="px-12 py-3.5 bg-[#00BFA5] text-white rounded text-[13px] font-bold shadow-lg hover:opacity-90 transition-all active:scale-95 flex items-center gap-2">
+                     <button type="submit" disabled={saving} className="px-12 py-3.5 bg-slate-900 text-white rounded text-[13px] font-bold shadow-lg hover:opacity-90 transition-all active:scale-95 flex items-center gap-2">
                         {saving && <Loader2 size={16} className="animate-spin" />}
                         {saving ? 'Saving Changes...' : 'Save'}
                      </button>
@@ -819,7 +819,7 @@ const SetPrices = ({ mode }) => {
 
                {/* Design Floating Action Button */}
                <div className="absolute right-8 top-[380px] z-50">
-                  <button type="button" className="w-14 h-14 bg-[#00BFA5] text-white rounded-full flex items-center justify-center shadow-2xl hover:rotate-[360deg] transition-all duration-700">
+                  <button type="button" className="w-14 h-14 bg-slate-900 text-white rounded-full flex items-center justify-center shadow-2xl hover:rotate-[360deg] transition-all duration-700">
                      <div className="flex flex-col gap-1.5 items-center">
                         <div className="w-6 h-[2.5px] bg-white rounded-full"></div>
                         <div className="w-6 h-[2px] bg-white/70 rounded-full"></div>
