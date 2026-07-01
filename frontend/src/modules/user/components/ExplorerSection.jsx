@@ -1,19 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Shield } from 'lucide-react';
 import insuranceBannerImg from '@/assets/images/insurance_banner.png';
+import api from '../../../shared/api/axiosInstance';
 
 const ExplorerSection = () => {
   const navigate = useNavigate();
+  const [settings, setSettings] = useState({
+    enabled: true,
+    bannerTitle: 'Vehicle Insurance',
+    bannerSubtitle: 'Instant coverage plans for your rides',
+    policyTermsLabel: 'Monthly, 6-Month, & Annual Coverage',
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/insurance/settings');
+        const s = res?.data?.data || res?.data || {};
+        setSettings(prev => ({
+          enabled: s.enabled ?? prev.enabled,
+          bannerTitle: s.bannerTitle || prev.bannerTitle,
+          bannerSubtitle: s.bannerSubtitle || prev.bannerSubtitle,
+          policyTermsLabel: s.policyTermsLabel || prev.policyTermsLabel,
+        }));
+      } catch {
+        // Keep defaults if API fails
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  if (!settings.enabled) {
+    return null;
+  }
 
   return (
     <div className="px-5 pb-8 flex flex-col gap-10">
       {/* Vehicle Insurance Section */}
       <div>
         <div className="mb-4 ml-1">
-          <h2 className="text-[19px] font-black text-gray-900 tracking-tight">Vehicle Insurance</h2>
+          <h2 className="text-[19px] font-black text-gray-900 tracking-tight">{settings.bannerTitle}</h2>
           <p className="mt-1 text-[11px] font-black uppercase tracking-[0.18em] text-gray-400">
-            Instant coverage plans for your rides
+            {settings.bannerSubtitle}
           </p>
         </div>
 
@@ -33,7 +62,7 @@ const ExplorerSection = () => {
           <div className="p-4 flex items-center justify-between bg-white/50 border-t border-slate-100">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Policy Terms</p>
-              <p className="text-[13px] font-bold text-slate-800 mt-0.5">Monthly, 6-Month, & Annual Coverage</p>
+              <p className="text-[13px] font-bold text-slate-800 mt-0.5">{settings.policyTermsLabel}</p>
             </div>
             <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-100 group-hover:translate-x-1 transition-transform">
               <ArrowRight size={18} strokeWidth={3} />

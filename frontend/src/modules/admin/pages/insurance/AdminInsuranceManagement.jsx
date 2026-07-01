@@ -9,7 +9,8 @@ import {
   AlertCircle, 
   Clock, 
   ChevronRight,
-  Filter
+  Filter,
+  Settings
 } from 'lucide-react';
 import { adminService } from '../../services/adminService';
 import api from '../../../../shared/api/axiosInstance';
@@ -38,11 +39,21 @@ const AdminInsuranceManagement = () => {
   const [editRates, setEditRates] = useState({ '1_month': 0, '6_months': 0, '1_year': 0 });
   const [updatingPlan, setUpdatingPlan] = useState(false);
 
+  // State for Banner Settings
+  const [bannerSettings, setBannerSettings] = useState({
+    enabled: true,
+    bannerTitle: 'Vehicle Insurance',
+    bannerSubtitle: 'Instant coverage plans for your rides',
+    policyTermsLabel: 'Monthly, 6-Month, & Annual Coverage',
+  });
+  const [savingSettings, setSavingSettings] = useState(false);
+
   const fetchRequests = async () => {
     try {
       setLoading(true);
       const res = await api.get('/insurance/admin');
-      setRequests(res.data || []);
+      const list = Array.from(res?.data?.data || res?.data || []);
+      setRequests(list);
     } catch (err) {
       console.error(err);
       toast.error('Failed to load insurance requests');
@@ -54,16 +65,46 @@ const AdminInsuranceManagement = () => {
   const fetchPlans = async () => {
     try {
       const res = await api.get('/insurance/admin/plans');
-      setPlans(res.data || []);
+      const list = Array.from(res?.data?.data || res?.data || []);
+      setPlans(list);
     } catch (err) {
       console.error(err);
       toast.error('Failed to load premium plans');
     }
   };
 
+  const fetchBannerSettings = async () => {
+    try {
+      const res = await api.get('/insurance/settings');
+      const s = res?.data?.data || res?.data || {};
+      setBannerSettings(prev => ({
+        enabled: s.enabled ?? prev.enabled,
+        bannerTitle: s.bannerTitle || prev.bannerTitle,
+        bannerSubtitle: s.bannerSubtitle || prev.bannerSubtitle,
+        policyTermsLabel: s.policyTermsLabel || prev.policyTermsLabel,
+      }));
+    } catch (err) {
+      console.error('Failed to load banner settings:', err);
+    }
+  };
+
+  const handleSaveBannerSettings = async () => {
+    try {
+      setSavingSettings(true);
+      await api.put('/insurance/admin/settings', bannerSettings);
+      toast.success('Banner settings saved successfully!');
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || 'Failed to save banner settings');
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
   useEffect(() => {
     fetchRequests();
     fetchPlans();
+    fetchBannerSettings();
   }, []);
 
   const handleUpdatePlan = async (e) => {
@@ -178,6 +219,14 @@ const AdminInsuranceManagement = () => {
           }`}
         >
           Manage Premium Rates
+        </button>
+        <button
+          onClick={() => setActiveTab('settings')}
+          className={`pb-3 pt-2 text-xs font-black uppercase tracking-widest border-b-2 transition-all ${
+            activeTab === 'settings' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'
+          }`}
+        >
+          Banner Settings
         </button>
       </div>
 
@@ -518,6 +567,86 @@ const AdminInsuranceManagement = () => {
                     )}
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Banner Settings Tab */}
+          {activeTab === 'settings' && (
+            <div className="max-w-2xl mx-auto">
+              <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm space-y-8">
+                <div className="flex items-center gap-3 border-b border-gray-100 pb-5">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <Settings size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-slate-800">Insurance Banner Settings</h3>
+                    <p className="text-[11px] text-slate-400 font-semibold mt-0.5">Control how insurance appears on the user home screen</p>
+                  </div>
+                </div>
+
+                {/* Enable/Disable Toggle */}
+                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">Show Insurance Section</p>
+                    <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Toggle visibility of insurance on the user app</p>
+                  </div>
+                  <button
+                    onClick={() => setBannerSettings(prev => ({ ...prev, enabled: !prev.enabled }))}
+                    className={`relative w-12 h-6 rounded-full transition-colors ${
+                      bannerSettings.enabled ? 'bg-indigo-600' : 'bg-gray-300'
+                    }`}
+                  >
+                    <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform ${
+                      bannerSettings.enabled ? 'translate-x-6' : 'translate-x-0.5'
+                    }`} />
+                  </button>
+                </div>
+
+                {/* Banner Title */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">Banner Title</label>
+                  <input
+                    type="text"
+                    value={bannerSettings.bannerTitle}
+                    onChange={(e) => setBannerSettings(prev => ({ ...prev, bannerTitle: e.target.value }))}
+                    placeholder="Vehicle Insurance"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors"
+                  />
+                </div>
+
+                {/* Banner Subtitle */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">Banner Subtitle</label>
+                  <input
+                    type="text"
+                    value={bannerSettings.bannerSubtitle}
+                    onChange={(e) => setBannerSettings(prev => ({ ...prev, bannerSubtitle: e.target.value }))}
+                    placeholder="Instant coverage plans for your rides"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors"
+                  />
+                </div>
+
+                {/* Policy Terms Label */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">Policy Terms Label</label>
+                  <input
+                    type="text"
+                    value={bannerSettings.policyTermsLabel}
+                    onChange={(e) => setBannerSettings(prev => ({ ...prev, policyTermsLabel: e.target.value }))}
+                    placeholder="Monthly, 6-Month, & Annual Coverage"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors"
+                  />
+                </div>
+
+                {/* Save Button */}
+                <button
+                  onClick={handleSaveBannerSettings}
+                  disabled={savingSettings}
+                  className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-md shadow-indigo-200 transition-colors disabled:opacity-50"
+                >
+                  {savingSettings ? 'Saving...' : 'Save Banner Settings'}
+                </button>
               </div>
             </div>
           )}

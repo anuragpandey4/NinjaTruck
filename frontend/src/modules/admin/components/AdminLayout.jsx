@@ -1491,7 +1491,7 @@ const AdminLayout = () => {
             <button
               type="button"
               onClick={() => setCollapsed((current) => !current)}
-              className="absolute -right-3 top-9 z-[60] hidden h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-800 shadow-[0_4px_12px_rgba(0,0,0,0.15)] ring-4 ring-[#0F172A] transition-all duration-300 hover:bg-indigo-600 hover:text-white hover:border-indigo-500 hover:scale-110 active:scale-95 lg:flex group/collapse"
+              className="absolute -right-3 top-9 z-[60] hidden h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-800 shadow-[0_4px_12px_rgba(0,0,0,0.15)] ring-4 ring-[#0F172A] transition-all duration-300 hover:bg-slate-800 hover:text-white hover:border-slate-700 hover:scale-110 active:scale-95 lg:flex group/collapse"
               style={{ '--tw-ring-color': adminThemeColor }}
             >
               {isCollapsed ? (

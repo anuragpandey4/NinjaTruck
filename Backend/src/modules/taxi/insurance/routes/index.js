@@ -6,12 +6,15 @@ import {
   getAdminInsurances,
   updateInsuranceStatus,
   getInsurancePlans,
-  updateInsurancePlan
+  updateInsurancePlan,
+  getInsuranceSettings,
+  updateInsuranceSettings
 } from '../controllers/insuranceController.js';
 
 export const insuranceRouter = Router();
 
-// User routes
+// Public/User routes
+insuranceRouter.get('/settings', getInsuranceSettings);
 insuranceRouter.post('/', authenticate(['user']), createInsuranceRequest);
 insuranceRouter.get('/me', authenticate(['user']), getUserInsurances);
 insuranceRouter.get('/plans', authenticate(['user', 'admin']), getInsurancePlans);
@@ -21,3 +24,4 @@ insuranceRouter.get('/admin', authenticate(['admin']), getAdminInsurances);
 insuranceRouter.patch('/admin/:id', authenticate(['admin']), updateInsuranceStatus);
 insuranceRouter.get('/admin/plans', authenticate(['admin']), getInsurancePlans);
 insuranceRouter.put('/admin/plans', authenticate(['admin']), updateInsurancePlan);
+insuranceRouter.put('/admin/settings', authenticate(['admin']), updateInsuranceSettings);

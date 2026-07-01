@@ -32,10 +32,13 @@ const InsurancePortal = () => {
   const fetchPlans = async () => {
     try {
       const res = await api.get('/insurance/plans');
-      if (res.data && Array.isArray(res.data)) {
+      const plans = Array.from(res?.data?.data || res?.data || []);
+      if (plans.length > 0) {
         const ratesMap = {};
-        res.data.forEach(plan => {
-          ratesMap[plan.vehicleType] = plan.rates;
+        plans.forEach(plan => {
+          if (plan?.vehicleType && plan?.rates) {
+            ratesMap[plan.vehicleType] = plan.rates;
+          }
         });
         setPremiumRates(prev => ({ ...prev, ...ratesMap }));
       }
@@ -56,7 +59,8 @@ const InsurancePortal = () => {
     try {
       setLoadingPolicies(true);
       const res = await api.get('/insurance/me');
-      setPolicies(res.data || []);
+      const list = Array.from(res?.data?.data || res?.data || []);
+      setPolicies(list);
     } catch (err) {
       console.error(err);
       toast.error('Failed to load your insurance policies');

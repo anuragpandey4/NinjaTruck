@@ -2,6 +2,7 @@ import { asyncHandler } from '../../../../utils/asyncHandler.js';
 import { ApiError } from '../../../../utils/ApiError.js';
 import { Insurance } from '../models/Insurance.js';
 import { InsurancePlan, seedInsurancePlans } from '../models/InsurancePlan.js';
+import { getOrCreateInsuranceSettings, InsuranceSetting } from '../models/InsuranceSetting.js';
 
 // Calculate premium based on vehicle type and duration dynamically
 const calculatePremium = async (vehicleType, duration) => {
@@ -192,5 +193,33 @@ export const updateInsurancePlan = asyncHandler(async (req, res) => {
     success: true,
     message: `Premium rates for ${type} updated successfully`,
     data: plan,
+  });
+});
+
+// Get insurance banner settings (public)
+export const getInsuranceSettings = asyncHandler(async (_req, res) => {
+  const settings = await getOrCreateInsuranceSettings();
+  return res.json({
+    success: true,
+    data: settings,
+  });
+});
+
+// Admin: Update insurance banner settings
+export const updateInsuranceSettings = asyncHandler(async (req, res) => {
+  const { enabled, bannerTitle, bannerSubtitle, policyTermsLabel } = req.body;
+  const settings = await getOrCreateInsuranceSettings();
+
+  if (typeof enabled === 'boolean') settings.enabled = enabled;
+  if (bannerTitle !== undefined) settings.bannerTitle = bannerTitle;
+  if (bannerSubtitle !== undefined) settings.bannerSubtitle = bannerSubtitle;
+  if (policyTermsLabel !== undefined) settings.policyTermsLabel = policyTermsLabel;
+
+  await settings.save();
+
+  return res.json({
+    success: true,
+    message: 'Insurance settings updated successfully',
+    data: settings,
   });
 });
