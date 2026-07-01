@@ -133,7 +133,7 @@ const Login = () => {
             <img 
               src={appLogo} 
               alt={appName} 
-              className="h-8 w-8 object-contain rounded-full bg-black p-1.5"
+              className="h-8 w-auto max-w-[120px] object-contain"
             />
           ) : (
             <div className="h-8 w-8 bg-black rounded-full flex items-center justify-center">
