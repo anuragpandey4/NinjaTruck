@@ -707,9 +707,10 @@ const SearchingDriver = () => {
             return;
           }
 
-          // Smart Fallback Polling
+          // Smart Fallback Polling: Don't skip if socket is flapping
           const socket = socketService.getSocket();
-          if (socket && socket.connected) {
+          const isStable = socket && socket.connected && !socket._reconnecting;
+          if (isStable && socket._lastEventAt && (Date.now() - socket._lastEventAt) < 10000) {
             return;
           }
 

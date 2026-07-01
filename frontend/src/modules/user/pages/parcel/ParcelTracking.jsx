@@ -264,17 +264,41 @@ const ParcelTracking = () => {
 
   useEffect(() => {
     let active = true;
+    let disconnectCount = 0;
+    let lastReceivedEvent = 0;
+
+    const onSocketDisconnect = () => {
+      disconnectCount += 1;
+    };
+
+    const onSocketRideEvent = () => {
+      lastReceivedEvent = Date.now();
+      disconnectCount = 0;
+    };
+
+    socketService.on('disconnect', onSocketDisconnect);
+    socketService.on('ride:state', onSocketRideEvent);
+    socketService.on('ride:status:updated', onSocketRideEvent);
+    socketService.on('ride:driver-location:updated', onSocketRideEvent);
 
     if (!rideId) {
       return () => {
         active = false;
+        socketService.off('disconnect', onSocketDisconnect);
+        socketService.off('ride:state', onSocketRideEvent);
+        socketService.off('ride:status:updated', onSocketRideEvent);
+        socketService.off('ride:driver-location:updated', onSocketRideEvent);
       };
     }
 
     const hydrateRideState = async (isInitialLoad = false) => {
-      // Smart Fallback Polling: Skip HTTP request if WebSockets are healthy
+      // Smart Fallback Polling: Skip HTTP request ONLY if socket is truly stable.
+      // If the socket has disconnected 3+ times without delivering any ride events,
+      // the connection is flapping and we must fall through to HTTP polling.
       const socket = socketService.getSocket();
-      if (!isInitialLoad && socket && socket.connected) {
+      const isSocketStable = socket && socket.connected && disconnectCount < 3;
+      const hasRecentEvent = lastReceivedEvent > 0 && (Date.now() - lastReceivedEvent) < 10000;
+      if (!isInitialLoad && isSocketStable && hasRecentEvent) {
         return;
       }
 
@@ -356,6 +380,10 @@ const ParcelTracking = () => {
     return () => {
       active = false;
       window.clearInterval(intervalId);
+      socketService.off('disconnect', onSocketDisconnect);
+      socketService.off('ride:state', onSocketRideEvent);
+      socketService.off('ride:status:updated', onSocketRideEvent);
+      socketService.off('ride:driver-location:updated', onSocketRideEvent);
     };
   }, [rideId]);
 

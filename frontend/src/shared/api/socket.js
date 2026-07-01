@@ -170,6 +170,16 @@ class SocketService {
       });
     });
 
+    // Track when ride events are actually received so polling can detect flapping
+    const rideEvents = ['ride:state', 'ride:status:updated', 'ride:driver-location:updated', 'rideAccepted', 'rideSearchUpdate'];
+    rideEvents.forEach((event) => {
+      this.socket.on(event, () => {
+        if (this.socket) {
+          this.socket._lastEventAt = Date.now();
+        }
+      });
+    });
+
     this.socket.on('connect_error', (error) => {
       console.error('[socket] connect_error', {
         role: options.role || 'unknown',
