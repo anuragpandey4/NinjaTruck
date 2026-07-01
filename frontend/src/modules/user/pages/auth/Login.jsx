@@ -111,14 +111,14 @@ const Login = () => {
 
   return (
     <div className="w-full min-h-[100dvh] bg-[#E7F5E8] flex flex-col font-['Outfit'] select-none overflow-hidden relative">
-      <div className="absolute top-0 left-0 right-0 h-[65%] z-0">
+      <div className="absolute top-0 left-0 right-0 h-[65%] z-0 overflow-hidden">
         <motion.img 
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
           src={loginIllustration} 
           alt="Travel background" 
-          className="w-full h-full object-cover object-bottom"
+          className="w-full h-full scale-105 object-cover object-[center_60%]"
         />
         <div className="absolute inset-0 bg-black/5" />
       </div>
@@ -144,12 +144,12 @@ const Login = () => {
         </motion.div>
       </header>
 
-      <main className="flex-1 flex flex-col justify-end">
+      <main className="w-full flex-1 flex flex-col justify-end">
         <motion.div 
           initial={{ y: 100 }}
           animate={{ y: 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 120 }}
-          className="bg-white rounded-t-[40px] px-8 pt-10 pb-12 shadow-[0_-20px_60px_rgba(0,0,0,0.1)] z-20 relative"
+          className="w-full bg-white rounded-t-[40px] px-8 pt-10 pb-12 shadow-[0_-20px_60px_rgba(0,0,0,0.1)] z-20 relative"
         >
           <AnimatePresence mode="wait">
             {!showInput ? (
@@ -158,7 +158,7 @@ const Login = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="space-y-8"
+                className="w-full space-y-8"
               >
                 <div className="space-y-2">
                    <h2 className="text-[30px] font-black text-slate-900 leading-[1.1] tracking-tight">
@@ -188,7 +188,7 @@ const Login = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="space-y-8"
+                className="w-full space-y-8"
               >
                 <div className="flex items-center gap-4">
                   <motion.button 
@@ -220,7 +220,7 @@ const Login = () => {
                         if (error) setError('');
                       }}
                       placeholder="000 000 0000"
-                      className="flex-1 bg-transparent border-none p-0 text-xl font-bold text-slate-900 outline-none focus:ring-0 placeholder:text-slate-200 tracking-widest"
+                      className="flex-1 min-w-0 w-full bg-transparent border-none p-0 text-xl font-bold text-slate-900 outline-none focus:ring-0 placeholder:text-slate-200 tracking-widest"
                     />
                   </div>
                   {error ? (
