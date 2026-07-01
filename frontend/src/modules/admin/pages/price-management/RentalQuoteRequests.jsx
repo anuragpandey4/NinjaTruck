@@ -95,7 +95,7 @@ const RentalQuoteRequests = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f7fb] p-6 lg:p-8">
+    <div className="min-h-full bg-[#f6f7fb] p-6 lg:p-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Rental Quote Requests</h1>

@@ -163,7 +163,7 @@ const GlobalDocuments = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-8">
+    <div className="min-h-full bg-gray-50 p-6 lg:p-8">
       <div className="mb-6">
         <div className="mb-2 flex items-center gap-1.5 text-xs text-gray-400">
           <span>Masters</span>

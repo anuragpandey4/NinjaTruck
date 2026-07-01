@@ -264,7 +264,7 @@ const Airport = ({ mode: initialMode = "list" }) => {
   const clearFilters = () => setFilters({ service_location_id: '', status: '' });
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-8 animate-in fade-in duration-500 font-sans">
+    <div className="min-h-full bg-gray-50 p-6 lg:p-8 animate-in fade-in duration-500 font-sans">
       <AnimatePresence mode="wait">
         {view === 'list' ? (
           <motion.div 

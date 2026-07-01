@@ -234,7 +234,7 @@ const SelectLocation = () => {
 
       try {
         const [zonesResponse, storesResponse] = await Promise.all([
-          api.get('/admin/zones'),
+          api.get('/users/zones'),
           api.get('/users/service-stores'),
         ]);
         if (!active) {

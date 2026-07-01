@@ -267,7 +267,7 @@ const ServiceStores = ({ mode: initialMode = 'list' }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] p-6 lg:p-8 font-sans">
+    <div className="min-h-full bg-[#F8F9FA] p-6 lg:p-8 font-sans">
       <AnimatePresence mode="wait">
         {view === 'list' ? (
           <motion.div key="list" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mx-auto max-w-7xl space-y-8">

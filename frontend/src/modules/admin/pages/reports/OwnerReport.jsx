@@ -56,7 +56,7 @@ const OwnerReport = () => {
   const labelClass = "block text-[13px] font-bold text-gray-600 mb-2";
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-6 lg:p-8">
+    <div className="min-h-full bg-[#F9FAFB] p-6 lg:p-8">
       {/* Header Block */}
       <div className="mb-8">
         <div className="flex items-center gap-2 text-xs text-gray-400 mb-3 font-medium">

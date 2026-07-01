@@ -19,7 +19,7 @@ export const normalizeAssetUrl = (url = '') => {
 const DEFAULT_SETTINGS_CONTEXT = {
   settings: {
     general: {
-      app_name: 'Rydon24 Trawler',
+      app_name: 'Ninja Truck',
       logo: '',
       favicon: '',
     },
@@ -252,7 +252,7 @@ export const SettingsProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const appName = settings.general?.app_name || 'Rydon24 Trawler';
+    const appName = settings.general?.app_name || 'Ninja Truck';
     document.title = appName;
 
     const favicon = settings.general?.favicon || settings.customization?.favicon;

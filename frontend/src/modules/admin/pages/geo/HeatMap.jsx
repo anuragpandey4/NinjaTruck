@@ -132,7 +132,7 @@ const HeatMap = () => {
   const circleRadiusMeters = Math.max(250, radius * 140);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-8 font-sans">
+    <div className="min-h-full bg-gray-50 p-6 lg:p-8 font-sans">
       
       {/* 1. Header Block (Design System Compliant) */}
       <div className="mb-6">

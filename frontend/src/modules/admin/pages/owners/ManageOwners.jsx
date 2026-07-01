@@ -226,7 +226,7 @@ const ManageOwners = () => {
   const visibleStart = filteredOwners.length > 0 ? 1 : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
+    <div className="min-h-full bg-gray-50 font-sans">
       <div className="p-6 lg:p-8">
         <AnimatePresence mode="wait">
           {view === 'list' ? (

@@ -24,6 +24,7 @@ import {
   Layers,
   LogOut,
   MapPin,
+  Menu,
   MessageCircle,
   Monitor,
   Package,
@@ -640,7 +641,7 @@ const AdminLayout = () => {
   const { settings } = useSettings();
   const adminThemeColor = normalizeHexColor(settings.customization?.admin_theme_color, '#405189');
   const sidebarTextColor = normalizeHexColor(settings.customization?.sidebar_text_color, '#CBD5E1');
-  const [isSidebarOpen] = useState(true);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isCollapsed, setCollapsed] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -1444,11 +1445,17 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F8F9FA] font-sans text-gray-900">
+    <div className="flex h-screen overflow-hidden bg-[#F8F9FA] font-sans text-gray-900 relative">
+      {isMobileSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setIsMobileSidebarOpen(false)}
+        />
+      )}
       <aside
-        className={`relative z-50 flex h-screen flex-col overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen flex-col overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] lg:relative ${
           isCollapsed ? 'w-20' : 'w-72'
-        } ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+        } ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
         style={{ backgroundColor: adminThemeColor }}
       >
         <div className="flex h-full flex-col">
@@ -1538,11 +1545,17 @@ const AdminLayout = () => {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[#f0f4f8]">
-        <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-slate-200/60 bg-white/80 backdrop-blur-md px-8 shadow-sm">
-          <div className="flex items-center gap-6">
+        <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-slate-200/60 bg-white/80 backdrop-blur-md px-4 lg:px-8 shadow-sm">
+          <div className="flex items-center gap-4 lg:gap-6">
+            <button
+              onClick={() => setIsMobileSidebarOpen(true)}
+              className="lg:hidden p-2 -ml-2 text-slate-600 hover:text-slate-900 focus:outline-none"
+            >
+              <Menu size={24} />
+            </button>
             <div className="flex items-center gap-3">
-              <div className="h-4 w-1 rounded-full bg-slate-900" />
-              <h2 className="text-[17px] font-bold tracking-tight text-slate-900">{pageTitle}</h2>
+              <div className="h-4 w-1 rounded-full bg-slate-900 hidden sm:block" />
+              <h2 className="text-[15px] sm:text-[17px] font-bold tracking-tight text-slate-900 truncate max-w-[120px] sm:max-w-none">{pageTitle}</h2>
             </div>
           </div>
 

@@ -62,14 +62,14 @@ const NotificationChannels = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-full bg-gray-50">
         <Loader2 className="animate-spin text-indigo-600" size={32} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-8 font-sans">
+    <div className="min-h-full bg-gray-50 p-6 lg:p-8 font-sans">
       
       {/* Header Block */}
       <div className="mb-8">

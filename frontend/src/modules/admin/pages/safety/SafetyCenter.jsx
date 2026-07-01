@@ -221,8 +221,8 @@ const SafetyCenter = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-140px)] gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="w-96 shrink-0 flex flex-col space-y-6 overflow-y-auto no-scrollbar pb-10">
+    <div className="flex flex-col lg:flex-row h-full min-h-[600px] gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="w-full lg:w-96 shrink-0 flex flex-col space-y-6 overflow-y-auto no-scrollbar pb-10">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
              <div className="h-10 w-10 bg-rose-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-rose-100">

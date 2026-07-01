@@ -296,14 +296,14 @@ const DriverDocumentForm = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 lg:p-8">
+      <div className="min-h-full bg-gray-50 p-6 lg:p-8">
         <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-500">Loading configuration...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-8">
+    <div className="min-h-full bg-gray-50 p-6 lg:p-8">
       <div className="mb-6">
         <div className="mb-2 flex items-center gap-1.5 text-xs text-gray-400">
           <span>Driver Onboarding Config</span>

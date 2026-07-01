@@ -392,7 +392,7 @@ const ManageFleet = () => {
   ════════════════════════════════════ */
   if (view === 'create' || view === 'edit') {
     return (
-      <div className="min-h-screen p-1 font-sans">
+      <div className="min-h-full p-1 font-sans">
         {/* Breadcrumb */}
         <div className="flex items-center justify-between mb-8 px-1">
           <h1 className="text-[16px] font-black tracking-tight text-gray-800 uppercase">
@@ -611,7 +611,7 @@ const ManageFleet = () => {
        LIST VIEW
   ════════════════════════════════════ */
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-950">
+    <div className="min-h-full bg-gray-50 font-sans text-gray-950">
       <AnimatePresence mode="wait">
         <MotionDiv
           key="list"

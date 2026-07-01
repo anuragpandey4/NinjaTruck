@@ -271,7 +271,13 @@ const ParcelTracking = () => {
       };
     }
 
-    const hydrateRideState = async () => {
+    const hydrateRideState = async (isInitialLoad = false) => {
+      // Smart Fallback Polling: Skip HTTP request if WebSockets are healthy
+      const socket = socketService.getSocket();
+      if (!isInitialLoad && socket && socket.connected) {
+        return;
+      }
+
       try {
         const payload = unwrapApiPayload(await api.get(`/rides/${rideId}`));
 
@@ -344,7 +350,7 @@ const ParcelTracking = () => {
     };
 
     hydrateRideStateRef.current = hydrateRideState;
-    hydrateRideState();
+    hydrateRideState(true);
     const intervalId = window.setInterval(hydrateRideState, ACTIVE_RIDE_VALIDATE_MS);
 
     return () => {

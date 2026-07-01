@@ -402,7 +402,7 @@ const SetPrices = ({ mode }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FD] flex flex-col font-sans">
+    <div className="min-h-full bg-[#F8F9FD] flex flex-col font-sans">
       <AnimatePresence mode="wait">
         {view === 'list' ? (
           <motion.div 

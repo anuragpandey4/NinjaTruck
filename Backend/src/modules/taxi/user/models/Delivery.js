@@ -198,4 +198,10 @@ const deliverySchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+deliverySchema.index({ userId: 1, createdAt: -1 });
+deliverySchema.index({ driverId: 1, createdAt: -1 });
+deliverySchema.index({ status: 1 });
+deliverySchema.index({ liveStatus: 1 });
+deliverySchema.index({ driverId: 1, status: 1 });
+
 export const Delivery = mongoose.models.Delivery || mongoose.model('Delivery', deliverySchema);

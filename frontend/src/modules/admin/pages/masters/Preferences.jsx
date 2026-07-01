@@ -82,7 +82,7 @@ const Preferences = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-8">
+    <div className="min-h-full bg-gray-50 p-6 lg:p-8">
       {/* Breadcrumb */}
       <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-2">
         <span>Masters</span>

@@ -148,7 +148,7 @@ const FleetNeededDocuments = () => {
   const showingTo = totalEntries === 0 ? 0 : Math.min(showingFrom + paginatedDocs.length - 1, totalEntries);
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-950">
+    <div className="min-h-full bg-gray-50 font-sans text-gray-950">
       {view === 'list' ? (
         <div className="px-5 pt-3">
           <AdminPageHeader module="Fleet Management" page="Fleet Needed Documents" title="Fleet Needed Documents" />

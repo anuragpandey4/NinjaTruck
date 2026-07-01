@@ -689,6 +689,12 @@ const SearchingDriver = () => {
             return;
           }
 
+          // Smart Fallback Polling
+          const socket = socketService.getSocket();
+          if (socket && socket.connected) {
+            return;
+          }
+
           try {
             const activeRide = await hydrateAcceptedRide();
 

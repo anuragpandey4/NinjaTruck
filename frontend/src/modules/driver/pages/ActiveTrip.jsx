@@ -1445,6 +1445,11 @@ const ActiveTrip = () => {
             return;
         }
 
+        // Smart Fallback Polling
+        if (socketService.isConnected()) {
+            return;
+        }
+
         try {
             const response = await api.get('/drivers/payments/qr/status', {
                 params: { rideId },

@@ -589,8 +589,8 @@ const GeoFencing = () => {
   }
 
   return (
-    <div className="flex h-[calc(100vh-120px)] gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="w-80 shrink-0 flex flex-col space-y-5 overflow-y-auto no-scrollbar pb-10">
+    <div className="flex flex-col lg:flex-row h-full min-h-[600px] gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="w-full lg:w-80 shrink-0 flex flex-col space-y-5 overflow-y-auto no-scrollbar pb-10">
         <div className="space-y-1">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Geo Operations</h1>
           <p className="text-gray-400 font-bold text-[11px] mt-1 uppercase tracking-widest leading-none">

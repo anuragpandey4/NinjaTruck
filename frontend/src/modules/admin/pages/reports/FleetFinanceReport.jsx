@@ -83,7 +83,7 @@ const FleetFinanceReport = () => {
   const isFormValid = filters.fleet_id && filters.date_option && filters.file_format;
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] p-4 md:p-8 font-sans text-gray-950">
+    <div className="min-h-full bg-[#F8F9FA] p-4 md:p-8 font-sans text-gray-950">
       {/* Breadcrumbs & Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>

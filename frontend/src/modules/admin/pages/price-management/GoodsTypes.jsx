@@ -300,7 +300,7 @@ const GoodsTypes = ({ mode }) => {
 
   if (!isEditor) {
     return (
-      <div className="min-h-screen bg-[#f6f7fb] p-6 lg:p-8">
+      <div className="min-h-full bg-[#f6f7fb] p-6 lg:p-8">
         <div className="mb-6">
           <div className="mb-2 flex items-center gap-1.5 text-xs text-slate-400">
             <span>Pricing</span>
@@ -410,7 +410,7 @@ const GoodsTypes = ({ mode }) => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f6f7fb] p-6 lg:p-8">
+    <div className="min-h-full bg-[#f6f7fb] p-6 lg:p-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <div className="mb-2 flex items-center gap-1.5 text-xs text-slate-400">

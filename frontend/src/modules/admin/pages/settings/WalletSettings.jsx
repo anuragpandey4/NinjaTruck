@@ -164,14 +164,14 @@ const WalletSettings = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="flex min-h-full items-center justify-center bg-slate-50">
         <Loader2 className="h-10 w-10 animate-spin text-slate-900" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F6F4EF] p-5 lg:p-8">
+    <div className="min-h-full bg-[#F6F4EF] p-5 lg:p-8">
       <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">App Settings</p>

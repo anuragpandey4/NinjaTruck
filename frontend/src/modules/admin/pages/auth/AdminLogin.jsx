@@ -57,7 +57,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-sans overflow-hidden">
+    <div className="min-h-full bg-[#F8F9FA] flex flex-col font-sans overflow-hidden">
       {/* Immersive Decorative Elements */}
       <div className="fixed inset-0 pointer-events-none">
          <div className="absolute top-[-10%] right-[-5%] w-[60%] h-[60%] bg-white rounded-full blur-[160px] opacity-60" />

@@ -64,14 +64,14 @@ const DriverIncentive = () => {
 
   if (loading) {
      return (
-       <div className="min-h-screen flex items-center justify-center bg-gray-50">
+       <div className="min-h-full flex items-center justify-center bg-gray-50">
           <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
        </div>
      );
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FD] p-6 lg:p-10 font-sans">
+    <div className="min-h-full bg-[#F8F9FD] p-6 lg:p-10 font-sans">
       
       {/* Header Block */}
       <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-10">

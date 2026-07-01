@@ -673,7 +673,7 @@ const CreateDriver = () => {
 
   return (
     <div
-      className="min-h-screen overflow-x-hidden bg-[linear-gradient(180deg,#f6efe4_0%,#fcfaf6_28%,#ffffff_100%)] px-5 pb-24 pt-8 text-slate-900"
+      className="min-h-full overflow-x-hidden bg-[linear-gradient(180deg,#f6efe4_0%,#fcfaf6_28%,#ffffff_100%)] px-5 pb-24 pt-8 text-slate-900"
       style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}
     >
       <div className="mx-auto max-w-5xl space-y-6">

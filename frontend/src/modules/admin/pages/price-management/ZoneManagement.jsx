@@ -459,7 +459,7 @@ const ZoneManagement = ({ mode: initialMode = "list" }) => {
   }, [selectedCountry, view]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-8 animate-in fade-in duration-500">
+    <div className="min-h-full bg-gray-50 p-6 lg:p-8 animate-in fade-in duration-500">
       <AnimatePresence mode="wait">
         {view === 'list' ? (
           <motion.div 

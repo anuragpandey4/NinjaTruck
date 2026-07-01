@@ -131,7 +131,7 @@ const BidRideSettings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-full flex items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
           <p className="text-xs font-black text-slate-400 uppercase tracking-widest italic">Recalibrating Bidding Logic...</p>
@@ -141,7 +141,7 @@ const BidRideSettings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9]">
+    <div className="min-h-full bg-[#F1F5F9]">
       <div className="max-w-[1600px] mx-auto p-4 md:p-8 space-y-8 animate-in fade-in duration-700 pb-32">
         
         {/* Header Breadcrumb */}

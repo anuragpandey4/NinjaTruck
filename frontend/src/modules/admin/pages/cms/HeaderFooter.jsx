@@ -41,7 +41,7 @@ const HeaderFooter = () => {
   const cardClass = "bg-white rounded-xl border border-gray-200 p-6";
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-8 font-sans pb-20">
+    <div className="min-h-full bg-gray-50 p-6 lg:p-8 font-sans pb-20">
       
       {/* Header Area */}
       <div className="mb-6">

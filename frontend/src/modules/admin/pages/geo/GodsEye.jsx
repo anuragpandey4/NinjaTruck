@@ -148,7 +148,7 @@ const GodsEye = () => {
   }, [markers, zones]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-8 font-sans animate-in fade-in duration-500">
+    <div className="min-h-full bg-gray-50 p-6 lg:p-8 font-sans animate-in fade-in duration-500">
       
       {/* Header Block */}
       <div className="mb-6">

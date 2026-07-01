@@ -74,7 +74,7 @@ const ReferralDashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50/30 p-8">
+      <div className="min-h-full flex items-center justify-center bg-gray-50/30 p-8">
         <div className="flex flex-col items-center gap-6">
           <div className="w-16 h-16 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
           <p className="text-[14px] font-black text-gray-400 uppercase tracking-widest animate-pulse">Syncing Viral Growth Metrics...</p>

@@ -86,7 +86,7 @@ const WithdrawalRequestOwners = () => {
   const showingTo = totalEntries === 0 ? 0 : Math.min(showingFrom + pagedRequests.length - 1, totalEntries);
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-950">
+    <div className="min-h-full bg-gray-50 font-sans text-gray-950">
       <div className="p-6 lg:p-8">
         <AdminPageHeader module="Owner Wallet" page="Withdrawal Requests" title="Withdrawal Requests" />
 

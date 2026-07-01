@@ -155,7 +155,7 @@ const OwnerDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-950">
+    <div className="min-h-full bg-gray-50 font-sans text-gray-950">
       <div className="p-6 lg:p-8">
         <AdminPageHeader module="Owner Management" page="Owner Details" title="Owner Details" backTo="/admin/owners" />
 

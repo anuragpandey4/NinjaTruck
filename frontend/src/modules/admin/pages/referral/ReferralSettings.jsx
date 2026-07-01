@@ -118,7 +118,7 @@ const ReferralSettings = () => {
 
   if (loading) {
      return (
-        <div className="min-h-screen flex items-center justify-center p-12">
+        <div className="min-h-full flex items-center justify-center p-12">
            <Loader2 className="animate-spin text-indigo-600" size={48} />
         </div>
      );

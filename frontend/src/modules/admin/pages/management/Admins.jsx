@@ -86,7 +86,7 @@ const Admins = () => {
   };
 
   return (
-    <div className="min-h-screen animate-in fade-in duration-500 bg-[#F8F9FA] p-6 lg:p-8 font-sans">
+    <div className="min-h-full animate-in fade-in duration-500 bg-[#F8F9FA] p-6 lg:p-8 font-sans">
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}

@@ -67,7 +67,7 @@ const Ongoing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
+    <div className="min-h-full bg-gray-50 flex flex-col font-sans">
       <div className="p-4 space-y-4">
         {/* Header Block exactly as image */}
         <div className="flex items-center justify-between px-4 py-2 bg-white rounded-t-xl">

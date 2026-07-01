@@ -53,7 +53,7 @@ const CountryManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-full bg-[#F8FAFC]">
       <div className="p-4 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-500">
         
         {/* Breadcrumb & Title */}

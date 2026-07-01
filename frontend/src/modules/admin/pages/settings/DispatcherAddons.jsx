@@ -29,7 +29,7 @@ const DispatcherAddons = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] font-sans pb-20">
+    <div className="min-h-full bg-[#F0F2F5] font-sans pb-20">
       
       {/* Header Area */}
       <div className="px-6 py-4 flex items-center justify-between border-b border-gray-200 bg-white shadow-sm shrink-0">

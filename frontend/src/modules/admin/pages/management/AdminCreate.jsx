@@ -214,7 +214,7 @@ const AdminCreate = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="flex min-h-full items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-3">
           <Loader2 size={30} className="animate-spin text-blue-600" />
           <p className="text-xs font-black uppercase tracking-[0.24em] text-slate-400">Preparing access form</p>
@@ -224,7 +224,7 @@ const AdminCreate = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,_#EFF6FF_0%,_#F8FAFC_32%)] p-6 lg:p-8">
+    <div className="min-h-full bg-[linear-gradient(180deg,_#EFF6FF_0%,_#F8FAFC_32%)] p-6 lg:p-8">
       <div className="mx-auto max-w-7xl space-y-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>

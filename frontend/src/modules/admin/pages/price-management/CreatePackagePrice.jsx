@@ -218,7 +218,7 @@ const CreatePackagePrice = ({ mode = 'create' }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FD] p-6 lg:p-8 font-sans">
+    <div className="min-h-full bg-[#F8F9FD] p-6 lg:p-8 font-sans">
       <div className="flex flex-col gap-4 border-b border-gray-100 pb-4 mb-8 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h1 className="text-sm font-bold text-[#1E293B] uppercase tracking-[0.15em]">{isEdit ? 'EDIT PACKAGE PRICING' : 'CREATE PACKAGE PRICING'}</h1>

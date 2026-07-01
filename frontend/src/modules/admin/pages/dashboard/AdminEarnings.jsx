@@ -275,7 +275,7 @@ const AdminEarnings = () => {
   const hasActiveFilters = Object.values(filters).some((value) => String(value || '').trim() !== '');
 
   return (
-    <div className="min-h-screen bg-[#f7fafc] p-4 text-slate-950 lg:p-6">
+    <div className="min-h-full bg-[#f7fafc] p-4 text-slate-950 lg:p-6">
       <div className="mb-6 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-widest text-emerald-600">Admin finance</p>

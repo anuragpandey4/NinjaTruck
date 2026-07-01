@@ -150,7 +150,7 @@ const AdminInsuranceManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F3F4F9] animate-in fade-in duration-500 font-sans flex flex-col">
+    <div className="min-h-full bg-[#F3F4F9] animate-in fade-in duration-500 font-sans flex flex-col">
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-8 py-5 flex items-center justify-between shrink-0">
         <h1 className="text-[14px] font-black text-slate-800 uppercase tracking-tight">Insurance Management</h1>

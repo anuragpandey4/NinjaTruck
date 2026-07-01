@@ -224,7 +224,7 @@ const PoolingVehicleForm = ({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-6 lg:p-8">
+    <div className="min-h-full bg-slate-50/50 p-6 lg:p-8">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
         <div className="mb-8">

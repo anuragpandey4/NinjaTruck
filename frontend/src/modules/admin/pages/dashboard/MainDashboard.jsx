@@ -102,7 +102,7 @@ const MainDashboard = () => {
   const todayTrips = dashboard?.todayTrips || {};
 
   return (
-    <div className="min-h-screen animate-in fade-in duration-500 bg-[#F8F9FA] p-6 lg:p-10 font-sans">
+    <div className="min-h-full animate-in fade-in duration-500 bg-[#F8F9FA] p-6 lg:p-10 font-sans">
       <div className="max-w-7xl mx-auto space-y-10">
         {/* Executive Header */}
         <div className="flex items-end justify-between">

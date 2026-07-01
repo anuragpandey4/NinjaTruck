@@ -576,7 +576,13 @@ const RideTracking = () => {
       };
     }
 
-    const hydrateRideState = async () => {
+    const hydrateRideState = async (isInitialLoad = false) => {
+      // Smart Fallback Polling: Skip HTTP request if WebSockets are healthy
+      const socket = socketService.getSocket();
+      if (!isInitialLoad && socket && socket.connected) {
+        return;
+      }
+
       try {
         const response = await api.get(`/rides/${rideId}`);
         const payload = unwrapApiPayload(response);
@@ -703,6 +709,11 @@ const RideTracking = () => {
     };
 
     const validateActiveRide = async () => {
+      const socket = socketService.getSocket();
+      if (socket && socket.connected) {
+        return;
+      }
+
       try {
         const activePayload = unwrapApiPayload(await api.get(activeRideEndpoint));
         const activeRideId = String(activePayload?.rideId || '');
@@ -732,7 +743,7 @@ const RideTracking = () => {
       }
     };
 
-    hydrateRideState();
+    hydrateRideState(true);
     const validationInterval = window.setInterval(() => {
       validateActiveRide().catch(() => {});
     }, ACTIVE_RIDE_VALIDATE_MS);

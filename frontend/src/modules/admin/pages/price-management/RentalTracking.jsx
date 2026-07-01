@@ -209,7 +209,7 @@ const RentalTracking = () => {
   }, [items, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-[#f6f7fb] p-6 lg:p-8">
+    <div className="min-h-full bg-[#f6f7fb] p-6 lg:p-8">
       <AdminPageHeader
         module="Pricing"
         page="Rental Tracking"

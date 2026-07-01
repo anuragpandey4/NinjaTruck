@@ -263,7 +263,7 @@ const DriverReferralSettings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-full bg-gray-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="animate-spin text-indigo-600" size={32} />
           <span className="text-sm text-gray-500 font-medium">Loading settings...</span>
@@ -273,7 +273,7 @@ const DriverReferralSettings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-8">
+    <div className="min-h-full bg-gray-50 p-6 lg:p-8">
       <div className="mb-6">
         <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-2">
           <span>Driver Referral Settings</span>

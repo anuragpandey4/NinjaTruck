@@ -27,7 +27,7 @@ const isBlockedAccountMessage = (message) => {
 
   return (
     normalizedMessage.includes('not active') ||
-    normalizedMessage.includes('blocked') ||
+    (normalizedMessage.includes('blocked') && !normalizedMessage.includes('cors')) ||
     normalizedMessage.includes('inactive')
   );
 };
@@ -42,7 +42,7 @@ const getFriendlyLoginError = (message) => {
 
   if (
     loweredMessage.includes('not active') ||
-    loweredMessage.includes('blocked') ||
+    (loweredMessage.includes('blocked') && !loweredMessage.includes('cors')) ||
     loweredMessage.includes('inactive')
   ) {
     return 'Your account has been blocked. Please contact support for help.';
@@ -65,7 +65,7 @@ const Login = () => {
   ));
   const [showInput, setShowInput] = useState(false);
   
-  const appName = settings.general?.app_name || 'Rydon24';
+  const appName = settings.general?.app_name || 'Ninja Truck';
   const appLogo = settings.general?.logo || settings.customization?.logo || settings.general?.favicon || '';
   
   const userHomeRoute = useMemo(

@@ -145,7 +145,7 @@ const ReferralDashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50/10">
+      <div className="min-h-full flex items-center justify-center bg-gray-50/10">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="animate-spin text-indigo-600" size={32} />
           <span className="text-sm text-gray-500 font-medium">Loading dashboard...</span>

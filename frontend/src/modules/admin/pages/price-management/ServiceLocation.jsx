@@ -253,7 +253,7 @@ const ServiceLocation = ({ mode }) => {
 
   if (isJurisdictions) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 lg:p-8 animate-in fade-in duration-500 font-sans">
+      <div className="min-h-full bg-gray-50 p-6 lg:p-8 animate-in fade-in duration-500 font-sans">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between gap-4">
             <div>
@@ -480,7 +480,7 @@ const ServiceLocation = ({ mode }) => {
 
   if (isList) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 lg:p-8 animate-in fade-in duration-500 font-sans">
+      <div className="min-h-full bg-gray-50 p-6 lg:p-8 animate-in fade-in duration-500 font-sans">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Header */}
           <div>
@@ -615,7 +615,7 @@ const ServiceLocation = ({ mode }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 lg:p-8 animate-in fade-in duration-500 font-sans">
+    <div className="min-h-full bg-gray-50 p-6 lg:p-8 animate-in fade-in duration-500 font-sans">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header - Matching Image */}
         <div className="flex items-center justify-between mb-4">
