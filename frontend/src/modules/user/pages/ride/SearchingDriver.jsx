@@ -679,9 +679,27 @@ const SearchingDriver = () => {
         }
         const socket = socketService.connect({ role: 'user', token: userToken });
 
-        if (socket && rideId) {
-          socketService.emit('joinRide', { rideId });
-          socketService.emit('ride:join', { rideId });
+        const onConnect = () => {
+          if (rideId) {
+            socketService.emit('joinRide', { rideId });
+            socketService.emit('ride:join', { rideId });
+          }
+        };
+
+        if (socket) {
+          socketService.on('connect', onConnect);
+          if (socket.connected || socketService.isConnected()) {
+            onConnect();
+          }
+          
+          // Add onConnect to cleanup
+          const originalCleanup = cleanupSearchRef.current;
+          cleanupSearchRef.current = () => {
+            socketService.off('connect', onConnect);
+            if (originalCleanup) {
+              originalCleanup();
+            }
+          };
         }
 
         const pollActiveRide = async () => {

@@ -544,12 +544,21 @@ const ParcelTracking = () => {
       }
     };
 
+    const onConnect = () => {
+      socketService.emit('ride:join', { rideId });
+    };
+
+    socketService.on('connect', onConnect);
     socketService.on('ride:state', onRideState);
     socketService.on('ride:driver-location:updated', onLocationUpdated);
     socketService.on('ride:status:updated', onStatusUpdated);
-    socketService.emit('ride:join', { rideId });
+    
+    if (socketService.isConnected()) {
+      onConnect();
+    }
 
     return () => {
+      socketService.off('connect', onConnect);
       socketService.off('ride:state', onRideState);
       socketService.off('ride:driver-location:updated', onLocationUpdated);
       socketService.off('ride:status:updated', onStatusUpdated);

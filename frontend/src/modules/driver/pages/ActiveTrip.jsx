@@ -846,8 +846,16 @@ const ActiveTrip = () => {
         }
 
         const socket = socketService.connect({ role: 'driver' });
-        if (socket) {
+        
+        const onConnect = () => {
             socketService.emit('ride:join', { rideId: currentRideId });
+        };
+        
+        if (socket) {
+            socketService.on('connect', onConnect);
+            if (socket.connected || socketService.isConnected()) {
+                onConnect();
+            }
         }
 
         const handleTripClosed = (payload = {}) => {
@@ -899,6 +907,7 @@ const ActiveTrip = () => {
         socketService.on('ride:state', handleRideState);
 
         return () => {
+            socketService.off('connect', onConnect);
             socketService.off('rideRequestClosed', handleTripClosed);
             socketService.off('rideCancelled', handleTripClosed);
             socketService.off('ride:status:updated', handleRideStatusUpdated);

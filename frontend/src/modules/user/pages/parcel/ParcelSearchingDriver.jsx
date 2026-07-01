@@ -679,9 +679,26 @@ const ParcelSearchingDriver = () => {
         const rideId = payload?.rideId || payload?.realtime?.rideId || payload?.ride?._id || payload?._id || payload?.id;
         activeRideIdRef.current = String(rideId || '');
 
-        if (socket && rideId) {
-          socketService.emit('joinRide', { rideId });
-          socketService.emit('ride:join', { rideId });
+        const onConnect = () => {
+          if (rideId) {
+            socketService.emit('joinRide', { rideId });
+            socketService.emit('ride:join', { rideId });
+          }
+        };
+
+        if (socket) {
+          socketService.on('connect', onConnect);
+          if (socket.connected || socketService.isConnected()) {
+            onConnect();
+          }
+
+          const originalCleanup = cleanupSearchRef.current;
+          cleanupSearchRef.current = () => {
+            socketService.off('connect', onConnect);
+            if (originalCleanup) {
+              originalCleanup();
+            }
+          };
         }
 
         const pollActiveRide = async () => {
