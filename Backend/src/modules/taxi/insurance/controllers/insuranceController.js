@@ -207,13 +207,14 @@ export const getInsuranceSettings = asyncHandler(async (_req, res) => {
 
 // Admin: Update insurance banner settings
 export const updateInsuranceSettings = asyncHandler(async (req, res) => {
-  const { enabled, bannerTitle, bannerSubtitle, policyTermsLabel } = req.body;
+  const { enabled, bannerTitle, bannerSubtitle, policyTermsLabel, bannerImageUrl } = req.body;
   const settings = await getOrCreateInsuranceSettings();
 
   if (typeof enabled === 'boolean') settings.enabled = enabled;
   if (bannerTitle !== undefined) settings.bannerTitle = bannerTitle;
   if (bannerSubtitle !== undefined) settings.bannerSubtitle = bannerSubtitle;
   if (policyTermsLabel !== undefined) settings.policyTermsLabel = policyTermsLabel;
+  if (bannerImageUrl !== undefined) settings.bannerImageUrl = bannerImageUrl;
 
   await settings.save();
 

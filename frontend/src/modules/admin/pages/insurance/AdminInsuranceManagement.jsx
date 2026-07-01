@@ -10,8 +10,10 @@ import {
   Clock, 
   ChevronRight,
   Filter,
-  Settings
+  Settings,
+  Upload
 } from 'lucide-react';
+import { useImageUpload } from '../../../../shared/hooks/useImageUpload';
 import { adminService } from '../../services/adminService';
 import api from '../../../../shared/api/axiosInstance';
 import toast from 'react-hot-toast';
@@ -45,8 +47,17 @@ const AdminInsuranceManagement = () => {
     bannerTitle: 'Vehicle Insurance',
     bannerSubtitle: 'Instant coverage plans for your rides',
     policyTermsLabel: 'Monthly, 6-Month, & Annual Coverage',
+    bannerImageUrl: '',
   });
   const [savingSettings, setSavingSettings] = useState(false);
+
+  const { 
+    uploading: imageUploading, 
+    handleFileChange: onImageFileChange,
+  } = useImageUpload({
+    folder: 'insurance',
+    onSuccess: (url) => setBannerSettings(prev => ({ ...prev, bannerImageUrl: url }))
+  });
 
   const fetchRequests = async () => {
     try {
@@ -82,6 +93,7 @@ const AdminInsuranceManagement = () => {
         bannerTitle: s.bannerTitle || prev.bannerTitle,
         bannerSubtitle: s.bannerSubtitle || prev.bannerSubtitle,
         policyTermsLabel: s.policyTermsLabel || prev.policyTermsLabel,
+        bannerImageUrl: s.bannerImageUrl || prev.bannerImageUrl,
       }));
     } catch (err) {
       console.error('Failed to load banner settings:', err);
@@ -265,7 +277,7 @@ const AdminInsuranceManagement = () => {
 
       <div className="flex-1 overflow-y-auto p-8 lg:p-10">
         <div className="max-w-7xl mx-auto">
-          {activeTab === 'applications' ? (
+          {activeTab === 'applications' && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[500px]">
               {/* Toolbar */}
               <div className="p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -471,7 +483,8 @@ const AdminInsuranceManagement = () => {
                 </div>
               </div>
             </div>
-          ) : (
+          )}
+          {activeTab === 'plans' && (
             <div className="space-y-6">
               {/* Dynamic Rates Management Panel */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
@@ -637,6 +650,32 @@ const AdminInsuranceManagement = () => {
                     placeholder="Monthly, 6-Month, & Annual Coverage"
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors"
                   />
+                </div>
+
+                {/* Banner Image Upload */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5">Banner Image</label>
+                  <div className="flex items-center gap-4">
+                    {bannerSettings.bannerImageUrl && (
+                      <div className="relative w-32 h-20 rounded-lg overflow-hidden border border-gray-200">
+                        <img src={bannerSettings.bannerImageUrl} alt="Banner Preview" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="relative flex-1">
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={onImageFileChange} 
+                        disabled={imageUploading}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10" 
+                      />
+                      <div className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-xl py-4 bg-gray-50 text-gray-500 hover:bg-gray-100 transition-colors">
+                        {imageUploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
+                        <span className="text-xs font-bold uppercase tracking-wider">{imageUploading ? 'Uploading...' : 'Upload New Image'}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-gray-400 font-semibold mt-2">Recommended size: 800x400 pixels. Max file size: 5MB.</p>
                 </div>
 
                 {/* Save Button */}

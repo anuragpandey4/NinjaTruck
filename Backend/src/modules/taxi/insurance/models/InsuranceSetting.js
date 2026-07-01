@@ -21,6 +21,11 @@ const insuranceSettingSchema = new mongoose.Schema(
       default: 'Monthly, 6-Month, & Annual Coverage',
       trim: true,
     },
+    bannerImageUrl: {
+      type: String,
+      default: '',
+      trim: true,
+    },
   },
   {
     timestamps: true,

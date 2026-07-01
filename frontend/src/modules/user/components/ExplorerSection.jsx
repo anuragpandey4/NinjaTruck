@@ -11,6 +11,7 @@ const ExplorerSection = () => {
     bannerTitle: 'Vehicle Insurance',
     bannerSubtitle: 'Instant coverage plans for your rides',
     policyTermsLabel: 'Monthly, 6-Month, & Annual Coverage',
+    bannerImageUrl: '',
   });
 
   useEffect(() => {
@@ -23,6 +24,7 @@ const ExplorerSection = () => {
           bannerTitle: s.bannerTitle || prev.bannerTitle,
           bannerSubtitle: s.bannerSubtitle || prev.bannerSubtitle,
           policyTermsLabel: s.policyTermsLabel || prev.policyTermsLabel,
+          bannerImageUrl: s.bannerImageUrl || prev.bannerImageUrl,
         }));
       } catch {
         // Keep defaults if API fails
@@ -51,9 +53,9 @@ const ExplorerSection = () => {
           onClick={() => navigate('/taxi/user/insurance')}
           className="w-full text-left rounded-[28px] overflow-hidden border border-white/80 bg-white/70 shadow-[0_24px_48px_rgba(15,23,42,0.06)] backdrop-blur-xl relative group active:scale-[0.99] transition-all duration-300"
         >
-          <div className="relative h-[220px] w-full overflow-hidden">
+          <div className="relative h-[220px] w-full overflow-hidden bg-slate-100">
             <img
-              src={insuranceBannerImg}
+              src={settings.bannerImageUrl || insuranceBannerImg}
               alt="Vehicle Insurance banner"
               className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
             />
