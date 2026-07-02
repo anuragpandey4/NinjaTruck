@@ -11,11 +11,11 @@ import PromoBanners from '../components/PromoBanners';
 import ExplorerSection from '../components/ExplorerSection';
 import CheckUsOutSection from '../components/CheckUsOutSection';
 import BottomNavbar from '../components/BottomNavbar';
-import carIcon from '../../../assets/icons/car.png';
-import bikeIcon from '../../../assets/icons/bike.png';
+const carIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985210/ninja_truck_assets/car.png";
+const bikeIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985207/ninja_truck_assets/bike.png";
 
-import autoIcon from '../../../assets/icons/auto.png';
-import deliveryIcon from '../../../assets/icons/Delivery.png';
+const autoIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985206/ninja_truck_assets/auto.png";
+const deliveryIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985211/ninja_truck_assets/Delivery.png";
 import api from '../../../shared/api/axiosInstance';
 import { useSettings } from '../../../shared/context/SettingsContext';
 import { userService } from '../services/userService';

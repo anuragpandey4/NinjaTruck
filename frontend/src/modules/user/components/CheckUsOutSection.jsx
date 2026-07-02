@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Camera, PlayCircle, Share2, ArrowRight } from 'lucide-react';
-import checkUsOutImg from '@/assets/check_us_out.jpg';
+const checkUsOutImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985203/ninja_truck_assets/check_us_out.jpg";
 
 const CheckUsOutSection = () => {
   return (

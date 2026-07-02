@@ -1,10 +1,10 @@
-import carIcon from '../../../../assets/icons/car.png';
-import bikeIcon from '../../../../assets/icons/bike.png';
-import autoIcon from '../../../../assets/icons/auto.png';
-import LuxuryIcon from '../../../../assets/icons/Luxury.png';
-import PremiumIcon from '../../../../assets/icons/Premium.png';
-import SuvIcon from '../../../../assets/icons/SUV.png';
-import busIcon from '../../../../assets/3d images/AutoCab/bus.png';
+const carIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985210/ninja_truck_assets/car.png";
+const bikeIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985207/ninja_truck_assets/bike.png";
+const autoIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985206/ninja_truck_assets/auto.png";
+const LuxuryIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985217/ninja_truck_assets/Luxury.png";
+const PremiumIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985221/ninja_truck_assets/Premium.png";
+const SuvIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985223/ninja_truck_assets/SUV.png";
+const busIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985175/ninja_truck_assets/bus.png";
 
 export const PAGE_SIZE = 4;
 export const TABS = ['All', 'Rides', 'Parcels', 'Rental', 'Outstation', 'Scheduled', 'Support'];
@@ -118,7 +118,7 @@ export const coordLabel = (location, fallback) => {
 
 export const getVehicleVisual = (ride, type) => {
   if (type === 'parcel') {
-    return '/5_Parcel.png';
+    return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985308/ninja_truck_assets/5_Parcel.png';
   }
 
   if (type === 'bus') {

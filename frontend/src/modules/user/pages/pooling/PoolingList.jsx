@@ -20,7 +20,7 @@ import { userService } from '../../services/userService';
 import toast from 'react-hot-toast';
 
 // Asset Imports
-import taxiImg from '../../../../assets/3d images/AutoCab/taxi.png';
+const taxiImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985180/ninja_truck_assets/taxi.png";
 
 const PoolingList = () => {
   const [searchParams] = useSearchParams();

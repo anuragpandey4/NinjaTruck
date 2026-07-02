@@ -134,7 +134,7 @@ const DUMMY_ACTIVITIES = {
       driverName: "Vikram Singh",
       eyebrow: "Delivery booking",
       driverImage: "https://ui-avatars.com/api/?name=Vikram+Singh&background=E2E8F0&color=0F172A&bold=true",
-      vehicleImage: "/5_Parcel.png",
+      vehicleImage: 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985308/ninja_truck_assets/5_Parcel.png',
     },
     {
       id: "dummy-parcel-2",
@@ -150,7 +150,7 @@ const DUMMY_ACTIVITIES = {
       driverName: "Amit Patel",
       eyebrow: "Delivery booking",
       driverImage: "https://ui-avatars.com/api/?name=Amit+Patel&background=E2E8F0&color=0F172A&bold=true",
-      vehicleImage: "/5_Parcel.png",
+      vehicleImage: 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985308/ninja_truck_assets/5_Parcel.png',
     }
   ],
   Rental: [

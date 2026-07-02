@@ -18,7 +18,7 @@ import {
     verifyDriverOtp,
     verifyPoolingDriverOnboardingOtp,
 } from '../../services/registrationService';
-import taxiBg from '../../../../assets/ninja_truck_hero_fixed.png';
+const taxiBg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985272/ninja_truck_assets/ninja_truck_hero_fixed.jpg";
 
 const unwrap = (response) => response?.data?.data || response?.data || response;
 const normalizeDriverRole = (role) => {

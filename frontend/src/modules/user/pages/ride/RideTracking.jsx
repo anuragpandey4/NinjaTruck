@@ -9,10 +9,10 @@ import { socketService } from '../../../../shared/api/socket';
 import api from '../../../../shared/api/axiosInstance';
 import { BACKEND_ORIGIN } from '../../../../shared/api/runtimeConfig';
 import { clearCurrentRide, getCurrentRide, saveCurrentRide } from '../../services/currentRideService';
-import carIcon from '../../../../assets/icons/car.png';
-import bikeIcon from '../../../../assets/icons/bike.png';
-import autoIcon from '../../../../assets/icons/auto.png';
-import deliveryIcon from '../../../../assets/icons/Delivery.png';
+const carIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985210/ninja_truck_assets/car.png";
+const bikeIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985207/ninja_truck_assets/bike.png";
+const autoIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985206/ninja_truck_assets/auto.png";
+const deliveryIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985211/ninja_truck_assets/Delivery.png";
 import { useSettings } from '../../../../shared/context/SettingsContext';
 
 const MAP_CONTAINER_STYLE = { width: '100%', height: '100%' };

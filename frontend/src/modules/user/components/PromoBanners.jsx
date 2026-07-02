@@ -12,8 +12,8 @@ const rotatingCards = [
     actionClass: 'bg-orange-50 text-orange-500',
     path: '/taxi/user/parcel/type',
     images: [
-      { src: '/2_AutoRickshaw.png', alt: 'Auto' },
-      { src: '/1_Bike.png', alt: 'Bike' },
+      { src: 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985292/ninja_truck_assets/2_AutoRickshaw.png', alt: 'Auto' },
+      { src: 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985288/ninja_truck_assets/1_Bike.png', alt: 'Bike' },
     ],
   },
   {
@@ -24,8 +24,8 @@ const rotatingCards = [
     actionClass: 'bg-blue-50 text-blue-500',
     path: '/taxi/user/parcel/type',
     images: [
-      { src: '/4_Taxi.png', alt: 'Taxi' },
-      { src: '/white_sedan_banner_car.png', alt: 'Sedan' },
+      { src: 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985305/ninja_truck_assets/4_Taxi.png', alt: 'Taxi' },
+      { src: 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985376/ninja_truck_assets/white_sedan_banner_car.jpg', alt: 'Sedan' },
     ],
   },
 ];

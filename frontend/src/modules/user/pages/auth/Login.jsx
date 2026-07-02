@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, ChevronRight, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { getLocalUserToken, userAuthService } from '../../services/authService';
 import { useSettings } from '../../../../shared/context/SettingsContext';
-import loginIllustration from '../../../../assets/images/login-illustration.png';
+const loginIllustration = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985235/ninja_truck_assets/login-illustration.jpg";
 
 const extractLoginErrorMessage = (error) => {
   if (typeof error === 'string') {

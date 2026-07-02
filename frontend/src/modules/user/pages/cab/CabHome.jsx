@@ -5,11 +5,11 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useSettings } from '../../../../shared/context/SettingsContext';
 
-import imgShared    from '@/assets/3d images/AutoCab/taxi.png';
-import imgAirport   from '@/assets/3d images/AutoCab/airoplan.png';
-import imgSpiritual from '@/assets/3d images/AutoCab/temple.png';
-import imgOneWay    from '@/assets/3d images/AutoCab/one way.png';
-import imgBus       from '@/assets/3d images/AutoCab/bus.png';
+const imgShared = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985180/ninja_truck_assets/taxi.png";
+const imgAirport = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985173/ninja_truck_assets/airoplan.png";
+const imgSpiritual = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985183/ninja_truck_assets/temple.png";
+const imgOneWay = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985178/ninja_truck_assets/one_way.png";
+const imgBus = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985175/ninja_truck_assets/bus.png";
 
 const isEnabledFlag = (value) => {
   if (typeof value === 'boolean') return value;
@@ -95,7 +95,7 @@ const CabHome = () => {
             <p className="text-[9px] font-black uppercase tracking-[0.26em] text-slate-400">Auto & Cab</p>
             <h1 className="text-[19px] font-black tracking-tight text-slate-900 leading-tight">Choose a Service</h1>
           </div>
-          <img src="/4_Taxi.png" alt="cab" className="h-10 w-10 object-contain drop-shadow-md shrink-0" />
+          <img src='https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985305/ninja_truck_assets/4_Taxi.png' alt="cab" className="h-10 w-10 object-contain drop-shadow-md shrink-0" />
         </div>
       </motion.header>
 

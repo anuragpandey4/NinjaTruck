@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import heroImg from '@/assets/landing/hero.png';
+const heroImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985258/ninja_truck_assets/hero.jpg";
 import { useSettings } from '../../../shared/context/SettingsContext';
 
-import mobilityBanner from '@/assets/images/mobility-banner-cartoony.png';
+const mobilityBanner = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985236/ninja_truck_assets/mobility-banner-cartoony.jpg";
 
 const AuthLayout = ({ children, title, subtitle }) => {
   const { settings } = useSettings();

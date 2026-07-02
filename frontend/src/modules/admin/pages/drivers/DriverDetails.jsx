@@ -15,17 +15,17 @@ import {
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { adminService } from '../../services/adminService';
 import { DELHI_CENTER, HAS_VALID_GOOGLE_MAPS_KEY, useAppGoogleMapsLoader } from '../../utils/googleMaps';
-import BikeIcon from '@/assets/icons/bike.png';
-import CarIcon from '@/assets/icons/car.png';
-import AutoIcon from '@/assets/icons/auto.png';
-import TruckIcon from '@/assets/icons/truck.png';
-import EhcvIcon from '@/assets/icons/ehcv.png';
-import HcvIcon from '@/assets/icons/hcv.png';
-import LcvIcon from '@/assets/icons/LCV.png';
-import McvIcon from '@/assets/icons/mcv.png';
-import LuxuryIcon from '@/assets/icons/Luxury.png';
-import PremiumIcon from '@/assets/icons/Premium.png';
-import SuvIcon from '@/assets/icons/SUV.png';
+const BikeIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985207/ninja_truck_assets/bike.png";
+const CarIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985210/ninja_truck_assets/car.png";
+const AutoIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985206/ninja_truck_assets/auto.png";
+const TruckIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985224/ninja_truck_assets/truck.png";
+const EhcvIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985212/ninja_truck_assets/ehcv.png";
+const HcvIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985214/ninja_truck_assets/hcv.png";
+const LcvIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985216/ninja_truck_assets/LCV.png";
+const McvIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985219/ninja_truck_assets/mcv.png";
+const LuxuryIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985217/ninja_truck_assets/Luxury.png";
+const PremiumIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985221/ninja_truck_assets/Premium.png";
+const SuvIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985223/ninja_truck_assets/SUV.png";
 
 const mapContainerStyle = { width: '100%', height: '100%' };
 

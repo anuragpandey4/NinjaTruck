@@ -7,8 +7,8 @@ import {
 import { motion } from 'framer-motion';
 import { useSettings } from '../../../shared/context/SettingsContext';
 
-import newHeroImg from '@/assets/ninja_truck_hero_fixed.png';
-import checkUsOutImg from '@/assets/premium_grid_map.png';
+const newHeroImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985272/ninja_truck_assets/ninja_truck_hero_fixed.jpg";
+const checkUsOutImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985276/ninja_truck_assets/premium_grid_map.jpg";
 
 // Reusable animation variants
 const fadeUpVariant = {

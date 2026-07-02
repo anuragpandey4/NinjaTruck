@@ -645,7 +645,7 @@ const IntercityHome = () => {
           {/* Banner 1: Chardham */}
           <div className="w-[280px] shrink-0 h-[140px] rounded-2xl overflow-hidden relative shadow-md group">
             <img
-              src="/chardham_banner.png"
+              src='https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985317/ninja_truck_assets/chardham_banner.jpg'
               alt="Chardham Cab Packages"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
@@ -662,7 +662,7 @@ const IntercityHome = () => {
           {/* Banner 2: Offers */}
           <div className="w-[280px] shrink-0 h-[140px] rounded-2xl overflow-hidden relative shadow-md group">
             <img
-              src="/offers_banner.png"
+              src='https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985363/ninja_truck_assets/offers_banner.jpg'
               alt="Beach Cab Offers"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />

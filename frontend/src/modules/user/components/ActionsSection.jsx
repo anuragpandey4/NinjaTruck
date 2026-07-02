@@ -68,7 +68,7 @@ const ActionsSection = () => {
         <ActionCard
           title="Rentals"
           description="Book trucks by the hour."
-          image="/rental_service_icon.png"
+          image='https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985367/ninja_truck_assets/rental_service_icon.jpg'
           surfaceClass="bg-gradient-to-br from-orange-50/60 via-white/80 to-orange-100/40"
           glowClass="249,115,22"
           buttonBgClass="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
@@ -78,7 +78,7 @@ const ActionsSection = () => {
         <ActionCard
           title="Delivery"
           description="Send parcels across the city."
-          image="/5_Parcel.png"
+          image='https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985308/ninja_truck_assets/5_Parcel.png'
           surfaceClass="bg-gradient-to-br from-indigo-50/60 via-white/80 to-indigo-100/40"
           glowClass="99,102,241"
           buttonBgClass="bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600"

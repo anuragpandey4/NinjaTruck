@@ -13,9 +13,9 @@ import api from '../../../../shared/api/axiosInstance';
 import { useAppGoogleMapsLoader } from '../../../admin/utils/googleMaps';
 import { getSavedLocation, getSavedLocationCoords, saveLocation } from '../../services/locationStore';
 
-import trucksImg from '@/assets/images/delivery/trucks.png';
-import bikeImg from '@/assets/images/delivery/bike.png';
-import moversImg from '@/assets/images/delivery/movers.png';
+const trucksImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985228/ninja_truck_assets/trucks.jpg";
+const bikeImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985207/ninja_truck_assets/bike.png";
+const moversImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985227/ninja_truck_assets/movers.jpg";
 
 const Motion = motion;
 const PARCEL_BOOKING_DRAFT_KEY = 'parcelBookingDraft';

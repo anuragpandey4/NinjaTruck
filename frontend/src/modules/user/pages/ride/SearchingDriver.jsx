@@ -36,12 +36,12 @@ const MAP_OPTIONS = {
 };
 
 const unwrap = (response) => response?.data?.data || response?.data || response;
-import LuxuryIcon from '@/assets/icons/Luxury.png';
-import PremiumIcon from '@/assets/icons/Premium.png';
-import SuvIcon from '@/assets/icons/SUV.png';
-import BikeIcon from '@/assets/icons/bike.png';
-import CarIcon from '@/assets/icons/car.png';
-import AutoIcon from '@/assets/icons/auto.png';
+const LuxuryIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985217/ninja_truck_assets/Luxury.png";
+const PremiumIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985221/ninja_truck_assets/Premium.png";
+const SuvIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985223/ninja_truck_assets/SUV.png";
+const BikeIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985207/ninja_truck_assets/bike.png";
+const CarIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985210/ninja_truck_assets/car.png";
+const AutoIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985206/ninja_truck_assets/auto.png";
 
 const getVehicleIcon = (type = 'car') => {
   const val = String(type).toLowerCase();

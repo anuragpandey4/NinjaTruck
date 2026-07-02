@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ShieldCheck, Wallet, Clock, Star, TrendingUp, Sparkles, UserCheck } from 'lucide-react';
-import DriverHero from '@/assets/driver_welcome_hero.png';
+const DriverHero = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985205/ninja_truck_assets/driver_welcome_hero.jpg";
 import { useSettings } from '@/shared/context/SettingsContext';
 
 const partnerAvatars = [

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Shield } from 'lucide-react';
-import insuranceBannerImg from '@/assets/images/insurance_banner.png';
+const insuranceBannerImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985231/ninja_truck_assets/insurance_banner.jpg";
 import api from '../../../shared/api/axiosInstance';
 
 const ExplorerSection = () => {

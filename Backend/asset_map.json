@@ -1,0 +1,552 @@
+{
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\3d images\\AutoCab\\airoplan.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985173/ninja_truck_assets/airoplan.png",
+    "fileName": "airoplan.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\3d images\\AutoCab\\bus.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985175/ninja_truck_assets/bus.png",
+    "fileName": "bus.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\3d images\\AutoCab\\one way.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985178/ninja_truck_assets/one_way.png",
+    "fileName": "one way.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\3d images\\AutoCab\\taxi.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985180/ninja_truck_assets/taxi.png",
+    "fileName": "taxi.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\3d images\\AutoCab\\temple.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985183/ninja_truck_assets/temple.png",
+    "fileName": "temple.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\3d images\\clothes.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985186/ninja_truck_assets/clothes.png",
+    "fileName": "clothes.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\3d images\\documents.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985189/ninja_truck_assets/documents.png",
+    "fileName": "documents.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\3d images\\electronics.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985193/ninja_truck_assets/electronics.png",
+    "fileName": "electronics.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\3d images\\gifts.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985196/ninja_truck_assets/gifts.png",
+    "fileName": "gifts.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\3d images\\grocery.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985200/ninja_truck_assets/grocery.png",
+    "fileName": "grocery.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\3d images\\others.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985202/ninja_truck_assets/others.png",
+    "fileName": "others.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\check_us_out.jpg": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985203/ninja_truck_assets/check_us_out.jpg",
+    "fileName": "check_us_out.jpg",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\driver_welcome_hero.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985205/ninja_truck_assets/driver_welcome_hero.jpg",
+    "fileName": "driver_welcome_hero.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\auto.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985206/ninja_truck_assets/auto.png",
+    "fileName": "auto.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\bike.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985207/ninja_truck_assets/bike.png",
+    "fileName": "bike.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\bus.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985208/ninja_truck_assets/bus.jpg",
+    "fileName": "bus.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\car.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985210/ninja_truck_assets/car.png",
+    "fileName": "car.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\Delivery.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985211/ninja_truck_assets/Delivery.png",
+    "fileName": "Delivery.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\ehcv.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985212/ninja_truck_assets/ehcv.png",
+    "fileName": "ehcv.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\Hatchback.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985213/ninja_truck_assets/Hatchback.png",
+    "fileName": "Hatchback.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\hcv.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985214/ninja_truck_assets/hcv.png",
+    "fileName": "hcv.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\LCV.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985216/ninja_truck_assets/LCV.png",
+    "fileName": "LCV.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\Luxury.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985217/ninja_truck_assets/Luxury.png",
+    "fileName": "Luxury.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\mcv.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985219/ninja_truck_assets/mcv.png",
+    "fileName": "mcv.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\mini_bus.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985220/ninja_truck_assets/mini_bus.jpg",
+    "fileName": "mini_bus.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\Premium.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985221/ninja_truck_assets/Premium.png",
+    "fileName": "Premium.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\scooty.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985222/ninja_truck_assets/scooty.jpg",
+    "fileName": "scooty.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\SUV.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985223/ninja_truck_assets/SUV.png",
+    "fileName": "SUV.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\icons\\truck.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985224/ninja_truck_assets/truck.png",
+    "fileName": "truck.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\delivery\\bike.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985226/ninja_truck_assets/bike.jpg",
+    "fileName": "bike.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\delivery\\movers.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985227/ninja_truck_assets/movers.jpg",
+    "fileName": "movers.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\delivery\\trucks.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985228/ninja_truck_assets/trucks.jpg",
+    "fileName": "trucks.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\driver-login-bg.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985230/ninja_truck_assets/driver-login-bg.jpg",
+    "fileName": "driver-login-bg.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\insurance_banner.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985231/ninja_truck_assets/insurance_banner.jpg",
+    "fileName": "insurance_banner.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\light-taxi-bg.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985233/ninja_truck_assets/light-taxi-bg.jpg",
+    "fileName": "light-taxi-bg.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\links-banner.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985234/ninja_truck_assets/links-banner.png",
+    "fileName": "links-banner.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\login-illustration.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985235/ninja_truck_assets/login-illustration.jpg",
+    "fileName": "login-illustration.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\mobility-banner-cartoony.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985236/ninja_truck_assets/mobility-banner-cartoony.jpg",
+    "fileName": "mobility-banner-cartoony.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\mobility-illustration.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985238/ninja_truck_assets/mobility-illustration.jpg",
+    "fileName": "mobility-illustration.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\premium-taxi-bg.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985240/ninja_truck_assets/premium-taxi-bg.jpg",
+    "fileName": "premium-taxi-bg.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\yellow_ola_style_taxi.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985241/ninja_truck_assets/yellow_ola_style_taxi.jpg",
+    "fileName": "yellow_ola_style_taxi.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\yellow_taxi_flat_vector.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985243/ninja_truck_assets/yellow_taxi_flat_vector.jpg",
+    "fileName": "yellow_taxi_flat_vector.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\images\\yellow_taxi_login_bg.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985245/ninja_truck_assets/yellow_taxi_login_bg.jpg",
+    "fileName": "yellow_taxi_login_bg.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\india gate.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985248/ninja_truck_assets/india_gate.png",
+    "fileName": "india gate.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\india_gate_real.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985250/ninja_truck_assets/india_gate_real.jpg",
+    "fileName": "india_gate_real.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\landing\\bike.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985252/ninja_truck_assets/bike.jpg",
+    "fileName": "bike.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\landing\\cities.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985254/ninja_truck_assets/cities.jpg",
+    "fileName": "cities.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\landing\\hero-bg.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985256/ninja_truck_assets/hero-bg.jpg",
+    "fileName": "hero-bg.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\landing\\hero.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985258/ninja_truck_assets/hero.jpg",
+    "fileName": "hero.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\landing\\options.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985259/ninja_truck_assets/options.jpg",
+    "fileName": "options.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\landing\\parcel.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985260/ninja_truck_assets/parcel.jpg",
+    "fileName": "parcel.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\landing\\ride.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985262/ninja_truck_assets/ride.jpg",
+    "fileName": "ride.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\landing\\yellow_taxi_hero.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985264/ninja_truck_assets/yellow_taxi_hero.jpg",
+    "fileName": "yellow_taxi_hero.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\map_image.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985266/ninja_truck_assets/map_image.jpg",
+    "fileName": "map_image.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\namologo.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985268/ninja_truck_assets/namologo.png",
+    "fileName": "namologo.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\ninja_truck_hero.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985270/ninja_truck_assets/ninja_truck_hero.jpg",
+    "fileName": "ninja_truck_hero.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\ninja_truck_hero_fixed.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985272/ninja_truck_assets/ninja_truck_hero_fixed.jpg",
+    "fileName": "ninja_truck_hero_fixed.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\premium_grid_map.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985276/ninja_truck_assets/premium_grid_map.jpg",
+    "fileName": "premium_grid_map.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\redigologo.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985277/ninja_truck_assets/redigologo.png",
+    "fileName": "redigologo.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\ride-removebg-preview.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985278/ninja_truck_assets/ride-removebg-preview.png",
+    "fileName": "ride-removebg-preview.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\rydon24_logo.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985283/ninja_truck_assets/rydon24_logo.png",
+    "fileName": "rydon24_logo.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\services_hero.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985285/ninja_truck_assets/services_hero.jpg",
+    "fileName": "services_hero.png",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\src\\assets\\taj mahal.jpeg": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985287/ninja_truck_assets/taj_mahal.jpg",
+    "fileName": "taj mahal.jpeg",
+    "isPublic": false
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\1_Bike.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985288/ninja_truck_assets/1_Bike.png",
+    "fileName": "1_Bike.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\1_Log In Anytime. Earn Anytime.jpg": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985289/ninja_truck_assets/1_Log_In_Anytime._Earn_Anytime.jpg",
+    "fileName": "1_Log In Anytime. Earn Anytime.jpg",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\1_Quick Rides, Easy on the Pocket.jpg": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985291/ninja_truck_assets/1_Quick_Rides_Easy_on_the_Pocket.jpg",
+    "fileName": "1_Quick Rides, Easy on the Pocket.jpg",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\2_AutoRickshaw.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985292/ninja_truck_assets/2_AutoRickshaw.png",
+    "fileName": "2_AutoRickshaw.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\2_Log In Anytime. Earn Anytime.jpg": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985293/ninja_truck_assets/2_Log_In_Anytime._Earn_Anytime.jpg",
+    "fileName": "2_Log In Anytime. Earn Anytime.jpg",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\2_Quick Rides, Easy on the Pocket.jpg": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985294/ninja_truck_assets/2_Quick_Rides_Easy_on_the_Pocket.jpg",
+    "fileName": "2_Quick Rides, Easy on the Pocket.jpg",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\3_E-Rickshaw.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985296/ninja_truck_assets/3_E-Rickshaw.png",
+    "fileName": "3_E-Rickshaw.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\3_Quick Rides, Easy on the Pocket.jpg": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985299/ninja_truck_assets/3_Quick_Rides_Easy_on_the_Pocket.jpg",
+    "fileName": "3_Quick Rides, Easy on the Pocket.jpg",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\4_Quick Rides, Easy on the Pocket.jpg": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985303/ninja_truck_assets/4_Quick_Rides_Easy_on_the_Pocket.jpg",
+    "fileName": "4_Quick Rides, Easy on the Pocket.jpg",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\4_Taxi.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985305/ninja_truck_assets/4_Taxi.png",
+    "fileName": "4_Taxi.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\5_Parcel.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985308/ninja_truck_assets/5_Parcel.png",
+    "fileName": "5_Parcel.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Airport building exterior with airplanes and control tower outline concept.jpg": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985309/ninja_truck_assets/Airport_building_exterior_with_airplanes_and_control_tower_outline_concept.jpg",
+    "fileName": "Airport building exterior with airplanes and control tower outline concept.jpg",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\airport_illustration.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985310/ninja_truck_assets/airport_illustration.jpg",
+    "fileName": "airport_illustration.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\auto_with_people_banner.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985311/ninja_truck_assets/auto_with_people_banner.jpg",
+    "fileName": "auto_with_people_banner.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\bus.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985208/ninja_truck_assets/bus.jpg",
+    "fileName": "bus.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Careers Page.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985314/ninja_truck_assets/Careers_Page.png",
+    "fileName": "Careers Page.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\chardham_banner.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985317/ninja_truck_assets/chardham_banner.jpg",
+    "fileName": "chardham_banner.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\ChatGPT Image Apr 6, 2026, 11_55_31 AM.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985319/ninja_truck_assets/ChatGPT_Image_Apr_6_2026_11_55_31_AM.png",
+    "fileName": "ChatGPT Image Apr 6, 2026, 11_55_31 AM.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\city_skyline_footer.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985321/ninja_truck_assets/city_skyline_footer.jpg",
+    "fileName": "city_skyline_footer.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\download (1).jpg": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985323/ninja_truck_assets/download_1.jpg",
+    "fileName": "download (1).jpg",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\download.jpg": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985324/ninja_truck_assets/download.jpg",
+    "fileName": "download.jpg",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\driver_welcome_hero.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985326/ninja_truck_assets/driver_welcome_hero.jpg",
+    "fileName": "driver_welcome_hero.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Everyones Safety Matters.jpg": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985328/ninja_truck_assets/Everyones_Safety_Matters.jpg",
+    "fileName": "Everyones Safety Matters.jpg",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Gemini_Generated_Image_17lko817lko817lk.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985331/ninja_truck_assets/Gemini_Generated_Image_17lko817lko817lk.png",
+    "fileName": "Gemini_Generated_Image_17lko817lko817lk.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Gemini_Generated_Image_5fp7205fp7205fp7.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985335/ninja_truck_assets/Gemini_Generated_Image_5fp7205fp7205fp7.png",
+    "fileName": "Gemini_Generated_Image_5fp7205fp7205fp7.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Gemini_Generated_Image_je17s0je17s0je17.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985340/ninja_truck_assets/Gemini_Generated_Image_je17s0je17s0je17.png",
+    "fileName": "Gemini_Generated_Image_je17s0je17s0je17.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Gemini_Generated_Image_je17s0je17s0je17s.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985342/ninja_truck_assets/Gemini_Generated_Image_je17s0je17s0je17s.png",
+    "fileName": "Gemini_Generated_Image_je17s0je17s0je17s.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Gemini_Generated_Image_nc0l1hnc0l1hnc0l.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985344/ninja_truck_assets/Gemini_Generated_Image_nc0l1hnc0l1hnc0l.png",
+    "fileName": "Gemini_Generated_Image_nc0l1hnc0l1hnc0l.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Gemini_Generated_Image_ob17d1ob17d1ob17.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985347/ninja_truck_assets/Gemini_Generated_Image_ob17d1ob17d1ob17.png",
+    "fileName": "Gemini_Generated_Image_ob17d1ob17d1ob17.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Gemini_Generated_Image_too4rotoo4rotoo4.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985350/ninja_truck_assets/Gemini_Generated_Image_too4rotoo4rotoo4.png",
+    "fileName": "Gemini_Generated_Image_too4rotoo4rotoo4.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Gemini_Generated_Image_too4rotoo4rotoo4ds.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985352/ninja_truck_assets/Gemini_Generated_Image_too4rotoo4rotoo4ds.png",
+    "fileName": "Gemini_Generated_Image_too4rotoo4rotoo4ds.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Hatchback.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985213/ninja_truck_assets/Hatchback.png",
+    "fileName": "Hatchback.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\home_footer_gemini.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985358/ninja_truck_assets/home_footer_gemini.png",
+    "fileName": "home_footer_gemini.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\man.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985360/ninja_truck_assets/man.png",
+    "fileName": "man.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\mini_bus.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985220/ninja_truck_assets/mini_bus.jpg",
+    "fileName": "mini_bus.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\offers_banner.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985363/ninja_truck_assets/offers_banner.jpg",
+    "fileName": "offers_banner.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\outstation_service_icon.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985364/ninja_truck_assets/outstation_service_icon.jpg",
+    "fileName": "outstation_service_icon.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\parcel_offer_assets.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985365/ninja_truck_assets/parcel_offer_assets.jpg",
+    "fileName": "parcel_offer_assets.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\premium_grid_map.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985366/ninja_truck_assets/premium_grid_map.jpg",
+    "fileName": "premium_grid_map.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\rental_service_icon.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985367/ninja_truck_assets/rental_service_icon.jpg",
+    "fileName": "rental_service_icon.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\ride_now_banner.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985368/ninja_truck_assets/ride_now_banner.jpg",
+    "fileName": "ride_now_banner.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\Rydon24.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985371/ninja_truck_assets/Rydon24.png",
+    "fileName": "Rydon24.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\scooty.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985222/ninja_truck_assets/scooty.jpg",
+    "fileName": "scooty.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\SUV.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985223/ninja_truck_assets/SUV.png",
+    "fileName": "SUV.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\train_station_illustration.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985374/ninja_truck_assets/train_station_illustration.jpg",
+    "fileName": "train_station_illustration.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\trans logo.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985375/ninja_truck_assets/trans_logo.png",
+    "fileName": "trans logo.png",
+    "isPublic": true
+  },
+  "D:\\appzeto-projects\\taxi\\frontend\\public\\white_sedan_banner_car.png": {
+    "url": "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985376/ninja_truck_assets/white_sedan_banner_car.jpg",
+    "fileName": "white_sedan_banner_car.png",
+    "isPublic": true
+  }
+}

@@ -10,7 +10,7 @@ import {
   Headphones,
   ChevronRight
 } from 'lucide-react';
-import servicesHeroImg from '../../../assets/services_hero.png';
+const servicesHeroImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985258/ninja_truck_assets/hero.jpg";
 
 const ServicesPage = () => {
   const navigate = useNavigate();

@@ -6,7 +6,7 @@ import { buildAvatarFallback } from './activityHelpers';
 const ActivityCard = ({ type, title, address, date, time, status, statusTone, price, onClick, driverName, driverImage, vehicleImage, eyebrow }) => {
   const [vehicleBroken, setVehicleBroken] = useState(false);
   const [driverBroken, setDriverBroken] = useState(false);
-  const resolvedVehicleImage = vehicleBroken ? (type === 'parcel' ? '/5_Parcel.png' : '/1_Bike.png') : vehicleImage;
+  const resolvedVehicleImage = vehicleBroken ? (type === 'parcel' ? 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985308/ninja_truck_assets/5_Parcel.png' : 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985288/ninja_truck_assets/1_Bike.png') : vehicleImage;
   const resolvedDriverImage = driverBroken ? buildAvatarFallback(driverName) : driverImage;
   const vehicleAlt = type === 'parcel' ? 'Parcel' : type === 'bus' ? 'Bus' : type === 'pooling' ? 'Pooling vehicle' : 'Vehicle';
 

@@ -23,7 +23,7 @@ import { GoogleMap, MarkerF, OverlayView, OverlayViewF, PolylineF } from '@react
 import { HAS_VALID_GOOGLE_MAPS_KEY, useAppGoogleMapsLoader } from '../../admin/utils/googleMaps';
 import { socketService } from '../../../shared/api/socket';
 import api from '../../../shared/api/axiosInstance';
-import carIcon from '../../../assets/icons/car.png';
+const carIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985210/ninja_truck_assets/car.png";
 import { getLocalDriverToken } from '../services/registrationService';
 
 const MAP_CONTAINER_STYLE = {

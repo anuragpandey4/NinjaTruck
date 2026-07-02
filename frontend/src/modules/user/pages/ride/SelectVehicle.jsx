@@ -8,21 +8,21 @@ import api from '../../../../shared/api/axiosInstance';
 import { HAS_VALID_GOOGLE_MAPS_KEY, useAppGoogleMapsLoader } from '../../../admin/utils/googleMaps';
 import { userService } from '../../services/userService';
 import { useSettings } from '../../../../shared/context/SettingsContext';
-import BikeIcon from '../../../../assets/icons/bike.png';
-import AutoIcon from '../../../../assets/icons/auto.png';
-import CarIcon from '../../../../assets/icons/car.png';
-import PremiumIcon from '../../../../assets/icons/Premium.png';
-import LuxuryIcon from '../../../../assets/icons/Luxury.png';
-import SuvIcon from '../../../../assets/icons/SUV.png';
-import TruckIcon from '../../../../assets/icons/truck.png';
-import LcvIcon from '../../../../assets/icons/LCV.png';
-import McvIcon from '../../../../assets/icons/mcv.png';
-import HcvIcon from '../../../../assets/icons/hcv.png';
-import EhcvIcon from '../../../../assets/icons/ehcv.png';
-import ScootyIcon from '../../../../assets/icons/scooty.png';
-import HatchbackIcon from '../../../../assets/icons/Hatchback.png';
-import BusIcon from '../../../../assets/icons/bus.png';
-import MiniBusIcon from '../../../../assets/icons/mini_bus.png';
+const BikeIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985207/ninja_truck_assets/bike.png";
+const AutoIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985206/ninja_truck_assets/auto.png";
+const CarIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985210/ninja_truck_assets/car.png";
+const PremiumIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985221/ninja_truck_assets/Premium.png";
+const LuxuryIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985217/ninja_truck_assets/Luxury.png";
+const SuvIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985223/ninja_truck_assets/SUV.png";
+const TruckIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985224/ninja_truck_assets/truck.png";
+const LcvIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985216/ninja_truck_assets/LCV.png";
+const McvIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985219/ninja_truck_assets/mcv.png";
+const HcvIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985214/ninja_truck_assets/hcv.png";
+const EhcvIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985212/ninja_truck_assets/ehcv.png";
+const ScootyIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985222/ninja_truck_assets/scooty.jpg";
+const HatchbackIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985213/ninja_truck_assets/Hatchback.png";
+const BusIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985175/ninja_truck_assets/bus.png";
+const MiniBusIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985175/ninja_truck_assets/bus.png";
 
 const MAP_CONTAINER_STYLE = { width: '100%', height: '100%' };
 const SELECT_VEHICLE_MAP_OPTIONS = {
@@ -312,7 +312,7 @@ const VehicleMapPreview = React.memo(({ center, dropPosition, stops = [], driver
           <AnimatedVehicleMarker
             key={driver.id || driver._id || index}
             driver={driver}
-            iconUrl={selectedVehicle?.vehicleIconUrl || selectedVehicle?.icon || '/4_Taxi.png'}
+            iconUrl={selectedVehicle?.vehicleIconUrl || selectedVehicle?.icon || 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985305/ninja_truck_assets/4_Taxi.png'}
             isMapInteracting={isMapInteracting}
             mapZoom={mapZoom}
           />
@@ -412,31 +412,31 @@ const getVehicleMapIcon = (type) => {
   const value = getIconValue(type);
 
   if (value.includes('scooty')) {
-    return '/scooty.png';
+    return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985222/ninja_truck_assets/scooty.jpg';
   }
 
   if (value.includes('car_5_seater')) {
-    return '/Hatchback.png';
+    return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985213/ninja_truck_assets/Hatchback.png';
   }
 
   if (value.includes('car_7_seater')) {
-    return '/SUV.png';
+    return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985223/ninja_truck_assets/SUV.png';
   }
 
   if (value.includes('mini_bus') || value.includes('minibus')) {
-    return '/mini_bus.png';
+    return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985220/ninja_truck_assets/mini_bus.jpg';
   }
 
   if (value.includes('bus')) {
-    return '/bus.png';
+    return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985208/ninja_truck_assets/bus.jpg';
   }
 
   if (value.includes('bike')) {
-    return '/1_Bike.png';
+    return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985288/ninja_truck_assets/1_Bike.png';
   }
 
   if (value.includes('auto')) {
-    return '/2_AutoRickshaw.png';
+    return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985292/ninja_truck_assets/2_AutoRickshaw.png';
   }
 
   if (value.includes('ehc')) {
@@ -468,10 +468,10 @@ const getVehicleMapIcon = (type) => {
   }
 
   if (value.includes('suv')) {
-    return '/SUV.png';
+    return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985223/ninja_truck_assets/SUV.png';
   }
 
-  return '/4_Taxi.png';
+  return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985305/ninja_truck_assets/4_Taxi.png';
 };
 
 const getVehiclePreviewImage = (type) => {

@@ -77,9 +77,9 @@ const getVehicleIcon = (type = {}) => {
   if (customIcon) return customIcon;
 
   const iconValue = String(type.iconType || type.vehicleName || '').toLowerCase();
-  if (iconValue.includes('bike')) return '/1_Bike.png';
-  if (iconValue.includes('auto')) return '/2_AutoRickshaw.png';
-  return '/4_Taxi.png';
+  if (iconValue.includes('bike')) return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985288/ninja_truck_assets/1_Bike.png';
+  if (iconValue.includes('auto')) return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985292/ninja_truck_assets/2_AutoRickshaw.png';
+  return 'https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985305/ninja_truck_assets/4_Taxi.png';
 };
 
 const normalizeVehicleEntry = (pkg, vehicle, index) => ({

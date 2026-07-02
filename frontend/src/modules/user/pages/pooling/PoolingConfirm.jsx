@@ -26,7 +26,7 @@ import toast from 'react-hot-toast';
 import { schedulePoolingBookingReminders } from '../../utils/upcomingRideReminderService';
 
 // Asset Imports
-import taxiImg from '../../../../assets/3d images/AutoCab/taxi.png';
+const taxiImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985180/ninja_truck_assets/taxi.png";
 
 const loadRazorpayScript = () =>
   new Promise((resolve) => {

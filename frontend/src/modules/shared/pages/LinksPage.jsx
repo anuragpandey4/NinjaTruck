@@ -1,7 +1,7 @@
 import React from 'react';
 import { Download, ExternalLink, Shield, Zap, Star } from 'lucide-react';
 import './LinksPage.css';
-import bannerImg from '@/assets/images/links-banner.png';
+const bannerImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985234/ninja_truck_assets/links-banner.png";
 
 const LinksPage = () => {
   const links = [

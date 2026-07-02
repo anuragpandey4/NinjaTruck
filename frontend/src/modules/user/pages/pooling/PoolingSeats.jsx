@@ -21,7 +21,7 @@ import { userService } from '../../services/userService';
 import toast from 'react-hot-toast';
 
 // Asset Imports
-import taxiImg from '../../../../assets/3d images/AutoCab/taxi.png';
+const taxiImg = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985180/ninja_truck_assets/taxi.png";
 
 const SEAT_LEGEND = [
   { key: 'available', label: 'Available', color: 'bg-white border-slate-200 text-slate-400' },

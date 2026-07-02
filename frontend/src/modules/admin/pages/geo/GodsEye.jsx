@@ -17,9 +17,9 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAppGoogleMapsLoader, HAS_VALID_GOOGLE_MAPS_KEY } from '../../utils/googleMaps';
 import { adminService } from '../../services/adminService';
-import CarIcon from '@/assets/icons/car.png';
-import BikeIcon from '@/assets/icons/bike.png';
-import AutoIcon from '@/assets/icons/auto.png';
+const CarIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985210/ninja_truck_assets/car.png";
+const BikeIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985207/ninja_truck_assets/bike.png";
+const AutoIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985206/ninja_truck_assets/auto.png";
 
 const INDIA_CENTER = { lat: 22.7196, lng: 75.8577 };
 const MAP_CONTAINER_STYLE = { width: '100%', height: '400px' };

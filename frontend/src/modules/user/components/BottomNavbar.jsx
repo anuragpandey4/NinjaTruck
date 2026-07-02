@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Clock, Map, User } from 'lucide-react';
 import { useSettings, normalizeAssetUrl } from '../../../shared/context/SettingsContext';
-import busIcon from '../../../assets/3d images/AutoCab/bus.png';
+const busIcon = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985175/ninja_truck_assets/bus.png";
 
 const isEnabledFlag = (value) => {
   if (typeof value === 'boolean') {

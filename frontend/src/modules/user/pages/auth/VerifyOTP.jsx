@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, CheckCircle2, ChevronRight, MessageSquare } from 'lucide-react';
 import { userAuthService } from '../../services/authService';
 import { useSettings } from '../../../../shared/context/SettingsContext';
-import loginIllustration from '../../../../assets/images/login-illustration.png';
+const loginIllustration = "https://res.cloudinary.com/dwoxiabbi/image/upload/v1782985235/ninja_truck_assets/login-illustration.jpg";
 
 const unwrap = (response) => response?.data?.data || response?.data || response;
 const PENDING_SIGNUP_PHONE_KEY = 'pendingUserSignupPhone';
