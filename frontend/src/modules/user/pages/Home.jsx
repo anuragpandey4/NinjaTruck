@@ -864,7 +864,7 @@ const Home = () => {
                   Ninja <span className="text-slate-900">Truck</span>
                 </div>
                 <div className="mt-2 text-[14px] font-sans italic font-medium tracking-[0.04em] text-slate-800">
-                  Your Trusted Journey Partner
+                  No Highway Is Too Long
                 </div>
                 <div className="mt-2 text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
                   Made for Everyone, Crafted for You.
