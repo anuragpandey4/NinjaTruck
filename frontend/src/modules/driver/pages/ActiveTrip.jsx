@@ -1281,6 +1281,7 @@ const ActiveTrip = () => {
     const completeRideAndExit = () => {
         clearStoredTripPhase(rideId);
         clearStoredTripUiState(rideId);
+        clearStoredActiveTripSnapshot();
         navigate('/taxi/driver/home');
     };
 

@@ -851,9 +851,9 @@ const Home = () => {
           </div>
         )}
         <div
-          className="relative w-full"
+          className="relative w-full -mb-24"
           style={{
-            height: 360,
+            height: 560,
           }}
         >
           <div className="absolute inset-0 pointer-events-none">
@@ -879,23 +879,298 @@ const Home = () => {
             </div>
           </div>
 
+          {/* City Skyline + Truck Illustration */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              filter: 'grayscale(1) contrast(1.08)',
-              ...footerIllustrationFadeMask,
-            }}
+            className="absolute inset-0 pointer-events-none overflow-hidden"
           >
             <div className="absolute inset-0" style={footerIllustrationBg} />
-            <div
-              className="absolute inset-0 opacity-55"
-              style={{
-                ...footerIllustrationBg,
-                filter: 'blur(3px)',
-                ...footerIllustrationEdgeBlurMask,
-              }}
-            />
+            <svg
+              className="absolute bottom-0 left-0 w-full"
+              viewBox="0 0 420 300"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMax slice"
+              style={{ opacity: 0.15, minHeight: '100%' }}
+            >
+              <defs>
+                <style>{`
+                  @keyframes truckDrive {
+                    0% { transform: translateX(-120px); }
+                    100% { transform: translateX(540px); }
+                  }
+                  @keyframes cloudFloat1 {
+                    0% { transform: translateX(0); }
+                    50% { transform: translateX(25px); }
+                    100% { transform: translateX(0); }
+                  }
+                  @keyframes cloudFloat2 {
+                    0% { transform: translateX(0); }
+                    50% { transform: translateX(-20px); }
+                    100% { transform: translateX(0); }
+                  }
+                  @keyframes wheelSpin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                  @keyframes lampGlow {
+                    0%, 100% { opacity: 0.3; }
+                    50% { opacity: 0.6; }
+                  }
+                  .truck-group { animation: truckDrive 14s linear infinite; }
+                  .cloud1 { animation: cloudFloat1 8s ease-in-out infinite; }
+                  .cloud2 { animation: cloudFloat2 10s ease-in-out infinite; }
+                  .wheel-spin { animation: wheelSpin 0.6s linear infinite; transform-origin: center; }
+                  .lamp-glow { animation: lampGlow 4s ease-in-out infinite; }
+                `}</style>
+              </defs>
+
+              {/* Sky gradient background */}
+              <rect x="0" y="0" width="420" height="260" fill="url(#skyGrad)" />
+              <defs>
+                <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#CBD5E1" stopOpacity="0.08" />
+                  <stop offset="100%" stopColor="#F1F5F9" stopOpacity="0.02" />
+                </linearGradient>
+              </defs>
+
+              {/* Clouds - animated */}
+              <g className="cloud1">
+                <ellipse cx="70" cy="35" rx="28" ry="10" fill="#94A3B8" opacity="0.35" />
+                <ellipse cx="85" cy="32" rx="18" ry="8" fill="#94A3B8" opacity="0.25" />
+                <ellipse cx="55" cy="33" rx="14" ry="7" fill="#94A3B8" opacity="0.2" />
+              </g>
+              <g className="cloud2">
+                <ellipse cx="300" cy="28" rx="24" ry="9" fill="#94A3B8" opacity="0.3" />
+                <ellipse cx="315" cy="25" rx="16" ry="7" fill="#94A3B8" opacity="0.22" />
+                <ellipse cx="288" cy="26" rx="12" ry="6" fill="#94A3B8" opacity="0.18" />
+              </g>
+              <g className="cloud1" style={{ animationDelay: '3s' }}>
+                <ellipse cx="195" cy="18" rx="20" ry="7" fill="#94A3B8" opacity="0.2" />
+                <ellipse cx="207" cy="16" rx="12" ry="5" fill="#94A3B8" opacity="0.15" />
+              </g>
+
+              {/* ===== BUILDINGS - FAR BACK ROW (lighter) ===== */}
+              {/* Building 1 - tall left */}
+              <rect x="8" y="80" width="32" height="200" rx="2" fill="#94A3B8" opacity="0.3" />
+              <rect x="13" y="90" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.4" />
+              <rect x="22" y="90" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.4" />
+              <rect x="13" y="104" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.4" />
+              <rect x="22" y="104" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.4" />
+              <rect x="13" y="118" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.4" />
+              <rect x="22" y="118" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.4" />
+              <rect x="13" y="132" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.4" />
+              <rect x="22" y="132" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.4" />
+
+              {/* Building 2 - tallest far back */}
+              <rect x="370" y="60" width="30" height="220" rx="2" fill="#94A3B8" opacity="0.25" />
+              <rect x="375" y="70" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.35" />
+              <rect x="384" y="70" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.35" />
+              <rect x="375" y="84" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.35" />
+              <rect x="384" y="84" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.35" />
+              <rect x="375" y="98" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.35" />
+              <rect x="384" y="98" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.35" />
+              <rect x="375" y="112" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.35" />
+              <rect x="384" y="112" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.35" />
+              <rect x="375" y="126" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.35" />
+              <rect x="384" y="126" width="5" height="7" rx="1" fill="#CBD5E1" opacity="0.35" />
+
+              {/* ===== BUILDINGS - FRONT ROW (darker) ===== */}
+              {/* Building A - left tall */}
+              <rect x="28" y="100" width="28" height="180" rx="2" fill="#475569" opacity="0.5" />
+              <rect x="32" y="108" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.5" />
+              <rect x="41" y="108" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.5" />
+              <rect x="32" y="122" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.5" />
+              <rect x="41" y="122" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.5" />
+              <rect x="32" y="136" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.5" />
+              <rect x="41" y="136" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.5" />
+              <rect x="32" y="150" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.5" />
+              <rect x="41" y="150" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.5" />
+              <rect x="32" y="164" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.5" />
+              <rect x="41" y="164" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.5" />
+
+              {/* Building B - tallest left */}
+              <rect x="62" y="70" width="26" height="210" rx="2" fill="#334155" opacity="0.55" />
+              <rect x="66" y="78" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="74" y="78" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="66" y="90" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="74" y="90" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="66" y="102" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="74" y="102" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="66" y="114" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="74" y="114" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="66" y="126" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="74" y="126" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="66" y="138" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="74" y="138" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+
+              {/* Building C - medium left */}
+              <rect x="94" y="140" width="22" height="140" rx="2" fill="#475569" opacity="0.45" />
+              <rect x="98" y="148" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="106" y="148" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="98" y="160" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="106" y="160" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="98" y="172" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="106" y="172" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.4" />
+
+              {/* Building D - small mid-left */}
+              <rect x="122" y="180" width="18" height="100" rx="2" fill="#334155" opacity="0.4" />
+              <rect x="126" y="188" width="3" height="5" rx="1" fill="#94A3B8" opacity="0.35" />
+              <rect x="133" y="188" width="3" height="5" rx="1" fill="#94A3B8" opacity="0.35" />
+              <rect x="126" y="200" width="3" height="5" rx="1" fill="#94A3B8" opacity="0.35" />
+              <rect x="133" y="200" width="3" height="5" rx="1" fill="#94A3B8" opacity="0.35" />
+
+              {/* Building E - right cluster */}
+              <rect x="290" y="120" width="24" height="160" rx="2" fill="#475569" opacity="0.5" />
+              <rect x="294" y="128" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="302" y="128" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="294" y="140" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="302" y="140" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="294" y="152" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="302" y="152" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="294" y="164" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="302" y="164" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.45" />
+
+              {/* Building F - tall right */}
+              <rect x="320" y="90" width="28" height="190" rx="2" fill="#334155" opacity="0.55" />
+              <rect x="325" y="100" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="334" y="100" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="325" y="114" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="334" y="114" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="325" y="128" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="334" y="128" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="325" y="142" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="334" y="142" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="325" y="156" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.45" />
+              <rect x="334" y="156" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.45" />
+
+              {/* Building G - medium right */}
+              <rect x="354" y="130" width="22" height="150" rx="2" fill="#475569" opacity="0.45" />
+              <rect x="358" y="138" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="366" y="138" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="358" y="150" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="366" y="150" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="358" y="162" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="366" y="162" width="4" height="6" rx="1" fill="#94A3B8" opacity="0.4" />
+
+              {/* Building H - far right */}
+              <rect x="382" y="110" width="30" height="170" rx="2" fill="#334155" opacity="0.5" />
+              <rect x="387" y="120" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="396" y="120" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="387" y="134" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="396" y="134" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="387" y="148" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.4" />
+              <rect x="396" y="148" width="5" height="7" rx="1" fill="#94A3B8" opacity="0.4" />
+
+              {/* ===== TREES ===== */}
+              {/* Tree 1 */}
+              <rect x="148" y="220" width="4" height="22" rx="1.5" fill="#475569" opacity="0.5" />
+              <circle cx="150" cy="212" r="12" fill="#475569" opacity="0.4" />
+              <circle cx="144" cy="216" r="8" fill="#475569" opacity="0.35" />
+              <circle cx="156" cy="216" r="8" fill="#475569" opacity="0.35" />
+
+              {/* Tree 2 */}
+              <rect x="258" y="222" width="4" height="20" rx="1.5" fill="#475569" opacity="0.5" />
+              <circle cx="260" cy="214" r="11" fill="#475569" opacity="0.4" />
+              <circle cx="254" cy="218" r="7" fill="#475569" opacity="0.35" />
+              <circle cx="266" cy="218" r="7" fill="#475569" opacity="0.35" />
+
+              {/* Tree 3 - small bush */}
+              <rect x="190" y="230" width="3" height="12" rx="1" fill="#475569" opacity="0.4" />
+              <circle cx="191.5" cy="225" r="7" fill="#475569" opacity="0.35" />
+
+              {/* ===== STREET LAMPS ===== */}
+              {/* Lamp 1 */}
+              <rect x="174" y="218" width="2" height="24" rx="1" fill="#64748B" opacity="0.5" />
+              <rect x="170" y="216" width="10" height="3" rx="1.5" fill="#64748B" opacity="0.5" />
+              <circle cx="175" cy="215" r="3" fill="#FFB300" className="lamp-glow" />
+
+              {/* Lamp 2 */}
+              <rect x="236" y="218" width="2" height="24" rx="1" fill="#64748B" opacity="0.5" />
+              <rect x="232" y="216" width="10" height="3" rx="1.5" fill="#64748B" opacity="0.5" />
+              <circle cx="237" cy="215" r="3" fill="#FFB300" className="lamp-glow" style={{ animationDelay: '2s' }} />
+
+              {/* ===== BUS STOP ===== */}
+              <rect x="275" y="222" width="2" height="20" rx="0.5" fill="#64748B" opacity="0.45" />
+              <rect x="270" y="220" width="14" height="3" rx="1" fill="#64748B" opacity="0.45" />
+              <rect x="270" y="223" width="14" height="8" rx="1" fill="#94A3B8" opacity="0.2" />
+
+              {/* ===== PEDESTRIAN FIGURES ===== */}
+              {/* Person 1 - standing near bus stop */}
+              <circle cx="283" cy="232" r="3" fill="#64748B" opacity="0.4" />
+              <rect x="281" y="235" width="4" height="7" rx="1.5" fill="#64748B" opacity="0.4" />
+
+              {/* Person 2 - walking */}
+              <circle cx="205" cy="233" r="2.5" fill="#64748B" opacity="0.35" />
+              <rect x="203.5" y="235.5" width="3" height="6.5" rx="1" fill="#64748B" opacity="0.35" />
+
+              {/* ===== SIDEWALK ===== */}
+              <rect x="0" y="242" width="420" height="6" fill="#CBD5E1" opacity="0.4" />
+
+              {/* ===== ROAD ===== */}
+              <rect x="0" y="248" width="420" height="52" fill="#94A3B8" opacity="0.25" />
+              {/* Road lane divider */}
+              <rect x="0" y="272" width="420" height="2" rx="1" fill="#CBD5E1" opacity="0.3" />
+              {/* Dashed center line */}
+              <rect x="10" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+              <rect x="42" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+              <rect x="74" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+              <rect x="106" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+              <rect x="138" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+              <rect x="170" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+              <rect x="202" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+              <rect x="234" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+              <rect x="266" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+              <rect x="298" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+              <rect x="330" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+              <rect x="362" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+              <rect x="394" y="273" width="20" height="1.5" rx="0.75" fill="#E2E8F0" opacity="0.5" />
+
+              {/* ===== ANIMATED DELIVERY TRUCK (drives right) ===== */}
+              <g className="truck-group">
+                {/* Truck cargo body */}
+                <rect x="0" y="218" width="58" height="34" rx="3" fill="#FFB300" />
+                <rect x="2" y="220" width="54" height="30" rx="2" fill="#FFC940" opacity="0.6" />
+                {/* Cargo panel lines */}
+                <line x1="20" y1="220" x2="20" y2="248" stroke="#FFB300" strokeWidth="1.2" />
+                <line x1="38" y1="220" x2="38" y2="248" stroke="#FFB300" strokeWidth="1.2" />
+                {/* NinjaTruck logo on side */}
+                <rect x="6" y="228" width="10" height="10" rx="2" fill="#F59E0B" opacity="0.8" />
+                {/* Truck cabin */}
+                <rect x="58" y="226" width="26" height="26" rx="3" fill="#334155" />
+                <rect x="62" y="230" width="16" height="12" rx="2" fill="#94A3B8" opacity="0.5" />
+                {/* Windshield glare */}
+                <rect x="64" y="232" width="4" height="8" rx="1" fill="#CBD5E1" opacity="0.3" />
+                {/* Front bumper */}
+                <rect x="82" y="238" width="6" height="14" rx="2" fill="#475569" />
+                {/* Headlight */}
+                <rect x="84" y="240" width="3" height="4" rx="1" fill="#FFB300" opacity="0.7" />
+                {/* Rear wheel — sits on road surface (y=248) */}
+                <g style={{ transformOrigin: '14px 255px' }} className="wheel-spin">
+                  <circle cx="14" cy="255" r="6" fill="#1E293B" />
+                  <circle cx="14" cy="255" r="3" fill="#475569" />
+                  <line x1="14" y1="250" x2="14" y2="252" stroke="#94A3B8" strokeWidth="0.8" />
+                  <line x1="14" y1="258" x2="14" y2="260" stroke="#94A3B8" strokeWidth="0.8" />
+                </g>
+                {/* Front wheel — sits on road surface (y=248) */}
+                <g style={{ transformOrigin: '70px 255px' }} className="wheel-spin">
+                  <circle cx="70" cy="255" r="6" fill="#1E293B" />
+                  <circle cx="70" cy="255" r="3" fill="#475569" />
+                  <line x1="70" y1="250" x2="70" y2="252" stroke="#94A3B8" strokeWidth="0.8" />
+                  <line x1="70" y1="258" x2="70" y2="260" stroke="#94A3B8" strokeWidth="0.8" />
+                </g>
+                {/* Boxes on top of cargo */}
+                <rect x="5" y="208" width="14" height="11" rx="2" fill="#F59E0B" />
+                <rect x="21" y="211" width="12" height="8" rx="1.5" fill="#FBBF24" />
+                <rect x="35" y="209" width="13" height="10" rx="1.5" fill="#F59E0B" />
+                <rect x="12" y="200" width="10" height="8" rx="1.5" fill="#FBBF24" opacity="0.8" />
+                {/* Exhaust puff */}
+                <circle cx="-8" cy="248" r="4" fill="#94A3B8" opacity="0.25" />
+                <circle cx="-16" cy="244" r="3" fill="#94A3B8" opacity="0.15" />
+                <circle cx="-22" cy="246" r="2.5" fill="#94A3B8" opacity="0.1" />
+              </g>
+
+            </svg>
           </div>
         </div>
       </div>
