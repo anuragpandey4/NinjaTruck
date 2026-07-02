@@ -3,13 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Tag, CheckCircle2, X, ChevronRight, Ticket } from 'lucide-react';
 import BottomNavbar from '../components/BottomNavbar';
-
-const MOCK_PROMOS = [
-  { id: '1', code: 'RYDON50',  discount: 50,  type: 'flat',    service: 'All Rides',    expiry: '30 Apr 2026', minFare: 100 },
-  { id: '2', code: 'GOFREE',   discount: 100, type: 'flat',    service: 'Cab Only',     expiry: '15 Apr 2026', minFare: 150 },
-  { id: '3', code: 'SAVE20',   discount: 20,  type: 'percent', service: 'Parcel',       expiry: '30 Apr 2026', minFare: 50  },
-  { id: '4', code: 'NEWUSER',  discount: 75,  type: 'flat',    service: 'First Ride',   expiry: '30 Apr 2026', minFare: 80  },
-];
+import api from '../../../shared/api/axiosInstance';
 
 const SkeletonCard = () => (
   <div className="animate-pulse rounded-[20px] bg-white/70 border border-white/80 p-4 space-y-3">
@@ -34,9 +28,24 @@ const PromoCodes = () => {
 
   useEffect(() => {
     const load = async () => {
-      await new Promise(r => setTimeout(r, 700));
-      setPromos(MOCK_PROMOS);
-      setLoading(false);
+      try {
+        const response = await api.get('/promos/available');
+        const activePromos = (response.data.data?.promos || response.data.promos || []).map(p => ({
+          id: p._id,
+          code: p.code,
+          discount: p.discount_value,
+          type: p.discount_type || 'flat',
+          service: p.service_locations?.length > 0 ? 'Specific Locations' : 'All Rides',
+          expiry: p.expiry_date ? new Date(p.expiry_date).toLocaleDateString() : 'No Expiry',
+          minFare: p.min_fare || 0,
+        }));
+        setPromos(activePromos);
+      } catch (error) {
+        console.error('Failed to fetch promos', error);
+        setErrorBanner('Failed to load promo codes.');
+      } finally {
+        setLoading(false);
+      }
     };
     load();
   }, []);
@@ -50,14 +59,12 @@ const PromoCodes = () => {
     if (appliedCode === code) return; // idempotence guard
     setApplying(code);
     try {
-      await new Promise(r => setTimeout(r, 600));
-      // POST /api/v1/request/promocode-redeem
-      if (code === 'INVALID') throw new Error('Promo code is expired or invalid');
+      await api.post('/promos/validate', { code });
       setAppliedCode(code);
       showToast(`"${code}" applied successfully!`, 'success');
       setErrorBanner(null);
     } catch (err) {
-      setErrorBanner(err.message || 'Failed to apply promo code');
+      setErrorBanner(err.response?.data?.message || err.message || 'Failed to apply promo code');
     } finally {
       setApplying(null);
     }

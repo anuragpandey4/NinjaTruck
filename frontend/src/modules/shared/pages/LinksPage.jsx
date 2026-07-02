@@ -31,20 +31,20 @@ const LinksPage = () => {
       <nav className="links-nav">
         <div className="nav-container">
           <a href="/" className="nav-logo">
-            <span className="logo-rydon">Rydon</span><span className="logo-24">24</span>
+            <span className="logo-Ninja Truck">Ninja Truck</span><span className="logo-24">24</span>
           </a>
           <a href="/" className="back-home">Back to Home</a>
         </div>
       </nav>
 
       <div className="links-banner">
-        <img src={bannerImg} alt="Rydon24 Banner" className="banner-image" />
+        <img src={bannerImg} alt="Ninja Truck Banner" className="banner-image" />
         <div className="banner-gradient"></div>
       </div>
 
       <div className="links-content-wrapper">
         <header className="links-header">
-          <h1 className="links-title">Download <span className="highlight">Rydon24</span></h1>
+          <h1 className="links-title">Download <span className="highlight">Ninja Truck</span></h1>
           <p className="links-tagline">Choose the app that's right for you and start your journey today.</p>
         </header>
 
@@ -86,9 +86,9 @@ const LinksPage = () => {
         </div>
 
         <footer className="links-footer">
-          <p>© 2026 Rydon24. All rights reserved.</p>
+          <p>© 2026 Ninja Truck. All rights reserved.</p>
           <div className="footer-links">
-            <a href="https://rydon24.com" target="_blank" rel="noopener noreferrer">Visit Website</a>
+            <a href="https://Ninja Truck.com" target="_blank" rel="noopener noreferrer">Visit Website</a>
             <span className="dot"></span>
             <a href="/support">Support</a>
           </div>
@@ -99,3 +99,4 @@ const LinksPage = () => {
 };
 
 export default LinksPage;
+

@@ -518,13 +518,13 @@ const ReferralTranslation = () => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
         <PreviewCard
           title="User App Preview"
-          code="RYDONUSER"
+          code="Ninja TruckUSER"
           bannerText={selectedRecord.user_referral?.banner_text}
           blocks={userPreviewBlocks}
         />
         <PreviewCard
           title="Driver App Preview"
-          code="RYDONDRV"
+          code="Ninja TruckDRV"
           bannerText={selectedRecord.driver_referral?.banner_text}
           blocks={driverPreviewBlocks}
         />
@@ -631,3 +631,4 @@ const ReferralTranslation = () => {
 };
 
 export default ReferralTranslation;
+
