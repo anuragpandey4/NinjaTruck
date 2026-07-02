@@ -1278,61 +1278,31 @@ const ActiveTrip = () => {
         });
     };
 
-    const completeRideAndExit = async () => {
-        const paymentMode = selectedPaymentMode || effectiveState?.paymentMethod || liveRequest?.payment || '';
-
-        try {
-            if (rideId) {
-                const driverToken = getLocalDriverToken();
-                await api.patch(
-                    `/rides/${rideId}/status`,
-                    {
-                        status: 'completed',
-                        paymentMethod: paymentMode || undefined,
-                        driverPaymentCollection: buildDriverPaymentCollection({
-                            mode: paymentMode,
-                            status: driverPaymentStatus,
-                            paymentQr,
-                        }) || undefined,
-                    },
-                    withDriverAuthorization(driverToken),
-                );
-            }
-        } catch {
-            // Keep going with the socket publish so the trip can still complete in transient API failure cases.
-        }
-
-        publishRideStatus('completed', paymentMode);
+    const completeRideAndExit = () => {
         clearStoredTripPhase(rideId);
         clearStoredTripUiState(rideId);
         navigate('/taxi/driver/home');
     };
 
-    const completeRideForUserSync = async (paymentMode = '') => {
+    const completeRideForUserSync = (paymentMode = '') => {
         if (!rideId) {
             return;
         }
 
-        try {
-            const driverToken = getLocalDriverToken();
-            await api.patch(
-                `/rides/${rideId}/status`,
-                {
-                    status: 'completed',
-                    paymentMethod: paymentMode || undefined,
-                    driverPaymentCollection: buildDriverPaymentCollection({
-                        mode: paymentMode,
-                        status: driverPaymentStatus,
-                        paymentQr,
-                    }) || undefined,
-                },
-                withDriverAuthorization(driverToken),
-            );
-        } catch {
-            // The socket publish below remains as a realtime fallback for the rider side.
-        }
-
-        publishRideStatus('completed', paymentMode);
+        const driverToken = getLocalDriverToken();
+        api.patch(
+            `/rides/${rideId}/status`,
+            {
+                status: 'completed',
+                paymentMethod: paymentMode || undefined,
+                driverPaymentCollection: buildDriverPaymentCollection({
+                    mode: paymentMode,
+                    status: driverPaymentStatus,
+                    paymentQr,
+                }) || undefined,
+            },
+            withDriverAuthorization(driverToken),
+        ).catch(err => console.error("Failed to sync completion status:", err));
     };
 
     useEffect(() => {
@@ -2503,8 +2473,8 @@ const ActiveTrip = () => {
                                         Once you have the cash in hand, tap below to close this {isParcel ? 'delivery' : 'ride'}.
                                     </p>
                                     <button
-                                        onClick={async () => {
-                                            await completeRideForUserSync('cash');
+                                        onClick={() => {
+                                            completeRideForUserSync('cash');
                                             setPhase('review');
                                         }}
                                         className="mt-4 w-full rounded-xl py-3 text-[11px] font-black uppercase tracking-[0.16em] text-white shadow-lg"
@@ -2583,9 +2553,9 @@ const ActiveTrip = () => {
                             <motion.button
                                 whileTap={{ scale: 0.96 }}
                                 disabled={driverPaymentStatus !== 'success' || selectedPaymentMode === 'cash'}
-                                onClick={async () => {
+                                onClick={() => {
                                     const paymentMode = selectedPaymentMode || effectiveState?.paymentMethod || liveRequest?.payment || '';
-                                    await completeRideForUserSync(paymentMode);
+                                    completeRideForUserSync(paymentMode);
                                     setPhase('review');
                                 }}
                                 className={`w-full h-15 rounded-xl flex items-center justify-center gap-3 text-[14px] font-semibold uppercase tracking-wide shadow-xl transition-all ${driverPaymentStatus === 'success' && selectedPaymentMode !== 'cash' ? 'text-white' : 'bg-slate-100 text-slate-300 pointer-events-none'}`}

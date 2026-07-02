@@ -365,7 +365,7 @@ const emitToSocket = (socketId, event, payload) => {
   }
 };
 
-const emitToRoom = (room, event, payload) => {
+export const emitToRoom = (room, event, payload) => {
   if (ioInstance) {
     ioInstance.to(room).emit(event, payload);
   }

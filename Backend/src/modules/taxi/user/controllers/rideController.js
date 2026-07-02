@@ -25,6 +25,7 @@ import {
 import {
   cancelRideByUser,
   emitToDriver,
+  emitToRoom,
   notifyRideAccepted,
   notifyRideBiddingUpdated,
   restartRideDispatchWithLatestFare,
@@ -34,6 +35,7 @@ import { getTipSettings } from '../../services/appSettingsService.js';
 import { matchDrivers } from '../../services/matchingService.js';
 import { Ride } from '../models/Ride.js';
 import { UserWallet } from '../models/UserWallet.js';
+import { SOCKET_EVENTS } from '../../socket/events.js';
 
 const EARTH_RADIUS_METERS = 6371000;
 const AVERAGE_CITY_SPEED_KMPH = 24;
@@ -407,9 +409,33 @@ export const updateRideStatus = async (req, res) => {
     paymentMethod: req.body.paymentMethod,
   });
 
+  const populatedRide = await getRideDetails(req.params.rideId);
+
+  const payload = {
+    rideId: String(populatedRide._id),
+    status: populatedRide.status,
+    liveStatus: populatedRide.liveStatus,
+    acceptedAt: populatedRide.acceptedAt,
+    arrivedAt: populatedRide.arrivedAt,
+    startedAt: populatedRide.startedAt,
+    completedAt: populatedRide.completedAt,
+  };
+
+  emitToRoom(getRideRoom(req.params.rideId), SOCKET_EVENTS.RIDE_STATUS_UPDATED, payload);
+
+  if (nextStatus === RIDE_LIVE_STATUS.COMPLETED) {
+    const walletUpdate = ride.$locals?.walletUpdate;
+    if (walletUpdate) {
+      emitToDriver(req.auth.sub, 'driver:wallet:updated', {
+        wallet: walletUpdate.wallet,
+        transaction: walletUpdate.transaction,
+      });
+    }
+  }
+
   res.json({
     success: true,
-    data: serializeRideRealtime(ride),
+    data: serializeRideRealtime(populatedRide),
   });
 };
 
